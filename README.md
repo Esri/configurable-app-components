@@ -2,7 +2,7 @@
 
 Custom 4.x widgets built with the ArcGIS API for JavaScript.
 
-## Widgets
+## Components
 
 1. Info
 2. Screenshot
