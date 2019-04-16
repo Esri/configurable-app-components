@@ -186,7 +186,11 @@
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
+<<<<<<< HEAD
    Copyright 2018 Esri
+=======
+   Copyright [yyyy] [name of copyright owner]
+>>>>>>> 62148c6593da629afa2347b5ace4aea8e4ff3b78
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
