@@ -1,1 +1,1 @@
-# template-components
+# ArcGIS Portal App Templates - Components
