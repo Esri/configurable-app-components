@@ -6,7 +6,7 @@ Custom 4.x widgets built with the ArcGIS API for JavaScript.
 
 Each component directory contains general instructions on how to use the corresponding component.
 
-1. Info:  Panel that displays customized string content in a list or paragraph form ([Sample App](https://jsapi.maps.arcgis.com/apps/InteractiveLegend/index.html?appid=c6be720af9cd4fe5a81c9016e3554fea)).
+1. Info: Panel that displays customized string content in a list or paragraph form ([Sample App](https://jsapi.maps.arcgis.com/apps/InteractiveLegend/index.html?appid=c6be720af9cd4fe5a81c9016e3554fea)).
 
 2. Screenshot: Tool which provides the capability of taking screenshots of the map view/scene view. Optionally, include the legend or pop-up with the map screenshot ([Sample App](https://jsapi.maps.arcgis.com/apps/InteractiveLegend/index.html?appid=c6be720af9cd4fe5a81c9016e3554fea)).
 
@@ -20,9 +20,16 @@ Each component directory contains general instructions on how to use the corresp
 - Your favorite IDE
 
 ## Install via npm
+
 `npm i @esri/configurable-app-components`
 
-## Dojo config example:
+## Typings
+
+Add to tsconfig in your project
+`./node_modules/@esri/configurable-app-components/index.ts`
+
+## Dojo config example
+
 ```
   const config = {
     async: true,
@@ -36,10 +43,12 @@ Each component directory contains general instructions on how to use the corresp
   };
 ```
 
-## Importing module into project:
+## Importing module into project
+
 Naming convention: `Components/[component_name]/[component_name]`
 
-### Import Example:
+### Import Example
+
 ```
 import Share = require("Components/Share/Share");
 ```
