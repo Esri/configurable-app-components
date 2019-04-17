@@ -85,7 +85,7 @@ Calcite Web Documentation: https://esri.github.io/calcite-web/documentation/
                 "sit autem repellendus vitae similique voluptate aut numquam tempora"
               ];
 
-            const infoContent = new Collection([
+              const infoContent = new Collection([
                     new InfoItem({
                       type: "list",
                       title: "Lorem Ipsum",
@@ -96,20 +96,20 @@ Calcite Web Documentation: https://esri.github.io/calcite-web/documentation/
                       title: newInteractiveLegend,
                       infoContentItems: infoExplanation
                     })
-                  ])
+              ]);
 
-            const infoWidget = new Info({
+              const infoWidget = new Info({
                 view,
                 infoContent
               });
 
-            const infoExpand = new Expand({
+              const infoExpand = new Expand({
                 view,
                 content: infoWidget,
                 expandTooltip: infoWidget.label
-            });
+              });
 
-            infoWidget.expandWidget = this.infoExpand;
+              infoWidget.expandWidget = this.infoExpand;
 ```
 
 ## Resources
