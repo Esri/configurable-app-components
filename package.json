@@ -1,5 +1,5 @@
 {
-  "name": "configurable-app-components",
+  "name": "@esri/configurable-app-components",
   "version": "1.0.0",
   "description": "\"Custom 4.x widgets built with the ArcGIS API for JavaScript.\"",
   "main": "main.js",
