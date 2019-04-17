@@ -26,7 +26,7 @@ Each component directory contains general instructions on how to use the corresp
 ## Typings
 
 Include in tsconfig.json
-`./node_modules/@esri/configurable-app-components/index.ts`
+`./node_modules/@esri/configurable-app-components/index.d.ts`
 
 ## Dojo config example
 
