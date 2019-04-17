@@ -2,7 +2,7 @@
 
 Custom 4.x widgets built with the ArcGIS API for JavaScript.
 
-## Widgets
+## Components
 
 Each component directory contains general instructions on how to use the corresponding component.
 
