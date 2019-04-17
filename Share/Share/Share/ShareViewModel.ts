@@ -1,3 +1,23 @@
+// Copyright 2019 Esri
+
+// Licensed under the Apache License, Version 2.0 (the "License");
+
+// you may not use this file except in compliance with the License.
+
+// You may obtain a copy of the License at
+
+//     http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software
+
+// distributed under the License is distributed on an "AS IS" BASIS,
+
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+// See the License for the specific language governing permissions and
+
+// limitations under the License.​
+
 /// <amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" />
 /// <amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" />
 
@@ -119,11 +139,11 @@ class ShareViewModel extends declared(Accessor) {
       ? this._projectionPromise
         ? "projecting"
         : this._shortenPromise
-          ? "shortening"
-          : "ready"
+        ? "shortening"
+        : "ready"
       : this.view
-        ? "loading"
-        : "disabled";
+      ? "loading"
+      : "disabled";
   }
 
   //----------------------------------
@@ -291,8 +311,8 @@ class ShareViewModel extends declared(Accessor) {
       path.indexOf("?") === -1
         ? "?"
         : path.indexOf("?") !== -1 && path.indexOf("=") !== -1
-          ? "&"
-          : "";
+        ? "&"
+        : "";
     const shareParams = `${path}${sep}center=${roundedLon},${roundedLat}&level=${roundedZoom}`;
     const type = this.get("view.type");
     // Checks if view.type is 3D, if so add, 3D url parameters

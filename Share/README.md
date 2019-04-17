@@ -19,7 +19,7 @@ Share widget built for version 4.x of the ArcGIS API for Javascript
     - Shorten URL
     - Embed Map
 
-***Note:** Share Widget uses Esri's Calcite CSS Styles.*
+**\*Note:** Share Widget uses Esri's Calcite CSS Styles.\*
 
 Calcite Web Documentation: https://esri.github.io/calcite-web/documentation/
 
@@ -159,7 +159,7 @@ Esri welcomes contributions from anyone and everyone. Please see our [guidelines
 
 ## Licensing
 
-Copyright 2018 Esri
+Copyright 2019 Esri
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

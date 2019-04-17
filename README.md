@@ -4,9 +4,16 @@ Custom 4.x widgets built with the ArcGIS API for JavaScript.
 
 ## Widgets
 
-1. Info
-2. Screenshot
-3. Share
+Each component directory contains general instructions on how to use the corresponding component.
+
+- Info ([Sample App](https://jsapi.maps.arcgis.com/apps/InteractiveLegend/index.html?appid=c6be720af9cd4fe5a81c9016e3554fea))
+  Panel that displays customized string content in a list or paragraph form.
+
+- Screenshot ([Sample App](https://jsapi.maps.arcgis.com/apps/InteractiveLegend/index.html?appid=c6be720af9cd4fe5a81c9016e3554fea))
+  Tool which provides the capability of taking screenshots of the map view/scene view. Optionally, include the legend or pop-up with the map screenshot.
+
+- Share ([Sample App](https://jsapi.maps.arcgis.com/apps/Media/index.html?appid=5fd207b452cb454bac9fff9f889bcd3e))
+  Dialogue that provides the capability of sharing a web application of the current map extent accross customized social sharing platforms i.e. Facebook, Twitter, LinkedIn, or E-mail.
 
 ## Requirements
 
@@ -44,4 +51,4 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-A copy of the license is available in the repository's [LICENSE](LICENSE.txt) file.
+A copy of the license is available in the repository's [LICENSE](LICENSE) file.
