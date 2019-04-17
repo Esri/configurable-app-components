@@ -6,14 +6,11 @@ Custom 4.x widgets built with the ArcGIS API for JavaScript.
 
 Each component directory contains general instructions on how to use the corresponding component.
 
-- Info ([Sample App](https://jsapi.maps.arcgis.com/apps/InteractiveLegend/index.html?appid=c6be720af9cd4fe5a81c9016e3554fea))
-  Panel that displays customized string content in a list or paragraph form.
+1. Info:  Panel that displays customized string content in a list or paragraph form ([Sample App](https://jsapi.maps.arcgis.com/apps/InteractiveLegend/index.html?appid=c6be720af9cd4fe5a81c9016e3554fea)).
 
-- Screenshot ([Sample App](https://jsapi.maps.arcgis.com/apps/InteractiveLegend/index.html?appid=c6be720af9cd4fe5a81c9016e3554fea))
-  Tool which provides the capability of taking screenshots of the map view/scene view. Optionally, include the legend or pop-up with the map screenshot.
+2. Screenshot: Tool which provides the capability of taking screenshots of the map view/scene view. Optionally, include the legend or pop-up with the map screenshot ([Sample App](https://jsapi.maps.arcgis.com/apps/InteractiveLegend/index.html?appid=c6be720af9cd4fe5a81c9016e3554fea)).
 
-- Share ([Sample App](https://jsapi.maps.arcgis.com/apps/Media/index.html?appid=5fd207b452cb454bac9fff9f889bcd3e))
-  Dialogue that provides the capability of sharing a web application of the current map extent accross customized social sharing platforms i.e. Facebook, Twitter, LinkedIn, or E-mail.
+3. Share: Dialogue that provides the capability of sharing a web application of the current map extent across customized social sharing platforms i.e. Facebook, Twitter, LinkedIn, or E-mail ([Sample App](https://jsapi.maps.arcgis.com/apps/Media/index.html?appid=5fd207b452cb454bac9fff9f889bcd3e)).
 
 ## Requirements
 
