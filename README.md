@@ -1,5 +1,10 @@
 # Configurable App Components
 
+[![npm version][npm-img]][npm-url]
+
+[npm-img]: https://img.shields.io/npm/v/@esri/configurable-app-components.svg?style=flat-square
+[npm-url]: https://www.npmjs.com/package/@esri/configurable-app-components
+
 Custom 4.x widgets built with the ArcGIS API for JavaScript.
 
 ## Components
