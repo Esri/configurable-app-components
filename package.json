@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Esri/configurable-app-components/issues"
   },
-  "homepage": "https://github.com/Esri/configurable-app-components#readme"
+  "homepage": "https://github.com/Esri/configurable-app-components#readme",
+  "devDependencies": {
+    "typescript": "^3.0.0"
+  }
 }
