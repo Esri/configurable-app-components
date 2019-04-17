@@ -15,8 +15,34 @@ Each component directory contains general instructions on how to use the corresp
 ## Requirements
 
 - ArcGIS API for JavaScript 4.x
+- Node
 - Web browser with access to the Internet
 - Your favorite IDE
+
+## Install via npm
+`npm i @esri/configurable-app-components`
+
+## Dojo config example:
+```
+  const config = {
+    async: true,
+    locale: dojoLocale,
+    packages: [
+      {
+        name: "Components",
+        location: `${appPath}/node_modules/@esri/configurable-app-components`
+      }
+    ]
+  };
+```
+
+## Importing module into project:
+Naming convention: `Components/[component_name]/[component_name]`
+
+### Import Example:
+```
+import Share = require("Components/Share/Share");
+```
 
 ## Resources
 
