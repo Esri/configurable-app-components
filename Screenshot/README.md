@@ -69,9 +69,9 @@ Uses Esri Calcite Styles: https://esri.github.io/calcite-web/
 
 Uses ArcGIS JS API: 
 
-https://js.arcgis.com/4.10/
+https://js.arcgis.com/4.11/
 
-https://js.arcgis.com/4.10/esri/css/main.css
+https://js.arcgis.com/4.11/esri/css/main.css
 
 Insert Screenshot styles as last stylesheet
 
