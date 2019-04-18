@@ -30,7 +30,8 @@ Each component directory contains general instructions on how to use the corresp
 
 ## Typings
 
-Include in tsconfig.json
+Include in tsconfig.json:
+
 `./node_modules/@esri/configurable-app-components/index.d.ts`
 
 ## Dojo config example
@@ -52,15 +53,22 @@ Include in tsconfig.json
 
 Naming convention: `Components/[component_name]/[component_name]`
 
-### Import Example
+### Example:
 
 ```
 import Share = require("Components/Share/Share");
+
+import ShareItem = require("Components/Share/Share/ShareItem");
 ```
+
+### Namespace
+
+After linking the typings file to your tsconfig.json, you can use the `__esriConfigApps` namespace for the types as seen in this example.
 
 ### Adding CSS
 
-Don't forget to link to corresponding CSS file.
+Don't forget to link to the corresponding CSS file.
+
 `./node_modules/@esri/configurable-app-components/[component_name]/[component_name]/css/[component_name].css`
 
 ```
