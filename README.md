@@ -63,7 +63,7 @@ import ShareItem = require("Components/Share/Share/ShareItem");
 
 ### Namespace
 
-After linking the typings file to your tsconfig.json, you can use the `__esriConfigApps` namespace for the types as seen in this example.
+After linking the typings file to your tsconfig.json, you can use the `__esriConfigApps` namespace for the types.
 
 ### Adding CSS
 
