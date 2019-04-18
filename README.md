@@ -58,6 +58,16 @@ Naming convention: `Components/[component_name]/[component_name]`
 import Share = require("Components/Share/Share");
 ```
 
+### Adding CSS
+
+Don't forget to link to corresponding CSS file.
+`./node_modules/@esri/configurable-app-components/[component_name]/[component_name]/css/[component_name].css`
+
+```
+<link rel="stylesheet"
+    href="./node_modules/@esri/configurable-app-components/Screenshot/Screenshot/css/Screenshot.css">
+```
+
 ## Resources
 
 - [ArcGIS for JavaScript API Resource Center](http://help.arcgis.com/en/webapi/javascript/arcgis/index.html)
