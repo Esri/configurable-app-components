@@ -1,36 +1,33 @@
-import MapView = require("esri/views/MapView");
-
-import SceneView = require("esri/views/SceneView");
-
-import Collection = require("esri/core/Collection");
-
-import Expand = require("esri/widgets/Expand");
-
-import ShareFeatures = require("./Share/Share/ShareFeatures");
-
-export interface ShareItem {
+interface ShareItem {
   id: string;
   name: string;
   className: string;
   urlTemplate: string;
 }
 
-export interface ShareViewModel {
-  view: MapView | SceneView;
-  shareItems?: Collection<ShareItem>;
+interface ShareViewModel {
+  view: __esri.MapView | __esri.SceneView;
+  shareItems?: __esri.Collection<ShareItem>;
   shareFeatures?: ShareFeatures;
   shareUrl?: string;
 }
 
-export interface Share {
-  view: MapView | SceneView;
+interface Share {
+  view: __esri.MapView | __esri.SceneView;
   shareModelOpened?: boolean;
-  shareItems?: Collection<ShareItem>;
+  shareItems?: __esri.Collection<ShareItem>;
   shareFeatures?: ShareFeatures;
   shareUrl?: string;
   label?: string;
   iconClass?: string;
   viewModel?: ShareViewModel;
+}
+
+interface ShareFeatures {
+  copyToClipboard: boolean;
+  shareServices: boolean;
+  embedMap: boolean;
+  shortenLink: boolean;
 }
 
 declare module "Components/Share/Share" {
@@ -53,8 +50,8 @@ declare module "Components/Share/Share/ShareItem" {
   export = ShareItem;
 }
 
-export interface ScreenshotViewModel {
-  view: MapView | SceneView;
+interface ScreenshotViewModel {
+  view: __esri.MapView | __esri.SceneView;
   previewIsVisible?: boolean;
   screenshotModeIsActive?: boolean;
   includeLegendInScreenshot?: boolean;
@@ -64,8 +61,8 @@ export interface ScreenshotViewModel {
   dragHandler?: any;
 }
 
-export interface Screenshot {
-  view: MapView | SceneView;
+interface Screenshot {
+  view: __esri.MapView | __esri.SceneView;
   includeLegendInScreenshot?: boolean;
   includePopupInScreenshot?: boolean;
   enableLegendOption?: boolean;
@@ -86,17 +83,17 @@ declare module "Components/Screenshot/Screenshot/ScreenshotViewModel" {
   export = ScreenshotViewModel;
 }
 
-export interface InfoViewModel {
-  view: MapView | SceneView;
+interface InfoViewModel {
+  view: __esri.MapView | __esri.SceneView;
   selectedItemIndex?: number;
-  expandWidget: Expand;
-  infoContent?: Collection<InfoItem>;
+  expandWidget: __esri.Expand;
+  infoContent?: __esri.Collection<InfoItem>;
 }
 
-export interface Info {
-  view: MapView | SceneView;
-  infoContent: Collection<InfoItem>;
-  expandWidget: Expand;
+interface Info {
+  view: __esri.MapView | __esri.SceneView;
+  infoContent: __esri.Collection<InfoItem>;
+  expandWidget: __esri.Expand;
   selectedItemIndex?: number;
   iconClass?: string;
   label?: string;
@@ -105,7 +102,7 @@ export interface Info {
 
 type InfoItemType = "list" | "explanation";
 
-export interface InfoItem {
+interface InfoItem {
   type: InfoItemType;
   title: string;
   infoContentItems: string[];

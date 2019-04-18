@@ -108,13 +108,13 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
     };
     var Share = /** @class */ (function (_super) {
         __extends(Share, _super);
-        function Share() {
+        function Share(value) {
+            var _this = _super.call(this) || this;
             //----------------------------------
             //
             //  Private Variables
             //
             //----------------------------------
-            var _this = _super !== null && _super.apply(this, arguments) || this;
             // Tabs
             _this._linkTabExpanded = true;
             _this._embedTabExpanded = false;

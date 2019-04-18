@@ -157,6 +157,9 @@ const CSS = {
 
 @subclass("Share")
 class Share extends declared(Widget) {
+  constructor(value?: any) {
+    super();
+  }
   //----------------------------------
   //
   //  Private Variables
