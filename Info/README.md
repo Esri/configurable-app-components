@@ -2,9 +2,9 @@
 
 Custom Info Panel widget built using the version 4.x of the ArcGIS API for Javascript
 
-![info-panel-1](https://github.com/ArcGIS/info-panel/blob/master/images/info-1.png)
+![info-panel-1](images/info-1.png)
 
-![info-panel-2](https://github.com/ArcGIS/info-panel/blob/master/images/info-2.png)
+![info-panel-2](images/info-2.png)
 
 ## Features:
 
