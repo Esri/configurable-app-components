@@ -27,7 +27,7 @@ import i18n = require("dojo/i18n!./Share/nls/resources");
 // esri.core
 import Collection = require("esri/core/Collection");
 import watchUtils = require("esri/core/watchUtils");
-import { substitute } from "esri/core/lang";
+import { replace } from "./utils/replace";
 
 // esri.core.accessorSupport
 import {
@@ -362,10 +362,10 @@ class Share extends declared(Widget) {
     const { urlTemplate } = shareItem;
     const portalItem = this.get<PortalItem>("view.map.portalItem");
     const title = portalItem
-      ? substitute({ title: portalItem.title }, i18n.urlTitle)
+      ? replace(i18n.urlTitle, { title: portalItem.title })
       : null;
     const summary = portalItem
-      ? substitute({ summary: portalItem.snippet }, i18n.urlSummary)
+      ? replace(i18n.urlSummary, { summary: portalItem.snippet })
       : null;
     this._openUrl(this.shareUrl, title, summary, urlTemplate);
   }
@@ -391,14 +391,11 @@ class Share extends declared(Widget) {
     summary: string,
     urlTemplate: string
   ): void {
-    const urlToOpen = substitute(
-      {
-        url: encodeURI(url),
-        title,
-        summary
-      },
-      urlTemplate
-    );
+    const urlToOpen = replace(urlTemplate, {
+      url: encodeURI(url),
+      title,
+      summary
+    });
     window.open(urlToOpen);
   }
 
