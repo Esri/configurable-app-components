@@ -15,7 +15,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/core/tsSupport/decorateHelper", "dojo/i18n!./Share/nls/resources", "esri/core/watchUtils", "esri/core/lang", "esri/core/accessorSupport/decorators", "esri/widgets/Widget", "esri/widgets/support/widget", "./Share/ShareViewModel"], function (require, exports, __extends, __decorate, i18n, watchUtils, lang_1, decorators_1, Widget, widget_1, ShareViewModel) {
+define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/core/tsSupport/decorateHelper", "dojo/i18n!./Share/nls/resources", "esri/core/watchUtils", "./utils/replace", "esri/core/accessorSupport/decorators", "esri/widgets/Widget", "esri/widgets/support/widget", "./Share/ShareViewModel"], function (require, exports, __extends, __decorate, i18n, watchUtils, replace_1, decorators_1, Widget, widget_1, ShareViewModel) {
     "use strict";
     //----------------------------------
     //
@@ -248,10 +248,10 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
             var urlTemplate = shareItem.urlTemplate;
             var portalItem = this.get("view.map.portalItem");
             var title = portalItem
-                ? lang_1.substitute({ title: portalItem.title }, i18n.urlTitle)
+                ? replace_1.replace(i18n.urlTitle, { title: portalItem.title })
                 : null;
             var summary = portalItem
-                ? lang_1.substitute({ summary: portalItem.snippet }, i18n.urlSummary)
+                ? replace_1.replace(i18n.urlSummary, { summary: portalItem.snippet })
                 : null;
             this._openUrl(this.shareUrl, title, summary, urlTemplate);
         };
@@ -267,11 +267,11 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
             this.scheduleRender();
         };
         Share.prototype._openUrl = function (url, title, summary, urlTemplate) {
-            var urlToOpen = lang_1.substitute({
+            var urlToOpen = replace_1.replace(urlTemplate, {
                 url: encodeURI(url),
                 title: title,
                 summary: summary
-            }, urlTemplate);
+            });
             window.open(urlToOpen);
         };
         // Render Nodes
