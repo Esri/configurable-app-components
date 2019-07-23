@@ -361,11 +361,16 @@ class Share extends declared(Widget) {
     const shareItem = node["data-share-item"] as ShareItem;
     const { urlTemplate } = shareItem;
     const portalItem = this.get<PortalItem>("view.map.portalItem");
+
     const title = portalItem
-      ? replace(i18n.urlTitle, { title: portalItem.title })
+      ? portalItem && portalItem.title
+        ? replace(i18n.urlTitle, { title: portalItem.title })
+        : replace(i18n.urlTitle, { title: "" })
       : null;
     const summary = portalItem
-      ? replace(i18n.urlSummary, { summary: portalItem.snippet })
+      ? portalItem && portalItem.snippet
+        ? replace(i18n.urlSummary, { summary: portalItem.snippet })
+        : replace(i18n.urlSummary, { summary: "" })
       : null;
     this._openUrl(this.shareUrl, title, summary, urlTemplate);
   }
