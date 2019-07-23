@@ -1,8 +1,11 @@
 // Copyright 2019 Esri
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -248,10 +251,14 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
             var urlTemplate = shareItem.urlTemplate;
             var portalItem = this.get("view.map.portalItem");
             var title = portalItem
-                ? replace_1.replace(i18n.urlTitle, { title: portalItem.title })
+                ? portalItem && portalItem.title
+                    ? replace_1.replace(i18n.urlTitle, { title: portalItem.title })
+                    : replace_1.replace(i18n.urlTitle, { title: "" })
                 : null;
             var summary = portalItem
-                ? replace_1.replace(i18n.urlSummary, { summary: portalItem.snippet })
+                ? portalItem && portalItem.snippet
+                    ? replace_1.replace(i18n.urlSummary, { summary: portalItem.snippet })
+                    : replace_1.replace(i18n.urlSummary, { summary: "" })
                 : null;
             this._openUrl(this.shareUrl, title, summary, urlTemplate);
         };
@@ -276,12 +283,12 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
         };
         // Render Nodes
         Share.prototype._renderShareModal = function () {
+            var _a;
             var modalContainerNode = this._renderModalContainer();
             var shareModalClass = (_a = {},
                 _a[CSS.shareModal.calciteStyles.isActive] = this.shareModalOpened,
                 _a);
             return (widget_1.tsx("div", { class: this.classes(CSS.shareModal.calciteStyles.modal.jsModal, CSS.shareModal.calciteStyles.modal.modalOverlay, CSS.shareModal.calciteStyles.modifier, shareModalClass), bind: this, onclick: this._toggleShareModal, onkeydown: this._toggleShareModal }, modalContainerNode));
-            var _a;
         };
         Share.prototype._renderModalContainer = function () {
             var modalContentNode = this._renderModalContent();
@@ -291,6 +298,7 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
                 widget_1.tsx("div", { bind: this, onclick: this._toggleShareModal, onkeydown: this._toggleShareModal, class: this.classes(CSS.shareModal.calciteStyles.modal.jsModalToggle, CSS.shareModal.close, CSS.icons.closeIcon), "aria-label": "close-modal", tabIndex: 0 })));
         };
         Share.prototype._renderModalContent = function () {
+            var _a, _b;
             var embedMap = this.shareFeatures.embedMap;
             var sendALinkContentNode = this._renderSendALinkContent();
             var embedMapContentNode = this._renderEmbedMapContent();
@@ -308,7 +316,6 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
                     widget_1.tsx("section", { class: CSS.shareModal.calciteStyles.tabs.tabContents },
                         sendALinkContentNode,
                         embedMapContentNode))));
-            var _a, _b;
         };
         Share.prototype._renderShareItem = function (shareItem) {
             var name = shareItem.name, className = shareItem.className;
@@ -345,6 +352,7 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
                 widget_1.tsx("div", { class: CSS.shareModal.main.mainShare.shareItemContainer }, shareItemNode))) : null));
         };
         Share.prototype._renderCopyUrl = function () {
+            var _a;
             var copyToClipboard = this.shareFeatures.copyToClipboard;
             var toolTipClasses = (_a = {},
                 _a[CSS.shareModal.calciteStyles.tooltip] = this._linkCopied,
@@ -357,35 +365,35 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
                         widget_1.tsx("div", { class: this.classes(CSS.shareModal.main.mainCopy.copyClipboardUrl, toolTipClasses), bind: this, onclick: this._copyUrlInput, onkeydown: this._copyUrlInput, tabIndex: 0, "aria-label": i18n.copied, role: "button" },
                             widget_1.tsx("div", { class: this.classes(CSS.icons.copy, CSS.icons.copyToClipboardIcon) })),
                         widget_1.tsx("input", { type: "text", class: CSS.shareModal.main.mainUrl.urlInput, bind: this, value: this.shareUrl, afterCreate: widget_1.storeNode, "data-node-ref": "_urlInputNode", readOnly: true }))))) : null));
-            var _a;
         };
         Share.prototype._renderSendALinkContent = function () {
+            var _a;
             var copyUrlNode = this._renderCopyUrl();
             var shareServicesNode = this._renderShareItemContainer();
-            var _a = this.shareFeatures, shareServices = _a.shareServices, copyToClipboard = _a.copyToClipboard;
+            var _b = this.shareFeatures, shareServices = _b.shareServices, copyToClipboard = _b.copyToClipboard;
             var state = this.viewModel.state;
-            var linkContentClass = (_b = {},
-                _b[CSS.shareModal.calciteStyles.isActive] = this._linkTabExpanded,
-                _b);
+            var linkContentClass = (_a = {},
+                _a[CSS.shareModal.calciteStyles.isActive] = this._linkTabExpanded,
+                _a);
             return (widget_1.tsx("article", { class: this.classes(CSS.shareModal.calciteStyles.tabs.tabSection, CSS.shareModal.calciteStyles.tabs.jsTabSection, CSS.shareModal.shareTabStyles.tabSection, linkContentClass), bind: this, "aria-expanded": "" + this._linkTabExpanded }, state === "ready" ? (widget_1.tsx("div", null,
                 shareServicesNode,
                 !copyToClipboard || !shareServices ? null : (widget_1.tsx("hr", { class: CSS.shareModal.main.mainHR })),
                 copyUrlNode)) : (widget_1.tsx("div", { class: CSS.icons.esriLoader }))));
-            var _b;
         };
         Share.prototype._renderCopyIframe = function () {
-            var _a = this.viewModel, embedCode = _a.embedCode, state = _a.state;
-            var toolTipClasses = (_b = {},
-                _b[CSS.shareModal.calciteStyles.tooltip] = this._embedCopied,
-                _b[CSS.shareModal.calciteStyles.tooltipTop] = this._embedCopied,
-                _b);
+            var _a;
+            var _b = this.viewModel, embedCode = _b.embedCode, state = _b.state;
+            var toolTipClasses = (_a = {},
+                _a[CSS.shareModal.calciteStyles.tooltip] = this._embedCopied,
+                _a[CSS.shareModal.calciteStyles.tooltipTop] = this._embedCopied,
+                _a);
             return (widget_1.tsx("div", { class: CSS.shareModal.shareIframe.iframeInputContainer },
                 widget_1.tsx("div", { class: this.classes(CSS.shareModal.main.mainCopy.copyClipboardIframe, toolTipClasses), bind: this, onclick: this._copyIframeInput, onkeydown: this._copyIframeInput, "aria-label": i18n.copied, tabIndex: 0, role: "button" },
                     widget_1.tsx("div", { class: this.classes(CSS.icons.copyToClipboardIcon, CSS.icons.copy) })),
                 state === "ready" ? (widget_1.tsx("input", { class: CSS.shareModal.shareIframe.iframeInput, type: "text", tabindex: 0, value: embedCode, bind: this, afterCreate: widget_1.storeNode, "data-node-ref": "_iframeInputNode", readOnly: true })) : (widget_1.tsx("div", { class: CSS.shareModal.main.mainUrl.linkGenerating }, i18n.generateLink))));
-            var _b;
         };
         Share.prototype._renderEmbedMapContent = function () {
+            var _a;
             var embedMap = this.shareFeatures.embedMap;
             var state = this.viewModel.state;
             var copyIframeCodeNode = this._renderCopyIframe();
@@ -396,7 +404,6 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
                 widget_1.tsx("h2", { class: CSS.shareModal.main.mainHeader }, i18n.clipboard),
                 copyIframeCodeNode,
                 widget_1.tsx("div", { class: CSS.shareModal.shareIframe.iframeContainer }, embedMap ? (state === "ready" ? (this.shareModalOpened ? (widget_1.tsx("iframe", { class: CSS.shareModal.shareIframe.iframePreview, src: this.shareUrl, tabIndex: "-1", scrolling: "no" })) : null) : null) : null))) : (widget_1.tsx("div", { class: CSS.icons.esriLoader })))) : null));
-            var _a;
         };
         __decorate([
             decorators_1.aliasOf("viewModel.view")
