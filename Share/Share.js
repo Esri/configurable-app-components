@@ -1,4 +1,5 @@
-// Copyright 2019 Esri
+/// <amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" />
+/// <amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" />
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -18,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/core/tsSupport/decorateHelper", "dojo/i18n!./Share/nls/resources", "esri/core/watchUtils", "./utils/replace", "esri/core/accessorSupport/decorators", "esri/widgets/Widget", "esri/widgets/support/widget", "./Share/ShareViewModel"], function (require, exports, __extends, __decorate, i18n, watchUtils, replace_1, decorators_1, Widget, widget_1, ShareViewModel) {
+define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/core/tsSupport/decorateHelper", "dojo/i18n!./Share/nls/resources", "esri/core/watchUtils", "esri/intl", "esri/core/accessorSupport/decorators", "esri/widgets/Widget", "esri/widgets/support/widget", "./Share/ShareViewModel"], function (require, exports, __extends, __decorate, i18n, watchUtils, intl_1, decorators_1, Widget, widget_1, ShareViewModel) {
     "use strict";
     //----------------------------------
     //
@@ -111,8 +112,8 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
     };
     var Share = /** @class */ (function (_super) {
         __extends(Share, _super);
-        function Share(value) {
-            var _this = _super.call(this) || this;
+        function Share(params) {
+            var _this = _super.call(this, params) || this;
             //----------------------------------
             //
             //  Private Variables
@@ -201,7 +202,7 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
         };
         Share.prototype.render = function () {
             var shareModalNode = this._renderShareModal();
-            return (widget_1.tsx("div", { class: CSS.base, "aria-labelledby": "modal" },
+            return (widget_1.tsx("div", { class: CSS.base, "aria-labelledby": "shareModal" },
                 widget_1.tsx("button", { class: this.classes(CSS.shareModal.calciteStyles.modal.jsModalToggle, CSS.icons.widgetIcon, CSS.shareButton), bind: this, title: i18n.heading, onclick: this._toggleShareModal, onkeydown: this._toggleShareModal }),
                 shareModalNode));
         };
@@ -251,14 +252,10 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
             var urlTemplate = shareItem.urlTemplate;
             var portalItem = this.get("view.map.portalItem");
             var title = portalItem
-                ? portalItem && portalItem.title
-                    ? replace_1.replace(i18n.urlTitle, { title: portalItem.title })
-                    : replace_1.replace(i18n.urlTitle, { title: "" })
+                ? intl_1.substitute(i18n.urlTitle, { title: portalItem.title })
                 : null;
             var summary = portalItem
-                ? portalItem && portalItem.snippet
-                    ? replace_1.replace(i18n.urlSummary, { summary: portalItem.snippet })
-                    : replace_1.replace(i18n.urlSummary, { summary: "" })
+                ? intl_1.substitute(i18n.urlSummary, { summary: portalItem.snippet })
                 : null;
             this._openUrl(this.shareUrl, title, summary, urlTemplate);
         };
@@ -274,7 +271,7 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
             this.scheduleRender();
         };
         Share.prototype._openUrl = function (url, title, summary, urlTemplate) {
-            var urlToOpen = replace_1.replace(urlTemplate, {
+            var urlToOpen = intl_1.substitute(urlTemplate, {
                 url: encodeURI(url),
                 title: title,
                 summary: summary
@@ -293,7 +290,7 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
         Share.prototype._renderModalContainer = function () {
             var modalContentNode = this._renderModalContent();
             return (widget_1.tsx("div", { class: this.classes(CSS.shareModalStyles, CSS.shareModal.calciteStyles.modal.modalContent), tabIndex: 0, bind: this, onclick: this._stopPropagation, onkeydown: this._stopPropagation },
-                widget_1.tsx("h1", { class: CSS.shareModal.header.heading }, i18n.heading),
+                widget_1.tsx("h1", { id: "shareModal", class: CSS.shareModal.header.heading }, i18n.heading),
                 widget_1.tsx("div", null, modalContentNode),
                 widget_1.tsx("div", { bind: this, onclick: this._toggleShareModal, onkeydown: this._toggleShareModal, class: this.classes(CSS.shareModal.calciteStyles.modal.jsModalToggle, CSS.shareModal.close, CSS.icons.closeIcon), "aria-label": "close-modal", tabIndex: 0 })));
         };
@@ -406,7 +403,8 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
                 widget_1.tsx("div", { class: CSS.shareModal.shareIframe.iframeContainer }, embedMap ? (state === "ready" ? (this.shareModalOpened ? (widget_1.tsx("iframe", { class: CSS.shareModal.shareIframe.iframePreview, src: this.shareUrl, tabIndex: "-1", scrolling: "no" })) : null) : null) : null))) : (widget_1.tsx("div", { class: CSS.icons.esriLoader })))) : null));
         };
         __decorate([
-            decorators_1.aliasOf("viewModel.view")
+            decorators_1.aliasOf("viewModel.view"),
+            decorators_1.property()
         ], Share.prototype, "view", void 0);
         __decorate([
             decorators_1.aliasOf("viewModel.shareModalOpened"),
