@@ -1,4 +1,5 @@
-// Copyright 2019 Esri
+/// <amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" />
+/// <amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" />
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -34,7 +35,7 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
     var FACEBOOK_ITEM = new ShareItem({
         id: "facebook",
         name: "Facebook",
-        urlTemplate: "https://www.facebook.com/sharer/sharer.php?s=100&p[url]={url}"
+        urlTemplate: "https://www.facebook.com/sharer/sharer.php?s=100&u={url}"
     });
     var TWITTER_ITEM = new ShareItem({
         id: "twitter",
@@ -264,7 +265,6 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
         };
         ShareViewModel.prototype._shorten = function (url) {
             this._shortenPromise = esriRequest(SHORTEN_API, {
-                callbackParamName: "callback",
                 query: {
                     longUrl: url,
                     f: "json"
