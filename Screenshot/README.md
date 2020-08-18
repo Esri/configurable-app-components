@@ -92,13 +92,13 @@ const screenshot = new Screenshot({
 
 A few things to note:
 
-Uses Esri Calcite Styles: https://esri.github.io/calcite-web/
+Uses Esri Calcite Components: https://github.com/Esri/calcite-components
 
 Uses ArcGIS JS API:
 
-https://js.arcgis.com/4.11/
+https://js.arcgis.com/4.16/
 
-https://js.arcgis.com/4.11/esri/css/main.css
+https://js.arcgis.com/4.16/esri/css/main.css
 
 Insert Screenshot styles as last stylesheet
 
