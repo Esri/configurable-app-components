@@ -54,7 +54,7 @@ More info on html2canvas can be found here: http://html2canvas.hertzen.com/
 | includeLegendInScreenshot | Boolean                                 | Boolean to include/exclude legend in screenshot.                                               |
 | includePopupInScreenshot  | Boolean                                 | Boolean to include/exclude pop-up in screenshot.                                               |
 | includeCustomInScreenshot | Boolean                                 | Boolean to include/exclude custom element in screenshot. Custom property required.             |
-| custom                    | { label: string; element: HTMLElement } | Config which includes label to use in Screenshot UI for custom element option and HTML element to pass in for screenshot output.          |
+| custom                    | { label: string; element: HTMLElement } | HTML Element to include in screenshot output. `custom.label` will be used for the checkbox input label. `custom.element` will be used to pass into html2canvas to include in final screenshot output.          |
 | offsetMask                | { left?: number; top?: number }         | Configuration to offset the drawn rectangle to account for headers and side panels in app.     |
 | featureWidget `read-only` | Feature                                 | Instance of the Feature widget.                                                                |
 | legendWidget `read-only`  | Legend                                  | Instance of the Legend widget.                                                                 |
