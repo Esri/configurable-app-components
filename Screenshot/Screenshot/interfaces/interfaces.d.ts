@@ -31,7 +31,7 @@ export interface Area {
 }
 
 interface ScreenshotConfig {
-  format?: string;
+  format?: "jpg" | "png";
   quality?: number;
   width?: number;
   height?: number;

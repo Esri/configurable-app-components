@@ -1,74 +1,35 @@
-// Copyright 2019 Esri
-
+// Copyright 2020 Esri
 // Licensed under the Apache License, Version 2.0 (the "License");
-
 // you may not use this file except in compliance with the License.
-
 // You may obtain a copy of the License at
-
 //     http://www.apache.org/licenses/LICENSE-2.0
-
 // Unless required by applicable law or agreed to in writing, software
-
 // distributed under the License is distributed on an "AS IS" BASIS,
-
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-
 // See the License for the specific language governing permissions and
-
 // limitations under the License.​
 
-/// <amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" />
-/// <amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" />
-
-// dojo
-import * as i18n from "dojo/i18n!./Screenshot/nls/resources";
-
-// esri.widgets.Widget
+import i18n = require("dojo/i18n!./Screenshot/nls/resources");
 import Widget = require("esri/widgets/Widget");
-
-// esri.core.accessorSupport
 import {
   subclass,
-  declared,
   property,
   aliasOf
 } from "esri/core/accessorSupport/decorators";
-
-// esri.views.MapView
 import MapView = require("esri/views/MapView");
-
-// esri.views.SceneView
 import SceneView = require("esri/views/SceneView");
-
-// esri.core.watchUtils
 import watchUtils = require("esri/core/watchUtils");
-
-// esri.core.Handles
 import Handles = require("esri/core/Handles");
-
-//esri.widgets.support
 import {
   accessibleHandler,
   renderable,
   tsx,
   storeNode
 } from "esri/widgets/support/widget";
-
-// ScreenshotViewModel
 import ScreenshotViewModel = require("./Screenshot/ScreenshotViewModel");
-
-// Legend
 import Legend = require("esri/widgets/Legend");
-
-// FeatureWidget
 import FeatureWidget = require("esri/widgets/Feature");
 
-//----------------------------------
-//
-//  CSS Classes
-//
-//----------------------------------
 const CSS = {
   base: "esri-screenshot",
   widget: "esri-widget esri-widget--panel",
@@ -89,39 +50,27 @@ const CSS = {
   backBtn: "esri-screenshot__back-btn",
   showOverlay: "esri-screenshot--show-overlay",
   hideOverlay: "esri-screenshot--hide-overlay",
-  mediaIcon: "icon-ui-media",
   pointerCursor: "esri-screenshot--pointer",
   disabledCursor: "esri-screenshot--disabled",
-  tooltip: "tooltip",
-  tooltipRight: "tooltip-right",
-  modifierClass: "modifier-class",
-  closeIcon: "icon-ui-close",
-  fieldsetCheckbox: "fieldset-checkbox",
-  button: "btn",
-  buttonRed: "btn-red",
-  alert: "alert",
-  greenAlert: "alert-green",
-  alertClose: "alert-close",
-  popupAlert: "esri-screenshot__popup-alert",
+  featureWarning: "esri-screenshot__feature-warning",
+  featureWarningTextContainer:
+    "esri-screenshot__feature-warning-text-container",
+  warningSVG: "esri-screenshot__warning-svg",
+  selectFeatureText: "esri-screenshot__select-feature-text",
   screenshotfieldSetCheckbox: "esri-screenshot__field-set-checkbox",
   offScreenPopupContainer: "esri-screenshot__offscreen-pop-up-container",
   offScreenLegendContainer: "esri-screenshot__offscreen-legend-container",
   screenshotClose: "esri-screenshot__close-button",
-  closeButtonContainer: "esri-screenshot__close-button-container"
+  closeButtonContainer: "esri-screenshot__close-button-container",
+  screenshotPreviewContainer: "esri-screenshot__img-preview-container"
 };
 
 @subclass("Screenshot")
-class Screenshot extends declared(Widget) {
+class Screenshot extends Widget {
   constructor(value?: any) {
-    super();
+    super(value);
   }
-  //----------------------------------
-  //
-  //  Variables
-  //
-  //----------------------------------
 
-  // Stored Nodes
   private _maskNode: HTMLElement = null;
   private _screenshotImgNode: HTMLImageElement = null;
   private _downloadBtnNode: HTMLButtonElement = null;
@@ -129,40 +78,37 @@ class Screenshot extends declared(Widget) {
   private _selectFeatureAlertIsVisible: boolean = null;
   private _offscreenPopupContainer: HTMLElement = null;
   private _offscreenLegendContainer: HTMLElement = null;
-
-  // _handles
   private _handles: Handles = new Handles();
 
-  //----------------------------------
-  //
-  //  Properties
-  //
-  //----------------------------------
-
-  // view
   @aliasOf("viewModel.view")
   @property()
   view: MapView | SceneView = null;
 
-  // includeLegendInScreenshot
   @aliasOf("viewModel.includeLegendInScreenshot")
   @property()
   includeLegendInScreenshot: boolean = null;
 
-  // includePopupInScreenshot
   @aliasOf("viewModel.includePopupInScreenshot")
   @property()
   includePopupInScreenshot: boolean = null;
 
-  // enableLegendOption
-  @aliasOf("viewModel.enableLegendOption")
+  @aliasOf("viewModel.includeCustomInScreenshot")
   @property()
+  includeCustomInScreenshot: boolean = null;
+
+  @aliasOf("viewModel.enableLegendOption")
+  @renderable()
   enableLegendOption: boolean = null;
 
-  // enablePopupOption
   @aliasOf("viewModel.enablePopupOption")
-  @property()
+  @renderable()
   enablePopupOption: boolean = null;
+
+  @aliasOf("viewModel.custom")
+  custom: { label: string; element: HTMLElement } = null;
+
+  @aliasOf("viewModel.offset")
+  offset: { top?: number; left?: number } = null;
 
   @aliasOf("viewModel.featureWidget")
   @property({
@@ -176,20 +122,19 @@ class Screenshot extends declared(Widget) {
   })
   legendWidget: Legend = null;
 
-  // screenshotModeIsActive
+  @property()
+  theme = "light";
+
   @aliasOf("viewModel.screenshotModeIsActive")
   @property()
   screenshotModeIsActive: boolean = null;
 
-  // iconClass
   @property()
-  iconClass = CSS.mediaIcon;
+  iconClass = "esri-icon-media";
 
-  // label
   @property()
   label = i18n.widgetLabel;
 
-  // viewModel
   @property()
   @renderable([
     "viewModel.state",
@@ -202,17 +147,15 @@ class Screenshot extends declared(Widget) {
   ])
   viewModel: ScreenshotViewModel = new ScreenshotViewModel();
 
-  //----------------------------------
-  //
-  //  Lifecycle Methods
-  //
-  //----------------------------------
-
   postInitialize() {
     this.own([
       this._togglePopupAlert(),
       this._generateOffScreenPopup(),
-      this._watchSelectedFeature()
+      this._watchSelectedFeature(),
+      watchUtils.when(this, "legendWidget", () => {
+        console.log(this.legendWidget);
+        this.scheduleRender();
+      })
     ]);
   }
 
@@ -251,13 +194,6 @@ class Screenshot extends declared(Widget) {
     this._screenshotImgNode = null;
   }
 
-  //----------------------------------
-  //
-  //  Public Methods
-  //
-  //----------------------------------
-
-  // activateScreenshot
   @accessibleHandler()
   activateScreenshot(): void {
     if (this.viewModel.screenshotModeIsActive) {
@@ -277,88 +213,61 @@ class Screenshot extends declared(Widget) {
     this.scheduleRender();
   }
 
-  // downloadImage
   @accessibleHandler()
   private _downloadImage() {
     this.viewModel.downloadImage();
   }
 
-  //----------------------------------
-  //
-  //  Private Methods
-  //
-  //----------------------------------
-
-  //----------------------------------
-  //
-  //  Render Node Methods
-  //
-  //----------------------------------
-
-  // _renderScreenshotPanel
   private _renderScreenshotPanel(): any {
     const { screenshotTitle, screenshotSubtitle } = i18n;
     const fieldSet = this._renderFieldSet();
-    const featureAlert = this._renderFeatureAlert();
     const setMapAreaButton = this._renderSetMapAreaButton();
+    const featureWarning = this._renderFeatureWarning();
     return (
-      // screenshotBtn
       <div key="screenshot-panel" class={this.classes(CSS.base, CSS.widget)}>
-        {this._selectFeatureAlertIsVisible ? featureAlert : null}
         <div class={CSS.mainContainer}>
           <h1 class={CSS.panelTitle}>{screenshotTitle}</h1>
           {this.enableLegendOption || this.enablePopupOption ? (
             <h3 class={CSS.panelSubTitle}>{screenshotSubtitle}</h3>
           ) : null}
           {this.enableLegendOption || this.enablePopupOption ? fieldSet : null}
+          {featureWarning}
           {setMapAreaButton}
         </div>
       </div>
     );
   }
 
-  // _renderFeatureAlert
-  private _renderFeatureAlert(): any {
-    const alertIsActive = {
-      ["is-active"]: this._selectFeatureAlertIsVisible
-    };
+  private _renderFeatureWarning(): any {
     return (
-      <div
-        key="feature-alert"
-        class={this.classes(
-          CSS.popupAlert,
-          CSS.alert,
-          CSS.greenAlert,
-          CSS.modifierClass,
-          alertIsActive
-        )}
-      >
-        {i18n.selectAFeature}
-        <button
-          bind={this}
-          onclick={this._removeSelectFeatureAlert}
-          onkeydown={this._removeSelectFeatureAlert}
-          class={CSS.alertClose}
-        >
-          <span class={CSS.closeIcon} />
-        </button>
+      <div key="feature-warning" class={CSS.featureWarning}>
+        {this._selectFeatureAlertIsVisible ? (
+          <div class={CSS.featureWarningTextContainer}>
+            <svg
+              class={CSS.warningSVG}
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 16 16"
+              width="16px"
+              height="16px"
+            >
+              <path d="M14.894 12.552l-6-11.998a1 1 0 0 0-1.787 0l-6 11.998A.998.998 0 0 0 2 13.999h12a.998.998 0 0 0 .894-1.447zM9 12H7v-2h2zm0-3H7V4h2z" />
+            </svg>
+            <span class={CSS.selectFeatureText}>{i18n.selectAFeature}</span>
+          </div>
+        ) : null}
       </div>
     );
   }
 
-  // _renderFieldSet
   private _renderFieldSet(): any {
     const { legend, popup } = i18n;
     return (
-      <fieldset
-        class={this.classes(
-          CSS.fieldsetCheckbox,
-          CSS.screenshotfieldSetCheckbox
-        )}
-      >
+      <div class={CSS.screenshotfieldSetCheckbox}>
         {this.enableLegendOption ? (
-          <label class={CSS.screenshotOption}>
-            {" "}
+          <label
+            key="esri-screenshot-legend-option"
+            class={CSS.screenshotOption}
+          >
             <input
               bind={this}
               onclick={this._toggleLegend}
@@ -370,7 +279,10 @@ class Screenshot extends declared(Widget) {
           </label>
         ) : null}
         {this.enablePopupOption ? (
-          <label class={CSS.screenshotOption}>
+          <label
+            key="esri-screenshot-popup-option"
+            class={CSS.screenshotOption}
+          >
             <input
               bind={this}
               onclick={this._togglePopup}
@@ -381,21 +293,34 @@ class Screenshot extends declared(Widget) {
             {popup}
           </label>
         ) : null}
-      </fieldset>
+        {this.custom ? (
+          <label
+            key="esri-screenshot-custom-option"
+            class={CSS.screenshotOption}
+          >
+            <input
+              bind={this}
+              onclick={this._toggleCustom}
+              onkeydown={this._toggleCustom}
+              type="checkbox"
+              checked={this.includeCustomInScreenshot}
+            />
+            {this.custom.label}
+          </label>
+        ) : null}
+      </div>
     );
   }
 
-  // _renderSetMapAreaButton
   private _renderSetMapAreaButton(): any {
     const { setScreenshotArea } = i18n;
     return (
-      <div class={CSS.buttonContainer}>
-        <button
+      <div key="active-button-container" class={CSS.buttonContainer}>
+        <calcite-button
           bind={this}
           tabIndex={0}
           onclick={this.activateScreenshot}
           onkeydown={this.activateScreenshot}
-          class={CSS.button}
           afterCreate={storeNode}
           data-node-ref="_activeScreenshotBtnNode"
           disabled={
@@ -405,14 +330,15 @@ class Screenshot extends declared(Widget) {
                 : true
               : false
           }
+          width="full"
+          theme={this.theme}
         >
           {setScreenshotArea}
-        </button>
+        </calcite-button>
       </div>
     );
   }
 
-  // _renderScreenshotPreviewOverlay
   private _renderScreenshotPreviewOverlay(): any {
     const { previewIsVisible } = this.viewModel;
     const overlayIsVisible = {
@@ -422,22 +348,21 @@ class Screenshot extends declared(Widget) {
     const screenshotPreviewBtns = this._renderScreenshotPreviewBtns();
     return (
       <div class={this.classes(CSS.screenshotDiv, overlayIsVisible)}>
-        <div class={CSS.screenshotImgContainer}>
-          <div>
+        <div class={CSS.screenshotPreviewContainer}>
+          <div class={CSS.screenshotImgContainer}>
             <img
               bind={this}
               afterCreate={storeNode}
               data-node-ref="_screenshotImgNode"
               class={CSS.screenshotImg}
             />
-            {screenshotPreviewBtns}
           </div>
+          {screenshotPreviewBtns}
         </div>
       </div>
     );
   }
 
-  // _renderScreenshotPreviewBtns
   private _renderScreenshotPreviewBtns(): any {
     return (
       <div>
@@ -467,7 +392,6 @@ class Screenshot extends declared(Widget) {
     );
   }
 
-  // _renderMaskNode
   private _renderMaskNode(screenshotModeIsActive: boolean): any {
     const maskDivIsHidden = {
       [CSS.hide]: !screenshotModeIsActive
@@ -482,29 +406,22 @@ class Screenshot extends declared(Widget) {
     );
   }
 
-  // _renderOptOutOfScreenshotButton
   private _renderOptOutOfScreenshotButton(): any {
     return (
-      <button
+      <calcite-button
         bind={this}
         tabIndex={0}
-        class={this.classes(
-          CSS.screenshotBtn,
-          CSS.pointerCursor,
-          CSS.button,
-          CSS.buttonRed,
-          CSS.screenshotClose
-        )}
+        class={this.classes(CSS.pointerCursor, CSS.screenshotClose)}
         onclick={this.deactivateScreenshot}
         onkeydown={this.deactivateScreenshot}
         title={i18n.deactivateScreenshot}
+        color="red"
       >
-        <span class={CSS.closeIcon} />
-      </button>
+        <calcite-icon icon="x"></calcite-icon>
+      </calcite-button>
     );
   }
 
-  // _renderOffScreenNodes
   private _renderOffScreenNodes(): any {
     return (
       <div>
@@ -519,14 +436,11 @@ class Screenshot extends declared(Widget) {
           afterCreate={storeNode}
           data-node-ref="_offscreenLegendContainer"
           class={CSS.offScreenLegendContainer}
-        />
+        ></div>
       </div>
     );
   }
 
-  // End of render node methods
-
-  // _deactivateScreenshot
   @accessibleHandler()
   deactivateScreenshot(): void {
     this.viewModel.screenshotModeIsActive = false;
@@ -546,7 +460,6 @@ class Screenshot extends declared(Widget) {
     this.scheduleRender();
   }
 
-  // _toggleLegend
   @accessibleHandler()
   private _toggleLegend(event: Event): void {
     const node = event.currentTarget as HTMLInputElement;
@@ -554,7 +467,6 @@ class Screenshot extends declared(Widget) {
     this.scheduleRender();
   }
 
-  // _togglePopup
   @accessibleHandler()
   private _togglePopup(event: Event): void {
     const node = event.currentTarget as HTMLInputElement;
@@ -562,7 +474,13 @@ class Screenshot extends declared(Widget) {
     this.scheduleRender();
   }
 
-  // _closePreview
+  @accessibleHandler()
+  private _toggleCustom(event: Event): void {
+    const node = event.currentTarget as HTMLInputElement;
+    this.includeCustomInScreenshot = node.checked;
+    this.scheduleRender();
+  }
+
   @accessibleHandler()
   private _closePreview(): void {
     const { viewModel } = this;
@@ -575,14 +493,6 @@ class Screenshot extends declared(Widget) {
     this.scheduleRender();
   }
 
-  // _removeSelectFeatureAlert
-  @accessibleHandler()
-  private _removeSelectFeatureAlert(): void {
-    this._selectFeatureAlertIsVisible = false;
-    this.scheduleRender();
-  }
-
-  // _generateOffScreenPopup
   private _generateOffScreenPopup(): __esri.WatchHandle {
     return watchUtils.watch(this, "view.popup.visible", () => {
       if (!this.view) {
@@ -594,7 +504,9 @@ class Screenshot extends declared(Widget) {
             "featureWidget",
             new FeatureWidget({
               container: this._offscreenPopupContainer,
-              graphic: this.view.popup.selectedFeature
+              graphic: this.view.popup.selectedFeature,
+              map: this.view.map,
+              spatialReference: this.view.spatialReference
             })
           );
           this._selectFeatureAlertIsVisible = false;
@@ -604,7 +516,6 @@ class Screenshot extends declared(Widget) {
     });
   }
 
-  // _togglePopupAlert
   private _togglePopupAlert(): __esri.WatchHandle {
     return watchUtils.init(this, "enablePopupOption", () => {
       if (this.enablePopupOption) {
@@ -628,7 +539,6 @@ class Screenshot extends declared(Widget) {
     });
   }
 
-  // _triggerAlert
   private _triggerAlert(): void {
     if (
       this.includePopupInScreenshot &&
@@ -642,7 +552,6 @@ class Screenshot extends declared(Widget) {
     this.scheduleRender();
   }
 
-  // _watchSelectedFeature
   private _watchSelectedFeature(): __esri.WatchHandle {
     return watchUtils.watch(this, "view.popup.selectedFeature", () => {
       if (
@@ -666,7 +575,9 @@ class Screenshot extends declared(Widget) {
         "featureWidget",
         new FeatureWidget({
           container: this._offscreenPopupContainer,
-          graphic: this.view.popup.selectedFeature
+          graphic: this.view.popup.selectedFeature,
+          map: this.view.map,
+          spatialReference: this.view.spatialReference
         })
       );
       this.scheduleRender();
