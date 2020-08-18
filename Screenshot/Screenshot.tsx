@@ -80,21 +80,8 @@ class Screenshot extends Widget {
   private _offscreenLegendContainer: HTMLElement = null;
   private _handles: Handles = new Handles();
 
-  @aliasOf("viewModel.view")
-  @property()
-  view: MapView | SceneView = null;
-
-  @aliasOf("viewModel.includeLegendInScreenshot")
-  @property()
-  includeLegendInScreenshot: boolean = null;
-
-  @aliasOf("viewModel.includePopupInScreenshot")
-  @property()
-  includePopupInScreenshot: boolean = null;
-
-  @aliasOf("viewModel.includeCustomInScreenshot")
-  @property()
-  includeCustomInScreenshot: boolean = null;
+  @aliasOf("viewModel.custom")
+  custom: { label: string; element: HTMLElement } = null;
 
   @aliasOf("viewModel.enableLegendOption")
   @renderable()
@@ -104,17 +91,29 @@ class Screenshot extends Widget {
   @renderable()
   enablePopupOption: boolean = null;
 
-  @aliasOf("viewModel.custom")
-  custom: { label: string; element: HTMLElement } = null;
-
-  @aliasOf("viewModel.offset")
-  offset: { top?: number; left?: number } = null;
-
   @aliasOf("viewModel.featureWidget")
   @property({
     readOnly: true
   })
   featureWidget: FeatureWidget = null;
+
+  @property()
+  iconClass = "esri-icon-media";
+
+  @aliasOf("viewModel.includeCustomInScreenshot")
+  @property()
+  includeCustomInScreenshot: boolean = null;
+
+  @aliasOf("viewModel.includeLegendInScreenshot")
+  @property()
+  includeLegendInScreenshot: boolean = null;
+
+  @aliasOf("viewModel.includePopupInScreenshot")
+  @property()
+  includePopupInScreenshot: boolean = null;
+
+  @property()
+  label = i18n.widgetLabel;
 
   @aliasOf("viewModel.legendWidget")
   @property({
@@ -122,18 +121,19 @@ class Screenshot extends Widget {
   })
   legendWidget: Legend = null;
 
-  @property()
-  theme = "light";
+  @aliasOf("viewModel.offsetMask")
+  offsetMask: { top?: number; left?: number } = null;
 
   @aliasOf("viewModel.screenshotModeIsActive")
   @property()
   screenshotModeIsActive: boolean = null;
 
   @property()
-  iconClass = "esri-icon-media";
+  theme = "light";
 
+  @aliasOf("viewModel.view")
   @property()
-  label = i18n.widgetLabel;
+  view: MapView | SceneView = null;
 
   @property()
   @renderable([

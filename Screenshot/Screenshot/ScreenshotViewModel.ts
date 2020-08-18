@@ -60,7 +60,38 @@ class ScreenshotViewModel extends Accessor {
   }
 
   @property()
-  view: MapView | SceneView = null;
+  custom: { label: string; element: HTMLElement } = null;
+
+  @property()
+  dragHandler: any = null;
+
+  @property()
+  enableLegendOption: boolean = null;
+
+  @property()
+  enablePopupOption: boolean = null;
+
+  @property({
+    readOnly: true
+  })
+  featureWidget: FeatureWidget = null;
+
+  @property()
+  includeCustomInScreenshot: boolean = null;
+
+  @property()
+  includeLegendInScreenshot: boolean = null;
+
+  @property()
+  includePopupInScreenshot: boolean = null;
+
+  @property({
+    readOnly: true
+  })
+  legendWidget: Legend = null;
+
+  @property()
+  offsetMask: { left?: number; top?: number } = {};
 
   @property()
   previewIsVisible: boolean = null;
@@ -69,38 +100,7 @@ class ScreenshotViewModel extends Accessor {
   screenshotModeIsActive: boolean = null;
 
   @property()
-  includeLegendInScreenshot: boolean = null;
-
-  @property()
-  includePopupInScreenshot: boolean = null;
-
-  @property()
-  includeCustomInScreenshot: boolean = null;
-
-  @property()
-  enableLegendOption: boolean = null;
-
-  @property()
-  enablePopupOption: boolean = null;
-
-  @property()
-  dragHandler: any = null;
-
-  @property({
-    readOnly: true
-  })
-  featureWidget: FeatureWidget = null;
-
-  @property({
-    readOnly: true
-  })
-  legendWidget: Legend = null;
-
-  @property()
-  custom: { label: string; element: HTMLElement } = null;
-
-  @property()
-  offset: { left?: string; top?: string } = {};
+  view: MapView | SceneView = null;
 
   initialize() {
     this._handles.add([
@@ -117,13 +117,13 @@ class ScreenshotViewModel extends Accessor {
     this._handles = null;
   }
 
-  setScreenshotArea(
+  async setScreenshotArea(
     event: any,
     maskDiv: HTMLElement,
     screenshotImageElement: HTMLImageElement,
     dragHandler: any,
     downloadBtnNode: HTMLButtonElement
-  ): void {
+  ): Promise<void> {
     if (event.action !== "end") {
       event.stopPropagation();
       this._setXYValues(event);
@@ -147,23 +147,24 @@ class ScreenshotViewModel extends Accessor {
             area: this._area
           };
         }
-        this._screenshotPromise = view
-          .takeScreenshot(this._screenshotConfig)
-          .catch((err: Error) => {
-            console.error("ERROR: ", err);
-          })
-          .then((viewScreenshot: Screenshot) => {
-            this._processScreenshot(
-              viewScreenshot,
-              screenshotImageElement,
-              maskDiv,
-              downloadBtnNode
-            );
-            if (this.dragHandler) {
-              this.dragHandler.remove();
-              this.dragHandler = null;
-            }
-          });
+        this._screenshotPromise = true;
+        this.notifyChange("state");
+        const viewScreenshot = await view.takeScreenshot(
+          this._screenshotConfig
+        );
+
+        this._processScreenshot(
+          viewScreenshot,
+          screenshotImageElement,
+          maskDiv,
+          downloadBtnNode
+        );
+        this._screenshotPromise = false;
+        this.notifyChange("state");
+        if (this.dragHandler) {
+          this.dragHandler.remove();
+          this.dragHandler = null;
+        }
       } else if (type === "3d") {
         const view = this.view as SceneView;
         const { width, height, x, y } = this._area;
@@ -181,25 +182,23 @@ class ScreenshotViewModel extends Accessor {
             area: this._area
           };
         }
-        this._screenshotPromise = view
-          .takeScreenshot(this._screenshotConfig)
-          .catch((err: Error) => {
-            console.error("ERROR: ", err);
-          })
-          .then((viewScreenshot: Screenshot) => {
-            this._processScreenshot(
-              viewScreenshot,
-              screenshotImageElement,
-              maskDiv,
-              downloadBtnNode
-            );
-            this._screenshotPromise = null;
-            if (this.dragHandler) {
-              this.dragHandler.remove();
-              this.dragHandler = null;
-            }
-            this.notifyChange("state");
-          });
+        this._screenshotPromise = true;
+        this.notifyChange("state");
+        const viewScreenshot = await view.takeScreenshot(
+          this._screenshotConfig
+        );
+        this._processScreenshot(
+          viewScreenshot,
+          screenshotImageElement,
+          maskDiv,
+          downloadBtnNode
+        );
+        this._screenshotPromise = false;
+        this.notifyChange("state");
+        if (this.dragHandler) {
+          this.dragHandler.remove();
+          this.dragHandler = null;
+        }
       }
     }
   }
@@ -247,14 +246,14 @@ class ScreenshotViewModel extends Accessor {
     };
   }
 
-  private _includeOneMapComponent(
+  private async _includeOneMapComponent(
     viewScreenshot: Screenshot,
     viewCanvas: HTMLCanvasElement,
     img: HTMLImageElement,
     screenshotImageElement: HTMLImageElement,
     maskDiv: HTMLElement,
     downloadBtnNode: HTMLButtonElement
-  ): void {
+  ): Promise<void> {
     const context = viewCanvas.getContext("2d") as CanvasRenderingContext2D;
     const combinedCanvas = document.createElement(
       "canvas"
@@ -273,39 +272,38 @@ class ScreenshotViewModel extends Accessor {
       : this.includeLegendInScreenshot
       ? firstComponent
       : secondMapComponent;
-    this._screenshotPromise = html2canvas(mapComponent, {
+    this._screenshotPromise = true;
+    this.notifyChange("state");
+
+    const mapComponentCanvas = await html2canvas(mapComponent, {
       removeContainer: true,
       logging: false
-    })
-      .catch((err: Error) => {
-        console.error("ERROR: ", err);
-      })
-      .then((mapComponent: HTMLCanvasElement) => {
-        viewCanvas.height = viewScreenshot.data.height;
-        viewCanvas.width = viewScreenshot.data.width;
-        img.src = viewScreenshot.dataUrl;
-        img.onload = () => {
-          context.drawImage(img, 0, 0);
-          this._generateImageForOneComponent(
-            viewCanvas,
-            combinedCanvas,
-            viewScreenshot,
-            mapComponent
-          );
-          this._canvasElement = combinedCanvas;
-          this._showPreview(
-            combinedCanvas,
-            screenshotImageElement,
-            maskDiv,
-            downloadBtnNode
-          );
-          this._screenshotPromise = null;
-          this.notifyChange("state");
-        };
-      });
+    });
+
+    viewCanvas.height = viewScreenshot.data.height;
+    viewCanvas.width = viewScreenshot.data.width;
+    img.src = viewScreenshot.dataUrl;
+    img.onload = () => {
+      context.drawImage(img, 0, 0);
+      this._generateImageForOneComponent(
+        viewCanvas,
+        combinedCanvas,
+        viewScreenshot,
+        mapComponentCanvas
+      );
+      this._canvasElement = combinedCanvas;
+      this._showPreview(
+        combinedCanvas,
+        screenshotImageElement,
+        maskDiv,
+        downloadBtnNode
+      );
+      this._screenshotPromise = false;
+      this.notifyChange("state");
+    };
   }
 
-  private _includeTwoMapComponents(
+  private async _includeTwoMapComponents(
     viewScreenshot: Screenshot,
     viewCanvas: HTMLCanvasElement,
     img: HTMLImageElement,
@@ -314,7 +312,7 @@ class ScreenshotViewModel extends Accessor {
     downloadBtnNode: HTMLButtonElement,
     firstNode: HTMLElement,
     secondNode: HTMLElement
-  ): void {
+  ): Promise<void> {
     const screenshotKey = "screenshot-key";
     const viewCanvasContext = viewCanvas.getContext(
       "2d"
@@ -322,34 +320,29 @@ class ScreenshotViewModel extends Accessor {
     const combinedCanvasElements = document.createElement(
       "canvas"
     ) as HTMLCanvasElement;
+    this._screenshotPromise = true;
+    this.notifyChange("state");
 
-    this._screenshotPromise = html2canvas(firstNode, {
+    const html2CanvasConfig = {
       removeContainer: true,
       logging: false
-    })
-      .catch((err: Error) => {
-        console.error("ERROR: ", err);
-      })
-      .then((firstMapComponent: HTMLCanvasElement) => {
-        this._firstMapComponent = firstMapComponent;
-        this.notifyChange("state");
-        html2canvas(secondNode, {
-          height: secondNode.offsetHeight,
-          removeContainer: true,
-          logging: false
-        })
-          .catch((err: Error) => {
-            console.error("ERROR: ", err);
-          })
-          .then((secondMapComponent: HTMLCanvasElement) => {
-            this._secondMapComponent = secondMapComponent;
-            this._screenshotPromise = null;
-            this.notifyChange("state");
-          });
-      });
+    };
+
+    const firstMapComponent = await html2canvas(firstNode, html2CanvasConfig);
+
+    this._firstMapComponent = firstMapComponent;
+
+    const secondMapComponent = await html2canvas(secondNode, {
+      height: secondNode.offsetHeight,
+      ...html2CanvasConfig
+    });
+
+    this._secondMapComponent = secondMapComponent;
+    this._screenshotPromise = null;
+    this.notifyChange("state");
     this._handles.remove(screenshotKey);
     this._handles.add(
-      this._watchMapComponents(
+      this._watchTwoMapComponents(
         viewCanvas,
         viewScreenshot,
         img,
@@ -364,7 +357,68 @@ class ScreenshotViewModel extends Accessor {
     );
   }
 
-  private _watchMapComponents(
+  private async _includeThreeMapComponents(
+    viewScreenshot: Screenshot,
+    viewCanvas: HTMLCanvasElement,
+    img: HTMLImageElement,
+    screenshotImageElement: HTMLImageElement,
+    maskDiv: HTMLElement,
+    downloadBtnNode: HTMLButtonElement,
+    firstNode: HTMLElement,
+    secondNode: HTMLElement,
+    thirdNode: HTMLElement
+  ) {
+    const screenshotKey = "screenshot-key";
+    const viewCanvasContext = viewCanvas.getContext(
+      "2d"
+    ) as CanvasRenderingContext2D;
+    const combinedCanvasElements = document.createElement(
+      "canvas"
+    ) as HTMLCanvasElement;
+
+    this._screenshotPromise = true;
+
+    const html2CanvasConfig = {
+      removeContainer: true,
+      logging: false
+    };
+
+    const firstMapComponent = await html2canvas(firstNode, html2CanvasConfig);
+    this._firstMapComponent = firstMapComponent;
+
+    const secondMapComponent = await html2canvas(secondNode, {
+      height: secondNode.offsetHeight,
+      ...html2CanvasConfig
+    });
+    this._secondMapComponent = secondMapComponent;
+
+    const thirdMapComponent = await html2canvas(thirdNode, {
+      height: thirdNode.offsetHeight,
+      ...html2CanvasConfig
+    });
+    this._thirdMapComponent = thirdMapComponent;
+    this._screenshotPromise = null;
+
+    this.notifyChange("state");
+
+    this._handles.remove(screenshotKey);
+    this._handles.add(
+      this._watchThreeMapComponents(
+        viewCanvas,
+        viewScreenshot,
+        img,
+        viewCanvasContext,
+        combinedCanvasElements,
+        screenshotImageElement,
+        maskDiv,
+        screenshotKey,
+        downloadBtnNode
+      ),
+      screenshotKey
+    );
+  }
+
+  private _watchTwoMapComponents(
     viewCanvas: HTMLCanvasElement,
     viewScreenshot: Screenshot,
     img: HTMLImageElement,
@@ -502,7 +556,7 @@ class ScreenshotViewModel extends Accessor {
       viewScreenshot.data.width +
       firstMapComponent.width +
       secondMapComponent.width;
-    combinedCanvasElements.height = this._setupCombinedScreenshotHeight(
+    combinedCanvasElements.height = this._setupCombinedScreenshotHeightForTwo(
       viewScreenshotHeight,
       firstMapComponentHeight,
       secondMapComponentHeight
@@ -521,48 +575,6 @@ class ScreenshotViewModel extends Accessor {
       viewScreenshot.data.width + firstMapComponent.width,
       0
     );
-  }
-
-  private _setupCombinedScreenshotHeight(
-    viewScreenshotHeight: number,
-    legendCanvasHeight: number,
-    popUpCanvasHeight: number
-  ): number {
-    return viewScreenshotHeight > legendCanvasHeight &&
-      viewScreenshotHeight > popUpCanvasHeight
-      ? viewScreenshotHeight
-      : legendCanvasHeight > viewScreenshotHeight &&
-        legendCanvasHeight > popUpCanvasHeight
-      ? legendCanvasHeight
-      : popUpCanvasHeight > legendCanvasHeight &&
-        popUpCanvasHeight > viewScreenshotHeight
-      ? popUpCanvasHeight
-      : null;
-  }
-
-  private _setupCombinedScreenshotHeightForThree(
-    viewScreenshotHeight: number,
-    legendCanvasHeight: number,
-    popUpCanvasHeight: number,
-    customCanvasHeight
-  ): number {
-    return viewScreenshotHeight > legendCanvasHeight &&
-      viewScreenshotHeight > popUpCanvasHeight &&
-      viewScreenshotHeight > customCanvasHeight
-      ? viewScreenshotHeight
-      : legendCanvasHeight > viewScreenshotHeight &&
-        legendCanvasHeight > popUpCanvasHeight &&
-        legendCanvasHeight > customCanvasHeight
-      ? legendCanvasHeight
-      : popUpCanvasHeight > viewScreenshotHeight &&
-        popUpCanvasHeight > legendCanvasHeight &&
-        popUpCanvasHeight > customCanvasHeight
-      ? popUpCanvasHeight
-      : customCanvasHeight > viewScreenshotHeight &&
-        customCanvasHeight > legendCanvasHeight &&
-        customCanvasHeight > popUpCanvasHeight
-      ? customCanvasHeight
-      : null;
   }
 
   private _generateImageForThreeComponents(
@@ -612,6 +624,48 @@ class ScreenshotViewModel extends Accessor {
         secondMapComponent.width,
       0
     );
+  }
+
+  private _setupCombinedScreenshotHeightForTwo(
+    viewScreenshotHeight: number,
+    legendCanvasHeight: number,
+    popUpCanvasHeight: number
+  ): number {
+    return viewScreenshotHeight > legendCanvasHeight &&
+      viewScreenshotHeight > popUpCanvasHeight
+      ? viewScreenshotHeight
+      : legendCanvasHeight > viewScreenshotHeight &&
+        legendCanvasHeight > popUpCanvasHeight
+      ? legendCanvasHeight
+      : popUpCanvasHeight > legendCanvasHeight &&
+        popUpCanvasHeight > viewScreenshotHeight
+      ? popUpCanvasHeight
+      : null;
+  }
+
+  private _setupCombinedScreenshotHeightForThree(
+    viewScreenshotHeight: number,
+    legendCanvasHeight: number,
+    popUpCanvasHeight: number,
+    customCanvasHeight
+  ): number {
+    return viewScreenshotHeight > legendCanvasHeight &&
+      viewScreenshotHeight > popUpCanvasHeight &&
+      viewScreenshotHeight > customCanvasHeight
+      ? viewScreenshotHeight
+      : legendCanvasHeight > viewScreenshotHeight &&
+        legendCanvasHeight > popUpCanvasHeight &&
+        legendCanvasHeight > customCanvasHeight
+      ? legendCanvasHeight
+      : popUpCanvasHeight > viewScreenshotHeight &&
+        popUpCanvasHeight > legendCanvasHeight &&
+        popUpCanvasHeight > customCanvasHeight
+      ? popUpCanvasHeight
+      : customCanvasHeight > viewScreenshotHeight &&
+        customCanvasHeight > legendCanvasHeight &&
+        customCanvasHeight > popUpCanvasHeight
+      ? customCanvasHeight
+      : null;
   }
 
   private _showPreview(
@@ -706,7 +760,6 @@ class ScreenshotViewModel extends Accessor {
     const firstComponent = document.querySelector(
       this._mapComponentSelectors[0]
     ) as HTMLElement;
-    console.log(firstComponent);
     const secondMapComponent = document.querySelector(
       this._mapComponentSelectors[1]
     ) as HTMLElement;
@@ -955,67 +1008,6 @@ class ScreenshotViewModel extends Accessor {
     }
   }
 
-  private async _includeThreeMapComponents(
-    viewScreenshot: Screenshot,
-    viewCanvas: HTMLCanvasElement,
-    img: HTMLImageElement,
-    screenshotImageElement: HTMLImageElement,
-    maskDiv: HTMLElement,
-    downloadBtnNode: HTMLButtonElement,
-    firstNode: HTMLElement,
-    secondNode: HTMLElement,
-    thirdNode: HTMLElement
-  ) {
-    const screenshotKey = "screenshot-key";
-    const viewCanvasContext = viewCanvas.getContext(
-      "2d"
-    ) as CanvasRenderingContext2D;
-    const combinedCanvasElements = document.createElement(
-      "canvas"
-    ) as HTMLCanvasElement;
-
-    this._screenshotPromise = true;
-
-    const firstMapComponent = await html2canvas(firstNode, {
-      removeContainer: true,
-      logging: false
-    });
-    this._firstMapComponent = firstMapComponent;
-
-    const secondMapComponent = await html2canvas(secondNode, {
-      height: secondNode.offsetHeight,
-      removeContainer: true,
-      logging: false
-    });
-    this._secondMapComponent = secondMapComponent;
-
-    const thirdMapComponent = await html2canvas(thirdNode, {
-      height: thirdNode.offsetHeight,
-      removeContainer: true,
-      logging: false
-    });
-    this._thirdMapComponent = thirdMapComponent;
-    this._screenshotPromise = null;
-
-    this.notifyChange("state");
-
-    this._handles.remove(screenshotKey);
-    this._handles.add(
-      this._watchThreeMapComponents(
-        viewCanvas,
-        viewScreenshot,
-        img,
-        viewCanvasContext,
-        combinedCanvasElements,
-        screenshotImageElement,
-        maskDiv,
-        screenshotKey,
-        downloadBtnNode
-      ),
-      screenshotKey
-    );
-  }
-
   private _setMaskPosition(maskDiv: HTMLElement, area?: any): void {
     if (!maskDiv) {
       return;
@@ -1023,21 +1015,21 @@ class ScreenshotViewModel extends Accessor {
     const calibratedMaskTop = (window.innerHeight - this.view.height) as number;
 
     if (area) {
-      const parsedLeft = this.offset.hasOwnProperty("left")
-        ? parseFloat(this.offset.left)
+      const parsedLeft = this.offsetMask.hasOwnProperty("left")
+        ? this.offsetMask.left
         : null;
       const left =
         !isNaN(parsedLeft) && parsedLeft !== null
-          ? area.x + this.offset.left
+          ? area.x + this.offsetMask.left
           : area.x;
 
-      const parsedTop = this.offset.hasOwnProperty("top")
-        ? parseFloat(this.offset.top)
+      const parsedTop = this.offsetMask.hasOwnProperty("top")
+        ? this.offsetMask.top
         : null;
 
       const top =
         !isNaN(parsedTop) && parsedTop !== null
-          ? area.y + calibratedMaskTop + this.offset.top
+          ? area.y + calibratedMaskTop + this.offsetMask.top
           : area.y + calibratedMaskTop;
 
       maskDiv.style.left = `${left}px`;

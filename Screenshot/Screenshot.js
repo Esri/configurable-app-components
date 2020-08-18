@@ -8,26 +8,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.​
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-define(["require", "exports", "dojo/i18n!./Screenshot/nls/resources", "esri/widgets/Widget", "esri/core/accessorSupport/decorators", "esri/core/watchUtils", "esri/core/Handles", "esri/widgets/support/widget", "./Screenshot/ScreenshotViewModel", "esri/widgets/Feature"], function (require, exports, i18n, Widget, decorators_1, watchUtils, Handles, widget_1, ScreenshotViewModel, FeatureWidget) {
+define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "esri/widgets/Widget", "esri/core/accessorSupport/decorators", "esri/core/watchUtils", "esri/core/Handles", "esri/widgets/support/widget", "./Screenshot/ScreenshotViewModel", "esri/widgets/Feature"], function (require, exports, tslib_1, i18n, Widget, decorators_1, watchUtils, Handles, widget_1, ScreenshotViewModel, FeatureWidget) {
     "use strict";
     var CSS = {
         base: "esri-screenshot",
@@ -63,7 +44,7 @@ define(["require", "exports", "dojo/i18n!./Screenshot/nls/resources", "esri/widg
         screenshotPreviewContainer: "esri-screenshot__img-preview-container"
     };
     var Screenshot = /** @class */ (function (_super) {
-        __extends(Screenshot, _super);
+        tslib_1.__extends(Screenshot, _super);
         function Screenshot(value) {
             var _this = _super.call(this, value) || this;
             _this._maskNode = null;
@@ -74,20 +55,20 @@ define(["require", "exports", "dojo/i18n!./Screenshot/nls/resources", "esri/widg
             _this._offscreenPopupContainer = null;
             _this._offscreenLegendContainer = null;
             _this._handles = new Handles();
-            _this.view = null;
-            _this.includeLegendInScreenshot = null;
-            _this.includePopupInScreenshot = null;
-            _this.includeCustomInScreenshot = null;
+            _this.custom = null;
             _this.enableLegendOption = null;
             _this.enablePopupOption = null;
-            _this.custom = null;
-            _this.offset = null;
             _this.featureWidget = null;
-            _this.legendWidget = null;
-            _this.theme = "light";
-            _this.screenshotModeIsActive = null;
             _this.iconClass = "esri-icon-media";
+            _this.includeCustomInScreenshot = null;
+            _this.includeLegendInScreenshot = null;
+            _this.includePopupInScreenshot = null;
             _this.label = i18n.widgetLabel;
+            _this.legendWidget = null;
+            _this.offsetMask = null;
+            _this.screenshotModeIsActive = null;
+            _this.theme = "light";
+            _this.view = null;
             _this.viewModel = new ScreenshotViewModel();
             return _this;
         }
@@ -332,62 +313,62 @@ define(["require", "exports", "dojo/i18n!./Screenshot/nls/resources", "esri/widg
                 _this.scheduleRender();
             });
         };
-        __decorate([
-            decorators_1.aliasOf("viewModel.view"),
-            decorators_1.property()
-        ], Screenshot.prototype, "view", void 0);
-        __decorate([
-            decorators_1.aliasOf("viewModel.includeLegendInScreenshot"),
-            decorators_1.property()
-        ], Screenshot.prototype, "includeLegendInScreenshot", void 0);
-        __decorate([
-            decorators_1.aliasOf("viewModel.includePopupInScreenshot"),
-            decorators_1.property()
-        ], Screenshot.prototype, "includePopupInScreenshot", void 0);
-        __decorate([
-            decorators_1.aliasOf("viewModel.includeCustomInScreenshot"),
-            decorators_1.property()
-        ], Screenshot.prototype, "includeCustomInScreenshot", void 0);
-        __decorate([
+        tslib_1.__decorate([
+            decorators_1.aliasOf("viewModel.custom")
+        ], Screenshot.prototype, "custom", void 0);
+        tslib_1.__decorate([
             decorators_1.aliasOf("viewModel.enableLegendOption"),
             widget_1.renderable()
         ], Screenshot.prototype, "enableLegendOption", void 0);
-        __decorate([
+        tslib_1.__decorate([
             decorators_1.aliasOf("viewModel.enablePopupOption"),
             widget_1.renderable()
         ], Screenshot.prototype, "enablePopupOption", void 0);
-        __decorate([
-            decorators_1.aliasOf("viewModel.custom")
-        ], Screenshot.prototype, "custom", void 0);
-        __decorate([
-            decorators_1.aliasOf("viewModel.offset")
-        ], Screenshot.prototype, "offset", void 0);
-        __decorate([
+        tslib_1.__decorate([
             decorators_1.aliasOf("viewModel.featureWidget"),
             decorators_1.property({
                 readOnly: true
             })
         ], Screenshot.prototype, "featureWidget", void 0);
-        __decorate([
+        tslib_1.__decorate([
+            decorators_1.property()
+        ], Screenshot.prototype, "iconClass", void 0);
+        tslib_1.__decorate([
+            decorators_1.aliasOf("viewModel.includeCustomInScreenshot"),
+            decorators_1.property()
+        ], Screenshot.prototype, "includeCustomInScreenshot", void 0);
+        tslib_1.__decorate([
+            decorators_1.aliasOf("viewModel.includeLegendInScreenshot"),
+            decorators_1.property()
+        ], Screenshot.prototype, "includeLegendInScreenshot", void 0);
+        tslib_1.__decorate([
+            decorators_1.aliasOf("viewModel.includePopupInScreenshot"),
+            decorators_1.property()
+        ], Screenshot.prototype, "includePopupInScreenshot", void 0);
+        tslib_1.__decorate([
+            decorators_1.property()
+        ], Screenshot.prototype, "label", void 0);
+        tslib_1.__decorate([
             decorators_1.aliasOf("viewModel.legendWidget"),
             decorators_1.property({
                 readOnly: true
             })
         ], Screenshot.prototype, "legendWidget", void 0);
-        __decorate([
-            decorators_1.property()
-        ], Screenshot.prototype, "theme", void 0);
-        __decorate([
+        tslib_1.__decorate([
+            decorators_1.aliasOf("viewModel.offsetMask")
+        ], Screenshot.prototype, "offsetMask", void 0);
+        tslib_1.__decorate([
             decorators_1.aliasOf("viewModel.screenshotModeIsActive"),
             decorators_1.property()
         ], Screenshot.prototype, "screenshotModeIsActive", void 0);
-        __decorate([
+        tslib_1.__decorate([
             decorators_1.property()
-        ], Screenshot.prototype, "iconClass", void 0);
-        __decorate([
+        ], Screenshot.prototype, "theme", void 0);
+        tslib_1.__decorate([
+            decorators_1.aliasOf("viewModel.view"),
             decorators_1.property()
-        ], Screenshot.prototype, "label", void 0);
-        __decorate([
+        ], Screenshot.prototype, "view", void 0);
+        tslib_1.__decorate([
             decorators_1.property(),
             widget_1.renderable([
                 "viewModel.state",
@@ -399,28 +380,28 @@ define(["require", "exports", "dojo/i18n!./Screenshot/nls/resources", "esri/widg
                 "viewModel.legendWidget"
             ])
         ], Screenshot.prototype, "viewModel", void 0);
-        __decorate([
+        tslib_1.__decorate([
             widget_1.accessibleHandler()
         ], Screenshot.prototype, "activateScreenshot", null);
-        __decorate([
+        tslib_1.__decorate([
             widget_1.accessibleHandler()
         ], Screenshot.prototype, "_downloadImage", null);
-        __decorate([
+        tslib_1.__decorate([
             widget_1.accessibleHandler()
         ], Screenshot.prototype, "deactivateScreenshot", null);
-        __decorate([
+        tslib_1.__decorate([
             widget_1.accessibleHandler()
         ], Screenshot.prototype, "_toggleLegend", null);
-        __decorate([
+        tslib_1.__decorate([
             widget_1.accessibleHandler()
         ], Screenshot.prototype, "_togglePopup", null);
-        __decorate([
+        tslib_1.__decorate([
             widget_1.accessibleHandler()
         ], Screenshot.prototype, "_toggleCustom", null);
-        __decorate([
+        tslib_1.__decorate([
             widget_1.accessibleHandler()
         ], Screenshot.prototype, "_closePreview", null);
-        Screenshot = __decorate([
+        Screenshot = tslib_1.__decorate([
             decorators_1.subclass("Screenshot")
         ], Screenshot);
         return Screenshot;
