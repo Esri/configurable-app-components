@@ -23,7 +23,6 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
             _this._secondMapComponent = null;
             _this._thirdMapComponent = null;
             _this._screenshotConfig = null;
-            _this._pageDirection = "ltr";
             _this._mapComponentSelectors = [
                 ".esri-screenshot__offscreen-legend-container",
                 ".esri-screenshot__offscreen-pop-up-container"
@@ -65,7 +64,6 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
                 this._resetOffScreenPopup(),
                 this._checkScreenshotModeFalse()
             ]);
-            this._setPageDirection();
         };
         ScreenshotViewModel.prototype.destroy = function () {
             this._handles.removeAll();
@@ -694,10 +692,6 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
                 }
                 _this.notifyChange("state");
             });
-        };
-        ScreenshotViewModel.prototype._setPageDirection = function () {
-            var htmlNode = document.querySelector("html");
-            this._pageDirection = htmlNode.getAttribute("dir");
         };
         tslib_1.__decorate([
             decorators_1.property({

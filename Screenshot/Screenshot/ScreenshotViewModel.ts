@@ -39,7 +39,6 @@ class ScreenshotViewModel extends Accessor {
   private _secondMapComponent: HTMLCanvasElement = null;
   private _thirdMapComponent: HTMLCanvasElement = null;
   private _screenshotConfig: ScreenshotConfig = null;
-  private _pageDirection: "ltr" | "rtl" = "ltr";
   private _mapComponentSelectors = [
     ".esri-screenshot__offscreen-legend-container",
     ".esri-screenshot__offscreen-pop-up-container"
@@ -111,7 +110,6 @@ class ScreenshotViewModel extends Accessor {
       this._resetOffScreenPopup(),
       this._checkScreenshotModeFalse()
     ]);
-    this._setPageDirection();
   }
 
   destroy() {
@@ -1150,11 +1148,6 @@ class ScreenshotViewModel extends Accessor {
 
       this.notifyChange("state");
     });
-  }
-
-  private _setPageDirection(): void {
-    const htmlNode = document.querySelector("html");
-    this._pageDirection = htmlNode.getAttribute("dir") as "ltr" | "rtl";
   }
 }
 
