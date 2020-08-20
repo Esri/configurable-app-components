@@ -62,7 +62,8 @@ const CSS = {
   offScreenLegendContainer: "esri-screenshot__offscreen-legend-container",
   screenshotClose: "esri-screenshot__close-button",
   closeButtonContainer: "esri-screenshot__close-button-container",
-  screenshotPreviewContainer: "esri-screenshot__img-preview-container"
+  screenshotPreviewContainer: "esri-screenshot__img-preview-container",
+  selectLayout: "esri-screenshot__select-layout"
 };
 
 @subclass("Screenshot")
@@ -107,6 +108,9 @@ class Screenshot extends Widget {
   @aliasOf("viewModel.includeLegendInScreenshot")
   @property()
   includeLegendInScreenshot: boolean = null;
+
+  @property()
+  includeLayoutOption = false;
 
   @aliasOf("viewModel.includePopupInScreenshot")
   @property()
@@ -227,20 +231,46 @@ class Screenshot extends Widget {
     const fieldSet = this._renderFieldSet();
     const setMapAreaButton = this._renderSetMapAreaButton();
     const featureWarning = this._renderFeatureWarning();
+    const screenshotLayout = this.includeLayoutOption
+      ? this._renderScreenshotLayout()
+      : null;
     return (
       <div key="screenshot-panel" class={this.classes(CSS.base, CSS.widget)}>
         <div class={CSS.mainContainer}>
           <h1 class={CSS.panelTitle}>{screenshotTitle}</h1>
+          {screenshotLayout}
           {this.enableLegendOption || this.enablePopupOption || this.custom ? (
             <h3 class={CSS.panelSubTitle}>{screenshotSubtitle}</h3>
           ) : null}
           {this.enableLegendOption || this.enablePopupOption || this.custom
             ? fieldSet
             : null}
-          {featureWarning}
+          {this.enablePopupOption ? featureWarning : null}
           {setMapAreaButton}
         </div>
       </div>
+    );
+  }
+
+  private _renderScreenshotLayout(): any {
+    return (
+      <label class={CSS.selectLayout}>
+        <span> {i18n.screenshotLayout}</span>
+        <select bind={this} onchange={this._updateLayoutOption}>
+          <option
+            value="row"
+            selected={this.outputLayout === "row" ? true : false}
+          >
+            {i18n.row}
+          </option>
+          <option
+            value="column"
+            selected={this.outputLayout === "column" ? true : false}
+          >
+            {i18n.column}
+          </option>
+        </select>
+      </label>
     );
   }
 
@@ -368,7 +398,7 @@ class Screenshot extends Widget {
             type="text"
             afterCreate={storeNode}
             data-node-ref="previewTitleInputNode"
-            placeholder={i18n.screenshotTitle}
+            placeholder={i18n.enterTitle}
           />
 
           {screenshotPreviewBtns}
@@ -596,6 +626,11 @@ class Screenshot extends Widget {
       );
       this.scheduleRender();
     });
+  }
+
+  private _updateLayoutOption(e: Event) {
+    const node = e.target as HTMLSelectElement;
+    this.outputLayout = node.value as "row" | "column";
   }
 }
 

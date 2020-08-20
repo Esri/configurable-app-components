@@ -41,7 +41,8 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
         offScreenLegendContainer: "esri-screenshot__offscreen-legend-container",
         screenshotClose: "esri-screenshot__close-button",
         closeButtonContainer: "esri-screenshot__close-button-container",
-        screenshotPreviewContainer: "esri-screenshot__img-preview-container"
+        screenshotPreviewContainer: "esri-screenshot__img-preview-container",
+        selectLayout: "esri-screenshot__select-layout"
     };
     var Screenshot = /** @class */ (function (_super) {
         tslib_1.__extends(Screenshot, _super);
@@ -62,6 +63,7 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
             _this.iconClass = "esri-icon-media";
             _this.includeCustomInScreenshot = null;
             _this.includeLegendInScreenshot = null;
+            _this.includeLayoutOption = false;
             _this.includePopupInScreenshot = null;
             _this.label = i18n.widgetLabel;
             _this.legendWidget = null;
@@ -127,15 +129,28 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
             var fieldSet = this._renderFieldSet();
             var setMapAreaButton = this._renderSetMapAreaButton();
             var featureWarning = this._renderFeatureWarning();
+            var screenshotLayout = this.includeLayoutOption
+                ? this._renderScreenshotLayout()
+                : null;
             return (widget_1.tsx("div", { key: "screenshot-panel", class: this.classes(CSS.base, CSS.widget) },
                 widget_1.tsx("div", { class: CSS.mainContainer },
                     widget_1.tsx("h1", { class: CSS.panelTitle }, screenshotTitle),
+                    screenshotLayout,
                     this.enableLegendOption || this.enablePopupOption || this.custom ? (widget_1.tsx("h3", { class: CSS.panelSubTitle }, screenshotSubtitle)) : null,
                     this.enableLegendOption || this.enablePopupOption || this.custom
                         ? fieldSet
                         : null,
-                    featureWarning,
+                    this.enablePopupOption ? featureWarning : null,
                     setMapAreaButton)));
+        };
+        Screenshot.prototype._renderScreenshotLayout = function () {
+            return (widget_1.tsx("label", { class: CSS.selectLayout },
+                widget_1.tsx("span", null,
+                    " ",
+                    i18n.screenshotLayout),
+                widget_1.tsx("select", { bind: this, onchange: this._updateLayoutOption },
+                    widget_1.tsx("option", { value: "row", selected: this.outputLayout === "row" ? true : false }, i18n.row),
+                    widget_1.tsx("option", { value: "column", selected: this.outputLayout === "column" ? true : false }, i18n.column))));
         };
         Screenshot.prototype._renderFeatureWarning = function () {
             return (widget_1.tsx("div", { key: "feature-warning", class: CSS.featureWarning }, this._selectFeatureAlertIsVisible ? (widget_1.tsx("div", { class: CSS.featureWarningTextContainer },
@@ -177,7 +192,7 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
                 widget_1.tsx("div", { class: CSS.screenshotPreviewContainer },
                     widget_1.tsx("div", { class: CSS.screenshotImgContainer },
                         widget_1.tsx("img", { bind: this, afterCreate: widget_1.storeNode, "data-node-ref": "_screenshotImgNode", class: CSS.screenshotImg })),
-                    widget_1.tsx("input", { bind: this, type: "text", afterCreate: widget_1.storeNode, "data-node-ref": "previewTitleInputNode", placeholder: i18n.screenshotTitle }),
+                    widget_1.tsx("input", { bind: this, type: "text", afterCreate: widget_1.storeNode, "data-node-ref": "previewTitleInputNode", placeholder: i18n.enterTitle }),
                     screenshotPreviewBtns)));
         };
         Screenshot.prototype._renderScreenshotPreviewBtns = function () {
@@ -316,6 +331,10 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
                 _this.scheduleRender();
             });
         };
+        Screenshot.prototype._updateLayoutOption = function (e) {
+            var node = e.target;
+            this.outputLayout = node.value;
+        };
         tslib_1.__decorate([
             decorators_1.aliasOf("viewModel.custom")
         ], Screenshot.prototype, "custom", void 0);
@@ -344,6 +363,9 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
             decorators_1.aliasOf("viewModel.includeLegendInScreenshot"),
             decorators_1.property()
         ], Screenshot.prototype, "includeLegendInScreenshot", void 0);
+        tslib_1.__decorate([
+            decorators_1.property()
+        ], Screenshot.prototype, "includeLayoutOption", void 0);
         tslib_1.__decorate([
             decorators_1.aliasOf("viewModel.includePopupInScreenshot"),
             decorators_1.property()
