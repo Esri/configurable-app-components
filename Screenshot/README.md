@@ -28,7 +28,7 @@ More info on html2canvas can be found here: http://html2canvas.hertzen.com/
 | includeCustomInScreenshot \* | Boolean                                 | Boolean to include/exclude custom element in screenshot. This property requires a value for the `custom` property to be passed in.                                                                    |
 | includeCustomInScreenshot \* | Boolean                                 | Boolean to include/exclude custom element in screenshot. This property requires a value for the `custom` property to be passed in.                                                                    |
 | custom \*                    | { label: string; element: HTMLElement } | HTML Element to include in screenshot output. `custom.label` will be used for the checkbox input label. `custom.element` will be used to pass into html2canvas to include in final screenshot output. |
-| offsetMask \*                | { left?: number; top?: number }         | Configuration to offset the drawn rectangle to account for headers and side panels in app.                                                                                                            |
+| outputLayout \*                    | "row" \| "column" | Option to set layout of screenshot output to a row or column. `Default: "row"` |
 | featureWidget \* `read-only` | Feature                                 | Feature Widget containing pop-up node to include in screenshot.                                                                                                                                       |
 | legendWidget \* `read-only`  | Legend                                  | Legend Widget containing map legend node to include in screenshot.                                                                                                                                    |
 
@@ -55,7 +55,7 @@ More info on html2canvas can be found here: http://html2canvas.hertzen.com/
 | includePopupInScreenshot  | Boolean                                 | Boolean to include/exclude pop-up in screenshot.                                               |
 | includeCustomInScreenshot | Boolean                                 | Boolean to include/exclude custom element in screenshot. Custom property required.             |
 | custom                    | { label: string; element: HTMLElement } | HTML Element to include in screenshot output. `custom.label` will be used for the checkbox input label. `custom.element` will be used to pass into html2canvas to include in final screenshot output.          |
-| offsetMask                | { left?: number; top?: number }         | Configuration to offset the drawn rectangle to account for headers and side panels in app.     |
+| outputLayout                    | "row" \| "column" | Option to set layout of screenshot output to a row or column. `Default: "row"` |
 | featureWidget `read-only` | Feature                                 | Instance of the Feature widget.                                                                |
 | legendWidget `read-only`  | Legend                                  | Instance of the Legend widget.                                                                 |
 
@@ -84,9 +84,7 @@ const screenshot = new Screenshot({
     label: "Include results",
     element: sidePanel
   },
-  offsetMask: {
-      left: sidePanel.clientWidth
-  }
+  outputLayout: "column"
   });
 ```
 
