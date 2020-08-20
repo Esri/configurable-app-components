@@ -39,6 +39,7 @@ class ScreenshotViewModel extends Accessor {
   private _secondMapComponent: HTMLCanvasElement = null;
   private _thirdMapComponent: HTMLCanvasElement = null;
   private _screenshotConfig: ScreenshotConfig = null;
+  private _pageDirection: "ltr" | "rtl" = "ltr";
   private _mapComponentSelectors = [
     ".esri-screenshot__offscreen-legend-container",
     ".esri-screenshot__offscreen-pop-up-container"
@@ -58,6 +59,9 @@ class ScreenshotViewModel extends Accessor {
         : "complete"
       : "disabled";
   }
+
+  @property()
+  outputLayout: "row" | "column" = "row";
 
   @property()
   custom: { label: string; element: HTMLElement } = null;
@@ -91,9 +95,6 @@ class ScreenshotViewModel extends Accessor {
   legendWidget: Legend = null;
 
   @property()
-  offsetMask: { left?: number; top?: number } = {};
-
-  @property()
   previewIsVisible: boolean = null;
 
   @property()
@@ -110,6 +111,7 @@ class ScreenshotViewModel extends Accessor {
       this._resetOffScreenPopup(),
       this._checkScreenshotModeFalse()
     ]);
+    this._setPageDirection();
   }
 
   destroy() {
@@ -523,10 +525,18 @@ class ScreenshotViewModel extends Accessor {
     ) as CanvasRenderingContext2D;
     const mapComponentHeight = mapComponent.height as number;
     const height =
-      mapComponentHeight > viewScreenshotHeight
-        ? mapComponentHeight
-        : viewScreenshotHeight;
-    combinedCanvas.width = viewScreenshot.data.width + mapComponent.width;
+      this.outputLayout === "row"
+        ? Math.max(mapComponentHeight, viewScreenshotHeight)
+        : this.outputLayout === "column"
+        ? mapComponentHeight + viewScreenshotHeight
+        : null;
+    const width =
+      this.outputLayout === "row"
+        ? viewScreenshot.data.width + mapComponent.width
+        : this.outputLayout === "column"
+        ? Math.max(viewScreenshot.data.width, mapComponent.width)
+        : null;
+    combinedCanvas.width = width;
     combinedCanvas.height = height;
     viewLegendCanvasContext.fillStyle = "#fff";
     viewLegendCanvasContext.fillRect(
@@ -535,8 +545,13 @@ class ScreenshotViewModel extends Accessor {
       combinedCanvas.width,
       combinedCanvas.height
     );
-    viewLegendCanvasContext.drawImage(mapComponent, 0, 0);
-    viewLegendCanvasContext.drawImage(viewCanvas, mapComponent.width, 0);
+    if (this.outputLayout === "row") {
+      viewLegendCanvasContext.drawImage(mapComponent, 0, 0);
+      viewLegendCanvasContext.drawImage(viewCanvas, mapComponent.width, 0);
+    } else if (this.outputLayout === "column") {
+      viewLegendCanvasContext.drawImage(mapComponent, 0, 0);
+      viewLegendCanvasContext.drawImage(viewCanvas, 0, mapComponentHeight);
+    }
   }
 
   private _generateImageForTwoComponents(
@@ -552,15 +567,28 @@ class ScreenshotViewModel extends Accessor {
     const firstMapComponentHeight = firstMapComponent.height as number;
     const secondMapComponentHeight = secondMapComponent.height as number;
     const viewScreenshotHeight = viewScreenshot.data.height as number;
-    combinedCanvasElements.width =
-      viewScreenshot.data.width +
-      firstMapComponent.width +
-      secondMapComponent.width;
-    combinedCanvasElements.height = this._setupCombinedScreenshotHeightForTwo(
-      viewScreenshotHeight,
-      firstMapComponentHeight,
-      secondMapComponentHeight
-    );
+    if (this.outputLayout === "row") {
+      combinedCanvasElements.width =
+        viewScreenshot.data.width +
+        firstMapComponent.width +
+        secondMapComponent.width;
+      combinedCanvasElements.height = Math.max(
+        viewScreenshotHeight,
+        firstMapComponentHeight,
+        secondMapComponentHeight
+      );
+    } else if (this.outputLayout === "column") {
+      combinedCanvasElements.width = Math.max(
+        viewScreenshot.data.width,
+        firstMapComponent.width,
+        secondMapComponent.width
+      );
+      combinedCanvasElements.height =
+        viewScreenshot.data.height +
+        firstMapComponent.height +
+        secondMapComponent.height;
+    }
+
     combinedCanvasContext.fillStyle = "#fff";
     combinedCanvasContext.fillRect(
       0,
@@ -568,13 +596,23 @@ class ScreenshotViewModel extends Accessor {
       combinedCanvasElements.width,
       combinedCanvasElements.height
     );
-    combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
-    combinedCanvasContext.drawImage(viewCanvas, firstMapComponent.width, 0);
-    combinedCanvasContext.drawImage(
-      secondMapComponent,
-      viewScreenshot.data.width + firstMapComponent.width,
-      0
-    );
+    if (this.outputLayout === "row") {
+      combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
+      combinedCanvasContext.drawImage(viewCanvas, firstMapComponent.width, 0);
+      combinedCanvasContext.drawImage(
+        secondMapComponent,
+        viewScreenshot.data.width + firstMapComponent.width,
+        0
+      );
+    } else if (this.outputLayout === "column") {
+      combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
+      combinedCanvasContext.drawImage(viewCanvas, 0, firstMapComponentHeight);
+      combinedCanvasContext.drawImage(
+        secondMapComponent,
+        0,
+        viewScreenshotHeight + firstMapComponentHeight
+      );
+    }
   }
 
   private _generateImageForThreeComponents(
@@ -592,17 +630,31 @@ class ScreenshotViewModel extends Accessor {
     const secondMapComponentHeight = secondMapComponent.height as number;
     const thirdMapComponentHeight = thirdMapComponent.height as number;
     const viewScreenshotHeight = viewScreenshot.data.height as number;
-    combinedCanvasElements.width =
-      viewScreenshot.data.width +
-      firstMapComponent.width +
-      secondMapComponent.width +
-      thirdMapComponent.width;
-    combinedCanvasElements.height = this._setupCombinedScreenshotHeightForThree(
-      viewScreenshotHeight,
-      firstMapComponentHeight,
-      secondMapComponentHeight,
-      thirdMapComponentHeight
-    );
+    if (this.outputLayout === "row") {
+      combinedCanvasElements.width =
+        viewScreenshot.data.width +
+        firstMapComponent.width +
+        secondMapComponent.width +
+        thirdMapComponent.width;
+      combinedCanvasElements.height = Math.max(
+        viewScreenshotHeight,
+        firstMapComponentHeight,
+        secondMapComponentHeight,
+        thirdMapComponentHeight
+      );
+    } else if (this.outputLayout === "column") {
+      combinedCanvasElements.width = Math.max(
+        viewScreenshot.data.width,
+        firstMapComponent.width,
+        secondMapComponent.width,
+        thirdMapComponent.width
+      );
+      combinedCanvasElements.height =
+        viewScreenshot.data.height +
+        firstMapComponent.height +
+        secondMapComponent.height +
+        thirdMapComponent.height;
+    }
     combinedCanvasContext.fillStyle = "#fff";
     combinedCanvasContext.fillRect(
       0,
@@ -610,62 +662,37 @@ class ScreenshotViewModel extends Accessor {
       combinedCanvasElements.width,
       combinedCanvasElements.height
     );
-    combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
-    combinedCanvasContext.drawImage(viewCanvas, firstMapComponent.width, 0);
-    combinedCanvasContext.drawImage(
-      secondMapComponent,
-      viewScreenshot.data.width + firstMapComponent.width,
-      0
-    );
-    combinedCanvasContext.drawImage(
-      thirdMapComponent,
-      viewScreenshot.data.width +
-        firstMapComponent.width +
-        secondMapComponent.width,
-      0
-    );
-  }
-
-  private _setupCombinedScreenshotHeightForTwo(
-    viewScreenshotHeight: number,
-    legendCanvasHeight: number,
-    popUpCanvasHeight: number
-  ): number {
-    return viewScreenshotHeight > legendCanvasHeight &&
-      viewScreenshotHeight > popUpCanvasHeight
-      ? viewScreenshotHeight
-      : legendCanvasHeight > viewScreenshotHeight &&
-        legendCanvasHeight > popUpCanvasHeight
-      ? legendCanvasHeight
-      : popUpCanvasHeight > legendCanvasHeight &&
-        popUpCanvasHeight > viewScreenshotHeight
-      ? popUpCanvasHeight
-      : null;
-  }
-
-  private _setupCombinedScreenshotHeightForThree(
-    viewScreenshotHeight: number,
-    legendCanvasHeight: number,
-    popUpCanvasHeight: number,
-    customCanvasHeight
-  ): number {
-    return viewScreenshotHeight > legendCanvasHeight &&
-      viewScreenshotHeight > popUpCanvasHeight &&
-      viewScreenshotHeight > customCanvasHeight
-      ? viewScreenshotHeight
-      : legendCanvasHeight > viewScreenshotHeight &&
-        legendCanvasHeight > popUpCanvasHeight &&
-        legendCanvasHeight > customCanvasHeight
-      ? legendCanvasHeight
-      : popUpCanvasHeight > viewScreenshotHeight &&
-        popUpCanvasHeight > legendCanvasHeight &&
-        popUpCanvasHeight > customCanvasHeight
-      ? popUpCanvasHeight
-      : customCanvasHeight > viewScreenshotHeight &&
-        customCanvasHeight > legendCanvasHeight &&
-        customCanvasHeight > popUpCanvasHeight
-      ? customCanvasHeight
-      : null;
+    if (this.outputLayout === "row") {
+      combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
+      combinedCanvasContext.drawImage(viewCanvas, firstMapComponent.width, 0);
+      combinedCanvasContext.drawImage(
+        secondMapComponent,
+        viewScreenshot.data.width + firstMapComponent.width,
+        0
+      );
+      combinedCanvasContext.drawImage(
+        thirdMapComponent,
+        viewScreenshot.data.width +
+          firstMapComponent.width +
+          secondMapComponent.width,
+        0
+      );
+    } else if (this.outputLayout === "column") {
+      combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
+      combinedCanvasContext.drawImage(viewCanvas, 0, firstMapComponent.height);
+      combinedCanvasContext.drawImage(
+        secondMapComponent,
+        0,
+        viewScreenshot.data.height + firstMapComponent.height
+      );
+      combinedCanvasContext.drawImage(
+        thirdMapComponent,
+        0,
+        viewScreenshot.data.height +
+          firstMapComponent.height +
+          secondMapComponent.height
+      );
+    }
   }
 
   private _showPreview(
@@ -1012,28 +1039,13 @@ class ScreenshotViewModel extends Accessor {
     if (!maskDiv) {
       return;
     }
+    const boundClientRect = this.view.container.getBoundingClientRect();
     const calibratedMaskTop = (window.innerHeight - this.view.height) as number;
-
     if (area) {
-      const parsedLeft = this.offsetMask.hasOwnProperty("left")
-        ? this.offsetMask.left
-        : null;
-      const left =
-        !isNaN(parsedLeft) && parsedLeft !== null
-          ? area.x + this.offsetMask.left
-          : area.x;
-
-      const parsedTop = this.offsetMask.hasOwnProperty("top")
-        ? this.offsetMask.top
-        : null;
-
-      const top =
-        !isNaN(parsedTop) && parsedTop !== null
-          ? area.y + calibratedMaskTop + this.offsetMask.top
-          : area.y + calibratedMaskTop;
-
-      maskDiv.style.left = `${left}px`;
-      maskDiv.style.top = `${top}px`;
+      maskDiv.style.top = `${area.y + boundClientRect.top}px`;
+      maskDiv.style.left = `${area.x + boundClientRect.left}px`;
+      maskDiv.style.bottom = `${area.y + boundClientRect.bottom}px`;
+      maskDiv.style.right = `${area.x + boundClientRect.right}px`;
       maskDiv.style.width = `${area.width}px`;
       maskDiv.style.height = `${area.height}px`;
       this.screenshotModeIsActive = true;
@@ -1138,6 +1150,11 @@ class ScreenshotViewModel extends Accessor {
 
       this.notifyChange("state");
     });
+  }
+
+  private _setPageDirection(): void {
+    const htmlNode = document.querySelector("html");
+    this._pageDirection = htmlNode.getAttribute("dir") as "ltr" | "rtl";
   }
 }
 
