@@ -85,7 +85,8 @@ const screenshot = new Screenshot({
     label: "Include results",
     element: sidePanel
   },
-  outputLayout: "column"
+  outputLayout: "column",
+  includeLayoutOption: true
   });
 ```
 
