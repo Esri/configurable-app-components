@@ -12,7 +12,10 @@ define({
     widgetLabel: "Screenshot",
     legend: "Legend",
     popup: "Pop-up",
-    screenshotTitle: "Enter title"
+    enterTitle: "Enter title",
+    screenshotLayout: "Screenshot layout",
+    row: "Row",
+    column: "Column"
   }),
   "ar": 1,
   "bs": 1,
