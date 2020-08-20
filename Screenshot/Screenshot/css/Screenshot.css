@@ -165,6 +165,7 @@
   max-height: 75vh;
   max-width: 80vw;
   overflow-y: auto;
+  margin-bottom: 8px;
 }
 
 .esri-screenshot__js-screenshot-image {

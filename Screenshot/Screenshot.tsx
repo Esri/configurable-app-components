@@ -136,6 +136,10 @@ class Screenshot extends Widget {
   @property()
   outputLayout: "row" | "column" = null;
 
+  @aliasOf("viewModel.previewTitleInputNode")
+  @property()
+  previewTitleInputNode: HTMLInputElement = null;
+
   @property()
   @renderable([
     "viewModel.state",
@@ -227,10 +231,12 @@ class Screenshot extends Widget {
       <div key="screenshot-panel" class={this.classes(CSS.base, CSS.widget)}>
         <div class={CSS.mainContainer}>
           <h1 class={CSS.panelTitle}>{screenshotTitle}</h1>
-          {this.enableLegendOption || this.enablePopupOption ? (
+          {this.enableLegendOption || this.enablePopupOption || this.custom ? (
             <h3 class={CSS.panelSubTitle}>{screenshotSubtitle}</h3>
           ) : null}
-          {this.enableLegendOption || this.enablePopupOption ? fieldSet : null}
+          {this.enableLegendOption || this.enablePopupOption || this.custom
+            ? fieldSet
+            : null}
           {featureWarning}
           {setMapAreaButton}
         </div>
@@ -357,6 +363,14 @@ class Screenshot extends Widget {
               class={CSS.screenshotImg}
             />
           </div>
+          <input
+            bind={this}
+            type="text"
+            afterCreate={storeNode}
+            data-node-ref="previewTitleInputNode"
+            placeholder={i18n.screenshotTitle}
+          />
+
           {screenshotPreviewBtns}
         </div>
       </div>

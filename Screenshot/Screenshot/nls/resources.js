@@ -11,7 +11,8 @@ define({
     screenshotSubtitle: "Select additional elements to include with the map.",
     widgetLabel: "Screenshot",
     legend: "Legend",
-    popup: "Pop-up"
+    popup: "Pop-up",
+    screenshotTitle: "Enter title"
   }),
   "ar": 1,
   "bs": 1,
