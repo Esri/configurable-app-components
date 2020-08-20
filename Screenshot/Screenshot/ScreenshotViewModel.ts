@@ -94,6 +94,9 @@ class ScreenshotViewModel extends Accessor {
   legendWidget: Legend = null;
 
   @property()
+  previewTitleInputNode: HTMLInputElement = null;
+
+  @property()
   previewIsVisible: boolean = null;
 
   @property()
@@ -208,10 +211,16 @@ class ScreenshotViewModel extends Accessor {
     if (type === "2d") {
       const view = this.view as MapView;
       const map = view.map as WebMap;
-      this._downloadImage(
-        `${map.portalItem.title}.png`,
-        this._canvasElement.toDataURL()
-      );
+      let imageToDownload = null;
+      if (this.previewTitleInputNode.value) {
+        imageToDownload = this._getImageWithText(
+          this._canvasElement,
+          this.previewTitleInputNode.value
+        );
+      } else {
+        imageToDownload = this._canvasElement.toDataURL();
+      }
+      this._downloadImage(`${map.portalItem.title}.png`, imageToDownload);
     } else if (type === "3d") {
       const view = this.view as SceneView;
       const map = view.map as WebScene;
@@ -220,6 +229,35 @@ class ScreenshotViewModel extends Accessor {
         this._canvasElement.toDataURL()
       );
     }
+  }
+
+  private _getImageWithText(
+    screenshotCanvas: HTMLCanvasElement,
+    text: string
+  ): string {
+    const screenshotCanvasContext = screenshotCanvas.getContext("2d");
+    const screenshotImageData = screenshotCanvasContext.getImageData(
+      0,
+      0,
+      screenshotCanvas.width,
+      screenshotCanvas.height
+    );
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+
+    canvas.height = screenshotImageData.height + 40;
+    canvas.width = screenshotImageData.width + 40;
+
+    context.fillStyle = "#fff";
+    context.fillRect(20, 0, screenshotImageData.width, 40);
+
+    context.putImageData(screenshotImageData, 20, 40);
+
+    context.font = "20px Arial";
+    context.fillStyle = "#000";
+    context.fillText(text, 40, 30);
+
+    return canvas.toDataURL();
   }
 
   private _onlyTakeScreenshotOfView(

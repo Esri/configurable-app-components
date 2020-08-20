@@ -27,8 +27,8 @@ More info on html2canvas can be found here: http://html2canvas.hertzen.com/
 | includePopupInScreenshot \*  | Boolean                                 | Boolean to include/exclude pop-up in screenshot.                                                                                                                                                      |
 | includeCustomInScreenshot \* | Boolean                                 | Boolean to include/exclude custom element in screenshot. This property requires a value for the `custom` property to be passed in.                                                                    |
 | includeCustomInScreenshot \* | Boolean                                 | Boolean to include/exclude custom element in screenshot. This property requires a value for the `custom` property to be passed in.                                                                    |
-| custom \*                    | { label: string; element: HTMLElement } | HTML Element to include in screenshot output. `custom.label` will be used for the checkbox input label. `custom.element` will be used to pass into html2canvas in include in final screenshot output. |
-| offsetMask \*                | { left?: number; top?: number }         | Configuration to offset the drawn rectangle to account for headers and side panels in app.                                                                                                            |
+| custom \*                    | { label: string; element: HTMLElement } | HTML Element to include in screenshot output. `custom.label` will be used for the checkbox input label. `custom.element` will be used to pass into html2canvas to include in final screenshot output. |
+| outputLayout \*              | "row" \| "column"                       | Option to set layout of screenshot output to a row or column. `Default: "row"`                                                                                                                        |
 | featureWidget \* `read-only` | Feature                                 | Feature Widget containing pop-up node to include in screenshot.                                                                                                                                       |
 | legendWidget \* `read-only`  | Legend                                  | Legend Widget containing map legend node to include in screenshot.                                                                                                                                    |
 
@@ -42,22 +42,22 @@ More info on html2canvas can be found here: http://html2canvas.hertzen.com/
 
 ##### Property Overview:
 
-| Name                      | Type                                    | Summary                                                                                        |
-| ------------------------- | --------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| view                      | MapView \| SceneView                    | A reference to the `MapView` or `SceneView`                                                    |
-| previewIsVisible          | Boolean                                 | Boolean which indicates if the image preview panel is visible.                                 |
-| screenshotModeIsActive    | Boolean                                 | Boolean which indicates if the widget is in screenshot mode.                                   |
-| dragHandler               | any                                     | Drag handler event.                                                                            |
-| state                     | String                                  | State of this widget. Possible values are: `ready`, `takingScreenshot`, `complete`, `disabled` |
-| enableLegendOption        | Boolean                                 | Boolean to include legend option for user to include/exclude in screenshot.                    |
-| enablePopupOption         | Boolean                                 | Boolean to include pop-up option for user to include/exclude in screenshot.                    |
-| includeLegendInScreenshot | Boolean                                 | Boolean to include/exclude legend in screenshot.                                               |
-| includePopupInScreenshot  | Boolean                                 | Boolean to include/exclude pop-up in screenshot.                                               |
-| includeCustomInScreenshot | Boolean                                 | Boolean to include/exclude custom element in screenshot. Custom property required.             |
-| custom                    | { label: string; element: HTMLElement } | Boolean to include/exclude custom element in screenshot. Custom property required.             |
-| offsetMask                | { left?: number; top?: number }         | Configuration to offset the drawn rectangle to account for headers and side panels in app.     |
-| featureWidget `read-only` | Feature                                 | Instance of the Feature widget.                                                                |
-| legendWidget `read-only`  | Legend                                  | Instance of the Legend widget.                                                                 |
+| Name                      | Type                                    | Summary                                                                                                                                                                                               |
+| ------------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| view                      | MapView \| SceneView                    | A reference to the `MapView` or `SceneView`                                                                                                                                                           |
+| previewIsVisible          | Boolean                                 | Boolean which indicates if the image preview panel is visible.                                                                                                                                        |
+| screenshotModeIsActive    | Boolean                                 | Boolean which indicates if the widget is in screenshot mode.                                                                                                                                          |
+| dragHandler               | any                                     | Drag handler event.                                                                                                                                                                                   |
+| state                     | String                                  | State of this widget. Possible values are: `ready`, `takingScreenshot`, `complete`, `disabled`                                                                                                        |
+| enableLegendOption        | Boolean                                 | Boolean to include legend option for user to include/exclude in screenshot.                                                                                                                           |
+| enablePopupOption         | Boolean                                 | Boolean to include pop-up option for user to include/exclude in screenshot.                                                                                                                           |
+| includeLegendInScreenshot | Boolean                                 | Boolean to include/exclude legend in screenshot.                                                                                                                                                      |
+| includePopupInScreenshot  | Boolean                                 | Boolean to include/exclude pop-up in screenshot.                                                                                                                                                      |
+| includeCustomInScreenshot | Boolean                                 | Boolean to include/exclude custom element in screenshot. Custom property required.                                                                                                                    |
+| custom                    | { label: string; element: HTMLElement } | HTML Element to include in screenshot output. `custom.label` will be used for the checkbox input label. `custom.element` will be used to pass into html2canvas to include in final screenshot output. |
+| outputLayout              | "row" \| "column"                       | Option to set layout of screenshot output to a row or column. `Default: "row"`                                                                                                                        |
+| featureWidget `read-only` | Feature                                 | Instance of the Feature widget.                                                                                                                                                                       |
+| legendWidget `read-only`  | Legend                                  | Instance of the Legend widget.                                                                                                                                                                        |
 
 ### **Example usage:**
 
@@ -84,21 +84,19 @@ const screenshot = new Screenshot({
     label: "Include results",
     element: sidePanel
   },
-  offsetMask: {
-      left: sidePanel.clientWidth
-  }
+  outputLayout: "column"
   });
 ```
 
 A few things to note:
 
-Uses Esri Calcite Styles: https://esri.github.io/calcite-web/
+Uses Esri Calcite Components: https://github.com/Esri/calcite-components
 
 Uses ArcGIS JS API:
 
-https://js.arcgis.com/4.11/
+https://js.arcgis.com/4.16/
 
-https://js.arcgis.com/4.11/esri/css/main.css
+https://js.arcgis.com/4.16/esri/css/main.css
 
 Insert Screenshot styles as last stylesheet
 
@@ -151,7 +149,7 @@ Esri welcomes contributions from anyone and everyone. Please see our [guidelines
 
 ## Licensing
 
-Copyright 2019 Esri
+Copyright 2020 Esri
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

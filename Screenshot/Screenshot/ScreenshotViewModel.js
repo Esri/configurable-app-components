@@ -37,6 +37,7 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
             _this.includeLegendInScreenshot = null;
             _this.includePopupInScreenshot = null;
             _this.legendWidget = null;
+            _this.previewTitleInputNode = null;
             _this.previewIsVisible = null;
             _this.screenshotModeIsActive = null;
             _this.view = null;
@@ -155,13 +156,35 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
             if (type === "2d") {
                 var view = this.view;
                 var map = view.map;
-                this._downloadImage(map.portalItem.title + ".png", this._canvasElement.toDataURL());
+                var imageToDownload = null;
+                if (this.previewTitleInputNode.value) {
+                    imageToDownload = this._getImageWithText(this._canvasElement, this.previewTitleInputNode.value);
+                }
+                else {
+                    imageToDownload = this._canvasElement.toDataURL();
+                }
+                this._downloadImage(map.portalItem.title + ".png", imageToDownload);
             }
             else if (type === "3d") {
                 var view = this.view;
                 var map = view.map;
                 this._downloadImage(map.portalItem.title + ".png", this._canvasElement.toDataURL());
             }
+        };
+        ScreenshotViewModel.prototype._getImageWithText = function (screenshotCanvas, text) {
+            var screenshotCanvasContext = screenshotCanvas.getContext("2d");
+            var screenshotImageData = screenshotCanvasContext.getImageData(0, 0, screenshotCanvas.width, screenshotCanvas.height);
+            var canvas = document.createElement("canvas");
+            var context = canvas.getContext("2d");
+            canvas.height = screenshotImageData.height + 40;
+            canvas.width = screenshotImageData.width + 40;
+            context.fillStyle = "#fff";
+            context.fillRect(20, 0, screenshotImageData.width, 40);
+            context.putImageData(screenshotImageData, 20, 40);
+            context.font = "20px Arial";
+            context.fillStyle = "#000";
+            context.fillText(text, 40, 30);
+            return canvas.toDataURL();
         };
         ScreenshotViewModel.prototype._onlyTakeScreenshotOfView = function (viewScreenshot, viewCanvas, img, screenshotImageElement, maskDiv, downloadBtnNode) {
             var _this = this;
@@ -733,6 +756,9 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
                 readOnly: true
             })
         ], ScreenshotViewModel.prototype, "legendWidget", void 0);
+        tslib_1.__decorate([
+            decorators_1.property()
+        ], ScreenshotViewModel.prototype, "previewTitleInputNode", void 0);
         tslib_1.__decorate([
             decorators_1.property()
         ], ScreenshotViewModel.prototype, "previewIsVisible", void 0);

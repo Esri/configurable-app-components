@@ -69,6 +69,7 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
             _this.theme = "light";
             _this.view = null;
             _this.outputLayout = null;
+            _this.previewTitleInputNode = null;
             _this.viewModel = new ScreenshotViewModel();
             return _this;
         }
@@ -129,8 +130,10 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
             return (widget_1.tsx("div", { key: "screenshot-panel", class: this.classes(CSS.base, CSS.widget) },
                 widget_1.tsx("div", { class: CSS.mainContainer },
                     widget_1.tsx("h1", { class: CSS.panelTitle }, screenshotTitle),
-                    this.enableLegendOption || this.enablePopupOption ? (widget_1.tsx("h3", { class: CSS.panelSubTitle }, screenshotSubtitle)) : null,
-                    this.enableLegendOption || this.enablePopupOption ? fieldSet : null,
+                    this.enableLegendOption || this.enablePopupOption || this.custom ? (widget_1.tsx("h3", { class: CSS.panelSubTitle }, screenshotSubtitle)) : null,
+                    this.enableLegendOption || this.enablePopupOption || this.custom
+                        ? fieldSet
+                        : null,
                     featureWarning,
                     setMapAreaButton)));
         };
@@ -174,6 +177,7 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
                 widget_1.tsx("div", { class: CSS.screenshotPreviewContainer },
                     widget_1.tsx("div", { class: CSS.screenshotImgContainer },
                         widget_1.tsx("img", { bind: this, afterCreate: widget_1.storeNode, "data-node-ref": "_screenshotImgNode", class: CSS.screenshotImg })),
+                    widget_1.tsx("input", { bind: this, type: "text", afterCreate: widget_1.storeNode, "data-node-ref": "previewTitleInputNode", placeholder: i18n.screenshotTitle }),
                     screenshotPreviewBtns)));
         };
         Screenshot.prototype._renderScreenshotPreviewBtns = function () {
@@ -368,6 +372,10 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
             decorators_1.aliasOf("viewModel.outputLayout"),
             decorators_1.property()
         ], Screenshot.prototype, "outputLayout", void 0);
+        tslib_1.__decorate([
+            decorators_1.aliasOf("viewModel.previewTitleInputNode"),
+            decorators_1.property()
+        ], Screenshot.prototype, "previewTitleInputNode", void 0);
         tslib_1.__decorate([
             decorators_1.property(),
             widget_1.renderable([
