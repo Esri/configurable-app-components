@@ -168,7 +168,14 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
             else if (type === "3d") {
                 var view = this.view;
                 var map = view.map;
-                this._downloadImage(map.portalItem.title + ".png", this._canvasElement.toDataURL());
+                var imageToDownload = null;
+                if (this.previewTitleInputNode.value) {
+                    imageToDownload = this._getImageWithText(this._canvasElement, this.previewTitleInputNode.value);
+                }
+                else {
+                    imageToDownload = this._canvasElement.toDataURL();
+                }
+                this._downloadImage(map.portalItem.title + ".png", imageToDownload);
             }
         };
         ScreenshotViewModel.prototype._getImageWithText = function (screenshotCanvas, text) {

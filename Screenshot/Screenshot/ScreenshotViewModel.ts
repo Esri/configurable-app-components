@@ -224,10 +224,16 @@ class ScreenshotViewModel extends Accessor {
     } else if (type === "3d") {
       const view = this.view as SceneView;
       const map = view.map as WebScene;
-      this._downloadImage(
-        `${map.portalItem.title}.png`,
-        this._canvasElement.toDataURL()
-      );
+      let imageToDownload = null;
+      if (this.previewTitleInputNode.value) {
+        imageToDownload = this._getImageWithText(
+          this._canvasElement,
+          this.previewTitleInputNode.value
+        );
+      } else {
+        imageToDownload = this._canvasElement.toDataURL();
+      }
+      this._downloadImage(`${map.portalItem.title}.png`, imageToDownload);
     }
   }
 
