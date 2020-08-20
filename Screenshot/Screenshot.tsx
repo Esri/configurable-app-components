@@ -121,9 +121,6 @@ class Screenshot extends Widget {
   })
   legendWidget: Legend = null;
 
-  @aliasOf("viewModel.offsetMask")
-  offsetMask: { top?: number; left?: number } = null;
-
   @aliasOf("viewModel.screenshotModeIsActive")
   @property()
   screenshotModeIsActive: boolean = null;
@@ -134,6 +131,10 @@ class Screenshot extends Widget {
   @aliasOf("viewModel.view")
   @property()
   view: MapView | SceneView = null;
+
+  @aliasOf("viewModel.outputLayout")
+  @property()
+  outputLayout: "row" | "column" = null;
 
   @property()
   @renderable([
@@ -153,7 +154,6 @@ class Screenshot extends Widget {
       this._generateOffScreenPopup(),
       this._watchSelectedFeature(),
       watchUtils.when(this, "legendWidget", () => {
-        console.log(this.legendWidget);
         this.scheduleRender();
       })
     ]);

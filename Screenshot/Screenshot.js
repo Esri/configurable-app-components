@@ -65,10 +65,10 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
             _this.includePopupInScreenshot = null;
             _this.label = i18n.widgetLabel;
             _this.legendWidget = null;
-            _this.offsetMask = null;
             _this.screenshotModeIsActive = null;
             _this.theme = "light";
             _this.view = null;
+            _this.outputLayout = null;
             _this.viewModel = new ScreenshotViewModel();
             return _this;
         }
@@ -79,7 +79,6 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
                 this._generateOffScreenPopup(),
                 this._watchSelectedFeature(),
                 watchUtils.when(this, "legendWidget", function () {
-                    console.log(_this.legendWidget);
                     _this.scheduleRender();
                 })
             ]);
@@ -355,9 +354,6 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
             })
         ], Screenshot.prototype, "legendWidget", void 0);
         tslib_1.__decorate([
-            decorators_1.aliasOf("viewModel.offsetMask")
-        ], Screenshot.prototype, "offsetMask", void 0);
-        tslib_1.__decorate([
             decorators_1.aliasOf("viewModel.screenshotModeIsActive"),
             decorators_1.property()
         ], Screenshot.prototype, "screenshotModeIsActive", void 0);
@@ -368,6 +364,10 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
             decorators_1.aliasOf("viewModel.view"),
             decorators_1.property()
         ], Screenshot.prototype, "view", void 0);
+        tslib_1.__decorate([
+            decorators_1.aliasOf("viewModel.outputLayout"),
+            decorators_1.property()
+        ], Screenshot.prototype, "outputLayout", void 0);
         tslib_1.__decorate([
             decorators_1.property(),
             widget_1.renderable([

@@ -27,6 +27,7 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
                 ".esri-screenshot__offscreen-legend-container",
                 ".esri-screenshot__offscreen-pop-up-container"
             ];
+            _this.outputLayout = "row";
             _this.custom = null;
             _this.dragHandler = null;
             _this.enableLegendOption = null;
@@ -36,7 +37,6 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
             _this.includeLegendInScreenshot = null;
             _this.includePopupInScreenshot = null;
             _this.legendWidget = null;
-            _this.offsetMask = {};
             _this.previewIsVisible = null;
             _this.screenshotModeIsActive = null;
             _this.view = null;
@@ -334,31 +334,60 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
             var viewScreenshotHeight = viewScreenshot.data.height;
             var viewLegendCanvasContext = combinedCanvas.getContext("2d");
             var mapComponentHeight = mapComponent.height;
-            var height = mapComponentHeight > viewScreenshotHeight
-                ? mapComponentHeight
-                : viewScreenshotHeight;
-            combinedCanvas.width = viewScreenshot.data.width + mapComponent.width;
+            var height = this.outputLayout === "row"
+                ? Math.max(mapComponentHeight, viewScreenshotHeight)
+                : this.outputLayout === "column"
+                    ? mapComponentHeight + viewScreenshotHeight
+                    : null;
+            var width = this.outputLayout === "row"
+                ? viewScreenshot.data.width + mapComponent.width
+                : this.outputLayout === "column"
+                    ? Math.max(viewScreenshot.data.width, mapComponent.width)
+                    : null;
+            combinedCanvas.width = width;
             combinedCanvas.height = height;
             viewLegendCanvasContext.fillStyle = "#fff";
             viewLegendCanvasContext.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
-            viewLegendCanvasContext.drawImage(mapComponent, 0, 0);
-            viewLegendCanvasContext.drawImage(viewCanvas, mapComponent.width, 0);
+            if (this.outputLayout === "row") {
+                viewLegendCanvasContext.drawImage(mapComponent, 0, 0);
+                viewLegendCanvasContext.drawImage(viewCanvas, mapComponent.width, 0);
+            }
+            else if (this.outputLayout === "column") {
+                viewLegendCanvasContext.drawImage(mapComponent, 0, 0);
+                viewLegendCanvasContext.drawImage(viewCanvas, 0, mapComponentHeight);
+            }
         };
         ScreenshotViewModel.prototype._generateImageForTwoComponents = function (viewCanvas, combinedCanvasElements, viewScreenshot, firstMapComponent, secondMapComponent) {
             var combinedCanvasContext = combinedCanvasElements.getContext("2d");
             var firstMapComponentHeight = firstMapComponent.height;
             var secondMapComponentHeight = secondMapComponent.height;
             var viewScreenshotHeight = viewScreenshot.data.height;
-            combinedCanvasElements.width =
-                viewScreenshot.data.width +
-                    firstMapComponent.width +
-                    secondMapComponent.width;
-            combinedCanvasElements.height = this._setupCombinedScreenshotHeightForTwo(viewScreenshotHeight, firstMapComponentHeight, secondMapComponentHeight);
+            if (this.outputLayout === "row") {
+                combinedCanvasElements.width =
+                    viewScreenshot.data.width +
+                        firstMapComponent.width +
+                        secondMapComponent.width;
+                combinedCanvasElements.height = Math.max(viewScreenshotHeight, firstMapComponentHeight, secondMapComponentHeight);
+            }
+            else if (this.outputLayout === "column") {
+                combinedCanvasElements.width = Math.max(viewScreenshot.data.width, firstMapComponent.width, secondMapComponent.width);
+                combinedCanvasElements.height =
+                    viewScreenshot.data.height +
+                        firstMapComponent.height +
+                        secondMapComponent.height;
+            }
             combinedCanvasContext.fillStyle = "#fff";
             combinedCanvasContext.fillRect(0, 0, combinedCanvasElements.width, combinedCanvasElements.height);
-            combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
-            combinedCanvasContext.drawImage(viewCanvas, firstMapComponent.width, 0);
-            combinedCanvasContext.drawImage(secondMapComponent, viewScreenshot.data.width + firstMapComponent.width, 0);
+            if (this.outputLayout === "row") {
+                combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
+                combinedCanvasContext.drawImage(viewCanvas, firstMapComponent.width, 0);
+                combinedCanvasContext.drawImage(secondMapComponent, viewScreenshot.data.width + firstMapComponent.width, 0);
+            }
+            else if (this.outputLayout === "column") {
+                combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
+                combinedCanvasContext.drawImage(viewCanvas, 0, firstMapComponentHeight);
+                combinedCanvasContext.drawImage(secondMapComponent, 0, viewScreenshotHeight + firstMapComponentHeight);
+            }
         };
         ScreenshotViewModel.prototype._generateImageForThreeComponents = function (viewCanvas, combinedCanvasElements, viewScreenshot, firstMapComponent, secondMapComponent, thirdMapComponent) {
             var combinedCanvasContext = combinedCanvasElements.getContext("2d");
@@ -366,51 +395,40 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
             var secondMapComponentHeight = secondMapComponent.height;
             var thirdMapComponentHeight = thirdMapComponent.height;
             var viewScreenshotHeight = viewScreenshot.data.height;
-            combinedCanvasElements.width =
-                viewScreenshot.data.width +
-                    firstMapComponent.width +
-                    secondMapComponent.width +
-                    thirdMapComponent.width;
-            combinedCanvasElements.height = this._setupCombinedScreenshotHeightForThree(viewScreenshotHeight, firstMapComponentHeight, secondMapComponentHeight, thirdMapComponentHeight);
+            if (this.outputLayout === "row") {
+                combinedCanvasElements.width =
+                    viewScreenshot.data.width +
+                        firstMapComponent.width +
+                        secondMapComponent.width +
+                        thirdMapComponent.width;
+                combinedCanvasElements.height = Math.max(viewScreenshotHeight, firstMapComponentHeight, secondMapComponentHeight, thirdMapComponentHeight);
+            }
+            else if (this.outputLayout === "column") {
+                combinedCanvasElements.width = Math.max(viewScreenshot.data.width, firstMapComponent.width, secondMapComponent.width, thirdMapComponent.width);
+                combinedCanvasElements.height =
+                    viewScreenshot.data.height +
+                        firstMapComponent.height +
+                        secondMapComponent.height +
+                        thirdMapComponent.height;
+            }
             combinedCanvasContext.fillStyle = "#fff";
             combinedCanvasContext.fillRect(0, 0, combinedCanvasElements.width, combinedCanvasElements.height);
-            combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
-            combinedCanvasContext.drawImage(viewCanvas, firstMapComponent.width, 0);
-            combinedCanvasContext.drawImage(secondMapComponent, viewScreenshot.data.width + firstMapComponent.width, 0);
-            combinedCanvasContext.drawImage(thirdMapComponent, viewScreenshot.data.width +
-                firstMapComponent.width +
-                secondMapComponent.width, 0);
-        };
-        ScreenshotViewModel.prototype._setupCombinedScreenshotHeightForTwo = function (viewScreenshotHeight, legendCanvasHeight, popUpCanvasHeight) {
-            return viewScreenshotHeight > legendCanvasHeight &&
-                viewScreenshotHeight > popUpCanvasHeight
-                ? viewScreenshotHeight
-                : legendCanvasHeight > viewScreenshotHeight &&
-                    legendCanvasHeight > popUpCanvasHeight
-                    ? legendCanvasHeight
-                    : popUpCanvasHeight > legendCanvasHeight &&
-                        popUpCanvasHeight > viewScreenshotHeight
-                        ? popUpCanvasHeight
-                        : null;
-        };
-        ScreenshotViewModel.prototype._setupCombinedScreenshotHeightForThree = function (viewScreenshotHeight, legendCanvasHeight, popUpCanvasHeight, customCanvasHeight) {
-            return viewScreenshotHeight > legendCanvasHeight &&
-                viewScreenshotHeight > popUpCanvasHeight &&
-                viewScreenshotHeight > customCanvasHeight
-                ? viewScreenshotHeight
-                : legendCanvasHeight > viewScreenshotHeight &&
-                    legendCanvasHeight > popUpCanvasHeight &&
-                    legendCanvasHeight > customCanvasHeight
-                    ? legendCanvasHeight
-                    : popUpCanvasHeight > viewScreenshotHeight &&
-                        popUpCanvasHeight > legendCanvasHeight &&
-                        popUpCanvasHeight > customCanvasHeight
-                        ? popUpCanvasHeight
-                        : customCanvasHeight > viewScreenshotHeight &&
-                            customCanvasHeight > legendCanvasHeight &&
-                            customCanvasHeight > popUpCanvasHeight
-                            ? customCanvasHeight
-                            : null;
+            if (this.outputLayout === "row") {
+                combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
+                combinedCanvasContext.drawImage(viewCanvas, firstMapComponent.width, 0);
+                combinedCanvasContext.drawImage(secondMapComponent, viewScreenshot.data.width + firstMapComponent.width, 0);
+                combinedCanvasContext.drawImage(thirdMapComponent, viewScreenshot.data.width +
+                    firstMapComponent.width +
+                    secondMapComponent.width, 0);
+            }
+            else if (this.outputLayout === "column") {
+                combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
+                combinedCanvasContext.drawImage(viewCanvas, 0, firstMapComponent.height);
+                combinedCanvasContext.drawImage(secondMapComponent, 0, viewScreenshot.data.height + firstMapComponent.height);
+                combinedCanvasContext.drawImage(thirdMapComponent, 0, viewScreenshot.data.height +
+                    firstMapComponent.height +
+                    secondMapComponent.height);
+            }
         };
         ScreenshotViewModel.prototype._showPreview = function (canvasElement, screenshotImageElement, maskDiv, downloadBtnNode) {
             screenshotImageElement.width = canvasElement.width;
@@ -577,22 +595,13 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
             if (!maskDiv) {
                 return;
             }
+            var boundClientRect = this.view.container.getBoundingClientRect();
             var calibratedMaskTop = (window.innerHeight - this.view.height);
             if (area) {
-                var parsedLeft = this.offsetMask.hasOwnProperty("left")
-                    ? this.offsetMask.left
-                    : null;
-                var left = !isNaN(parsedLeft) && parsedLeft !== null
-                    ? area.x + this.offsetMask.left
-                    : area.x;
-                var parsedTop = this.offsetMask.hasOwnProperty("top")
-                    ? this.offsetMask.top
-                    : null;
-                var top_1 = !isNaN(parsedTop) && parsedTop !== null
-                    ? area.y + calibratedMaskTop + this.offsetMask.top
-                    : area.y + calibratedMaskTop;
-                maskDiv.style.left = left + "px";
-                maskDiv.style.top = top_1 + "px";
+                maskDiv.style.top = area.y + boundClientRect.top + "px";
+                maskDiv.style.left = area.x + boundClientRect.left + "px";
+                maskDiv.style.bottom = area.y + boundClientRect.bottom + "px";
+                maskDiv.style.right = area.x + boundClientRect.right + "px";
                 maskDiv.style.width = area.width + "px";
                 maskDiv.style.height = area.height + "px";
                 this.screenshotModeIsActive = true;
@@ -692,6 +701,9 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
         ], ScreenshotViewModel.prototype, "state", null);
         tslib_1.__decorate([
             decorators_1.property()
+        ], ScreenshotViewModel.prototype, "outputLayout", void 0);
+        tslib_1.__decorate([
+            decorators_1.property()
         ], ScreenshotViewModel.prototype, "custom", void 0);
         tslib_1.__decorate([
             decorators_1.property()
@@ -721,9 +733,6 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
                 readOnly: true
             })
         ], ScreenshotViewModel.prototype, "legendWidget", void 0);
-        tslib_1.__decorate([
-            decorators_1.property()
-        ], ScreenshotViewModel.prototype, "offsetMask", void 0);
         tslib_1.__decorate([
             decorators_1.property()
         ], ScreenshotViewModel.prototype, "previewIsVisible", void 0);
