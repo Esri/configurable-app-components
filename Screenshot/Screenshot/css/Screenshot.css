@@ -25,6 +25,7 @@
 .esri-screenshot .esri-screenshot__main-container .esri-screenshot__screenshot-button-container {
   display: flex;
   justify-content: center;
+  margin-top: 8px;
 }
 .esri-screenshot .esri-screenshot__main-container .esri-screenshot__screenshot-button-container button {
   width: 100%;
