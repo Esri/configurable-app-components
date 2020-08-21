@@ -80,6 +80,11 @@ class Screenshot extends Widget {
   private _offscreenPopupContainer: HTMLElement = null;
   private _offscreenLegendContainer: HTMLElement = null;
   private _handles: Handles = new Handles();
+  private _elementOptions: {
+    legend?: boolean;
+    popup?: boolean;
+    custom?: boolean;
+  } = {};
 
   @aliasOf("viewModel.custom")
   custom: { label: string; element: HTMLElement } = null;
@@ -163,7 +168,22 @@ class Screenshot extends Widget {
       this._watchSelectedFeature(),
       watchUtils.when(this, "legendWidget", () => {
         this.scheduleRender();
-      })
+      }),
+      watchUtils.when(
+        this,
+        ["enableLegendOption", "enablePopupOption", "custom"],
+        () => {
+          if (this.enableLegendOption) {
+            this._elementOptions.legend = this.includeLegendInScreenshot;
+          }
+          if (this.enablePopupOption) {
+            this._elementOptions.popup = this.includePopupInScreenshot;
+          }
+          if (this.custom) {
+            this._elementOptions.custom = this.includeCustomInScreenshot;
+          }
+        }
+      )
     ]);
   }
 
@@ -253,10 +273,18 @@ class Screenshot extends Widget {
   }
 
   private _renderScreenshotLayout(): any {
+    const elementOptionKeys = Object.keys(this._elementOptions);
+    const allDisabled = elementOptionKeys.every(
+      key => !this._elementOptions[key]
+    );
     return (
       <label class={CSS.selectLayout}>
         <span> {i18n.screenshotLayout}</span>
-        <select bind={this} onchange={this._updateLayoutOption}>
+        <select
+          bind={this}
+          onchange={this._updateLayoutOption}
+          disabled={allDisabled}
+        >
           <option
             value="row"
             selected={this.outputLayout === "row" ? true : false}
@@ -508,6 +536,7 @@ class Screenshot extends Widget {
   private _toggleLegend(event: Event): void {
     const node = event.currentTarget as HTMLInputElement;
     this.includeLegendInScreenshot = node.checked;
+    this._elementOptions.legend = node.checked;
     this.scheduleRender();
   }
 
@@ -515,6 +544,7 @@ class Screenshot extends Widget {
   private _togglePopup(event: Event): void {
     const node = event.currentTarget as HTMLInputElement;
     this.includePopupInScreenshot = node.checked;
+    this._elementOptions.popup = node.checked;
     this.scheduleRender();
   }
 
@@ -522,6 +552,7 @@ class Screenshot extends Widget {
   private _toggleCustom(event: Event): void {
     const node = event.currentTarget as HTMLInputElement;
     this.includeCustomInScreenshot = node.checked;
+    this._elementOptions.custom = node.checked;
     this.scheduleRender();
   }
 

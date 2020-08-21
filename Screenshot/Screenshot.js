@@ -56,6 +56,7 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
             _this._offscreenPopupContainer = null;
             _this._offscreenLegendContainer = null;
             _this._handles = new Handles();
+            _this._elementOptions = {};
             _this.custom = null;
             _this.enableLegendOption = null;
             _this.enablePopupOption = null;
@@ -83,6 +84,17 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
                 this._watchSelectedFeature(),
                 watchUtils.when(this, "legendWidget", function () {
                     _this.scheduleRender();
+                }),
+                watchUtils.when(this, ["enableLegendOption", "enablePopupOption", "custom"], function () {
+                    if (_this.enableLegendOption) {
+                        _this._elementOptions.legend = _this.includeLegendInScreenshot;
+                    }
+                    if (_this.enablePopupOption) {
+                        _this._elementOptions.popup = _this.includePopupInScreenshot;
+                    }
+                    if (_this.custom) {
+                        _this._elementOptions.custom = _this.includeCustomInScreenshot;
+                    }
                 })
             ]);
         };
@@ -144,11 +156,14 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
                     setMapAreaButton)));
         };
         Screenshot.prototype._renderScreenshotLayout = function () {
+            var _this = this;
+            var elementOptionKeys = Object.keys(this._elementOptions);
+            var allDisabled = elementOptionKeys.every(function (key) { return !_this._elementOptions[key]; });
             return (widget_1.tsx("label", { class: CSS.selectLayout },
                 widget_1.tsx("span", null,
                     " ",
                     i18n.screenshotLayout),
-                widget_1.tsx("select", { bind: this, onchange: this._updateLayoutOption },
+                widget_1.tsx("select", { bind: this, onchange: this._updateLayoutOption, disabled: allDisabled },
                     widget_1.tsx("option", { value: "row", selected: this.outputLayout === "row" ? true : false }, i18n.row),
                     widget_1.tsx("option", { value: "column", selected: this.outputLayout === "column" ? true : false }, i18n.column))));
         };
@@ -235,16 +250,19 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
         Screenshot.prototype._toggleLegend = function (event) {
             var node = event.currentTarget;
             this.includeLegendInScreenshot = node.checked;
+            this._elementOptions.legend = node.checked;
             this.scheduleRender();
         };
         Screenshot.prototype._togglePopup = function (event) {
             var node = event.currentTarget;
             this.includePopupInScreenshot = node.checked;
+            this._elementOptions.popup = node.checked;
             this.scheduleRender();
         };
         Screenshot.prototype._toggleCustom = function (event) {
             var node = event.currentTarget;
             this.includeCustomInScreenshot = node.checked;
+            this._elementOptions.custom = node.checked;
             this.scheduleRender();
         };
         Screenshot.prototype._closePreview = function () {
