@@ -22,10 +22,10 @@
   },
   "homepage": "https://github.com/Esri/configurable-app-components#readme",
   "devDependencies": {
+    "@types/arcgis-js-api": "^4.16.0",
+    "dojo-typings": "^1.11.11",
     "gh-release": "^3.5.0",
-    "typescript": "^3.0.0",
-    "@types/arcgis-js-api": "^4.11.0",
-    "dojo-typings": "^1.11.9"
+    "typescript": "^3.9.7"
   },
   "peerDependencies": {
     "arcgis-js-api": "^4.0.0"
