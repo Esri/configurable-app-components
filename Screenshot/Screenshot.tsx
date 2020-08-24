@@ -258,7 +258,6 @@ class Screenshot extends Widget {
       <div key="screenshot-panel" class={this.classes(CSS.base, CSS.widget)}>
         <div class={CSS.mainContainer}>
           <h1 class={CSS.panelTitle}>{screenshotTitle}</h1>
-          {screenshotLayout}
           {this.enableLegendOption || this.enablePopupOption || this.custom ? (
             <h3 class={CSS.panelSubTitle}>{screenshotSubtitle}</h3>
           ) : null}
@@ -266,6 +265,7 @@ class Screenshot extends Widget {
             ? fieldSet
             : null}
           {this.enablePopupOption ? featureWarning : null}
+          {screenshotLayout}
           {setMapAreaButton}
         </div>
       </div>

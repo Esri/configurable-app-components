@@ -147,12 +147,12 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
             return (widget_1.tsx("div", { key: "screenshot-panel", class: this.classes(CSS.base, CSS.widget) },
                 widget_1.tsx("div", { class: CSS.mainContainer },
                     widget_1.tsx("h1", { class: CSS.panelTitle }, screenshotTitle),
-                    screenshotLayout,
                     this.enableLegendOption || this.enablePopupOption || this.custom ? (widget_1.tsx("h3", { class: CSS.panelSubTitle }, screenshotSubtitle)) : null,
                     this.enableLegendOption || this.enablePopupOption || this.custom
                         ? fieldSet
                         : null,
                     this.enablePopupOption ? featureWarning : null,
+                    screenshotLayout,
                     setMapAreaButton)));
         };
         Screenshot.prototype._renderScreenshotLayout = function () {

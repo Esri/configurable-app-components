@@ -64,8 +64,6 @@
 
 .esri-screenshot__feature-warning {
   height: 15px;
-  margin-top: 2%;
-  margin-bottom: 2%;
 }
 .esri-screenshot__feature-warning .esri-screenshot__feature-warning-text-container {
   display: flex;
@@ -80,6 +78,8 @@
 
 .esri-screenshot__select-layout {
   display: block;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 .esri-screenshot__select-layout span {
   font-size: 0.9rem;
@@ -298,4 +298,4 @@ html[dir=rtl] .icon-ui-media {
   }
 }
 
-/*# sourceMappingURL=Screenshot.css.map */
+/*# sourceMappingURL=cssScreenshot.css.map */
