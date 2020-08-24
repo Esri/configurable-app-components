@@ -591,8 +591,8 @@ class ScreenshotViewModel extends Accessor {
       viewLegendCanvasContext.drawImage(mapComponent, 0, 0);
       viewLegendCanvasContext.drawImage(viewCanvas, mapComponent.width, 0);
     } else if (this.outputLayout === "column") {
-      viewLegendCanvasContext.drawImage(mapComponent, 0, 0);
-      viewLegendCanvasContext.drawImage(viewCanvas, 0, mapComponentHeight);
+      viewLegendCanvasContext.drawImage(viewCanvas, 0, 0);
+      viewLegendCanvasContext.drawImage(mapComponent, 0, viewScreenshotHeight);
     }
   }
 
@@ -647,8 +647,12 @@ class ScreenshotViewModel extends Accessor {
         0
       );
     } else if (this.outputLayout === "column") {
-      combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
-      combinedCanvasContext.drawImage(viewCanvas, 0, firstMapComponentHeight);
+      combinedCanvasContext.drawImage(viewCanvas, 0, 0);
+      combinedCanvasContext.drawImage(
+        firstMapComponent,
+        0,
+        viewScreenshotHeight
+      );
       combinedCanvasContext.drawImage(
         secondMapComponent,
         0,
@@ -720,8 +724,12 @@ class ScreenshotViewModel extends Accessor {
         0
       );
     } else if (this.outputLayout === "column") {
-      combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
-      combinedCanvasContext.drawImage(viewCanvas, 0, firstMapComponent.height);
+      combinedCanvasContext.drawImage(viewCanvas, 0, 0);
+      combinedCanvasContext.drawImage(
+        firstMapComponent,
+        0,
+        viewScreenshotHeight
+      );
       combinedCanvasContext.drawImage(
         secondMapComponent,
         0,

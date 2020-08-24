@@ -383,8 +383,8 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
                 viewLegendCanvasContext.drawImage(viewCanvas, mapComponent.width, 0);
             }
             else if (this.outputLayout === "column") {
-                viewLegendCanvasContext.drawImage(mapComponent, 0, 0);
-                viewLegendCanvasContext.drawImage(viewCanvas, 0, mapComponentHeight);
+                viewLegendCanvasContext.drawImage(viewCanvas, 0, 0);
+                viewLegendCanvasContext.drawImage(mapComponent, 0, viewScreenshotHeight);
             }
         };
         ScreenshotViewModel.prototype._generateImageForTwoComponents = function (viewCanvas, combinedCanvasElements, viewScreenshot, firstMapComponent, secondMapComponent) {
@@ -414,8 +414,8 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
                 combinedCanvasContext.drawImage(secondMapComponent, viewScreenshot.data.width + firstMapComponent.width, 0);
             }
             else if (this.outputLayout === "column") {
-                combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
-                combinedCanvasContext.drawImage(viewCanvas, 0, firstMapComponentHeight);
+                combinedCanvasContext.drawImage(viewCanvas, 0, 0);
+                combinedCanvasContext.drawImage(firstMapComponent, 0, viewScreenshotHeight);
                 combinedCanvasContext.drawImage(secondMapComponent, 0, viewScreenshotHeight + firstMapComponentHeight);
             }
         };
@@ -452,8 +452,8 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
                     secondMapComponent.width, 0);
             }
             else if (this.outputLayout === "column") {
-                combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
-                combinedCanvasContext.drawImage(viewCanvas, 0, firstMapComponent.height);
+                combinedCanvasContext.drawImage(viewCanvas, 0, 0);
+                combinedCanvasContext.drawImage(firstMapComponent, 0, viewScreenshotHeight);
                 combinedCanvasContext.drawImage(secondMapComponent, 0, viewScreenshot.data.height + firstMapComponent.height);
                 combinedCanvasContext.drawImage(thirdMapComponent, 0, viewScreenshot.data.height +
                     firstMapComponent.height +
