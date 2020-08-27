@@ -18,18 +18,11 @@
 
 // limitations under the License.​
 
-/// <amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" />
-/// <amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" />
-
-import {
-  declared,
-  property,
-  subclass
-} from "esri/core/accessorSupport/decorators";
+import { property, subclass } from "esri/core/accessorSupport/decorators";
 import Accessor = require("esri/core/Accessor");
 
 @subclass("ShareFeatures")
-class ShareFeatures extends declared(Accessor) {
+class ShareFeatures extends Accessor {
   @property({ value: true })
   set copyToClipboard(value: boolean) {
     if (!this.shareServices) {

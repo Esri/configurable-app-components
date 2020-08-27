@@ -1,18 +1,9 @@
-/// <amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" />
-/// <amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" />
-
 // esri.core
 import Accessor = require("esri/core/Accessor");
 import Collection = require("esri/core/Collection");
-import requireUtils = require("esri/core/requireUtils");
-import promiseUtils = require("esri/core/promiseUtils");
 
 // esri.core.accessorSupport
-import {
-  subclass,
-  declared,
-  property
-} from "esri/core/accessorSupport/decorators";
+import { subclass, property } from "esri/core/accessorSupport/decorators";
 
 // esri.views
 import MapView = require("esri/views/MapView");
@@ -24,14 +15,15 @@ import Point = require("esri/geometry/Point");
 // esri.request
 import esriRequest = require("esri/request");
 
-// require
-import moduleRequire = require("require");
-
 // Share Item
 import ShareItem = require("./ShareItem");
 
 // Share Feature
 import ShareFeatures = require("./ShareFeatures");
+
+// esri.geometry
+import projection = require("esri/geometry/projection");
+import SpatialReference = require("esri/geometry/SpatialReference");
 
 //----------------------------------
 //
@@ -82,7 +74,7 @@ const SHORTEN_API = "https://arcg.is/prod/shorten";
 type State = "ready" | "loading" | "shortening" | "projecting" | "disabled";
 
 @subclass("ShareViewModel")
-class ShareViewModel extends declared(Accessor) {
+class ShareViewModel extends Accessor {
   //----------------------------------
   //
   //  Lifecycle
@@ -100,9 +92,9 @@ class ShareViewModel extends declared(Accessor) {
   //
   //----------------------------------
 
-  // Promises for widget state
-  private _shortenPromise: Promise<__esri.RequestResponse> = null;
-  private _projectionPromise: Promise<any[]> = null;
+  // To keep track of widget state
+  private _shortening = false;
+  private _projecting = false;
 
   //----------------------------------
   //
@@ -116,9 +108,9 @@ class ShareViewModel extends declared(Accessor) {
   get state(): State {
     const ready = this.get("view.ready");
     return ready
-      ? this._projectionPromise
+      ? this._projecting
         ? "projecting"
-        : this._shortenPromise
+        : this._shortening
         ? "shortening"
         : "ready"
       : this.view
@@ -197,20 +189,16 @@ class ShareViewModel extends declared(Accessor) {
   //  Public Methods
   //
   //----------------------------------
-  generateUrl(): IPromise<string> {
-    return this._generateShareUrl().then(url => {
-      const { shortenLink } = this.shareFeatures;
-      if (shortenLink) {
-        return this._shorten(url).then(shortenedUrl => {
-          this._shortenPromise = null;
-          this.notifyChange("state");
-          this._set("shareUrl", shortenedUrl);
-          return promiseUtils.resolve(shortenedUrl);
-        });
-      }
-      this._set("shareUrl", url);
-      return promiseUtils.resolve(url);
-    });
+  async generateUrl(): Promise<string> {
+    const url = await this._generateShareUrl();
+    const { shortenLink } = this.shareFeatures;
+    if (shortenLink) {
+      const shortenedUrl = await this._shorten(url);
+      this._set("shareUrl", shortenedUrl);
+      return shortenedUrl;
+    }
+    this._set("shareUrl", url);
+    return url;
   }
 
   //----------------------------------
@@ -218,11 +206,11 @@ class ShareViewModel extends declared(Accessor) {
   //  Private Methods
   //
   //----------------------------------
-  private _generateShareUrl(): IPromise<string> {
+  private async _generateShareUrl(): Promise<string> {
     const { href } = window.location;
     // If view is not ready
     if (!this.get("view.ready")) {
-      return promiseUtils.resolve(href);
+      return href;
     }
     // Use x/y values and the spatial reference of the view to instantiate a geometry point
     const { x, y } = this.view.center;
@@ -233,44 +221,37 @@ class ShareViewModel extends declared(Accessor) {
       spatialReference
     });
     // Use pointToConvert to project point. Once projected, pass point to generate the share URL parameters
-    return this._processPoint(centerPoint).then((point: Point) => {
-      this._projectionPromise = null;
-      this.notifyChange("state");
-      return this._generateShareUrlParams(point);
-    });
+    const point = await this._processPoint(centerPoint);
+    return this._generateShareUrlParams(point);
   }
 
-  private _processPoint(point: Point): IPromise<Point> {
+  private async _processPoint(point: Point): Promise<__esri.Point> {
     const { isWGS84, isWebMercator } = point.spatialReference;
     // If spatial reference is WGS84 or Web Mercator, use longitude/latitude values to generate the share URL parameters
     if (isWGS84 || isWebMercator) {
-      return promiseUtils.resolve(point);
+      return point;
     }
-    this._projectionPromise = requireUtils.when(moduleRequire, [
-      "esri/geometry/projection",
-      "esri/geometry/SpatialReference"
-    ]);
-    this.notifyChange("state");
-    return this._projectionPromise.then(([projection, SpatialReference]) => {
-      const outputSpatialReference = new SpatialReference({
-        wkid: 4326
+    // Check if client side projection is not supported
+    if (!projection.isSupported()) {
+      const point = new Point({
+        x: null,
+        y: null
       });
-      return projection.load().then(() => {
-        // Check if client side projection is not supported
-        if (!projection.isSupported()) {
-          const point = new Point({
-            x: null,
-            y: null
-          });
-          return promiseUtils.resolve(point);
-        }
-        const projectedPoint = projection.project(
-          point,
-          outputSpatialReference
-        );
-        return promiseUtils.resolve(projectedPoint);
-      });
+      return point;
+    }
+    const outputSpatialReference = new SpatialReference({
+      wkid: 4326
     });
+    this._projecting = true;
+    this.notifyChange("state");
+    await projection.load();
+    const projectedPoint = projection.project(
+      point,
+      outputSpatialReference
+    ) as __esri.Point;
+    this._projecting = false;
+    this.notifyChange("state");
+    return projectedPoint;
   }
 
   private _generateShareUrlParams(point: Point): string {
@@ -307,24 +288,21 @@ class ShareViewModel extends declared(Accessor) {
     return shareParams;
   }
 
-  private _shorten(url: string): IPromise<string> {
-    this._shortenPromise = esriRequest(SHORTEN_API, {
+  private async _shorten(url: string): Promise<string> {
+    this._shortening = true;
+    this.notifyChange("state");
+    const request = await esriRequest(SHORTEN_API, {
       query: {
         longUrl: url,
         f: "json"
       }
     });
+    this._shortening = false;
     this.notifyChange("state");
-    return this._shortenPromise
-      .catch(res => {
-        return res;
-      })
-      .then(res => {
-        const shortUrl = res.data && res.data.data && res.data.data.url;
-        if (shortUrl) {
-          return shortUrl;
-        }
-      });
+    const shortUrl = request.data && request.data.data && request.data.data.url;
+    if (shortUrl) {
+      return shortUrl;
+    }
   }
 
   private _roundValue(val: number): number {
