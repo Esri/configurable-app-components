@@ -1,25 +1,4 @@
-/// <amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" />
-/// <amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" />
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/core/tsSupport/decorateHelper", "dojo/i18n!./Share/nls/resources", "esri/core/watchUtils", "esri/intl", "esri/core/accessorSupport/decorators", "esri/widgets/Widget", "esri/widgets/support/widget", "./Share/ShareViewModel"], function (require, exports, __extends, __decorate, i18n, watchUtils, intl_1, decorators_1, Widget, widget_1, ShareViewModel) {
+define(["require", "exports", "tslib", "dojo/i18n!./Share/nls/resources", "esri/core/watchUtils", "esri/intl", "esri/core/accessorSupport/decorators", "esri/widgets/Widget", "esri/widgets/support/widget", "./Share/ShareViewModel"], function (require, exports, tslib_1, i18n, watchUtils, intl_1, decorators_1, Widget, widget_1, ShareViewModel) {
     "use strict";
     //----------------------------------
     //
@@ -111,7 +90,7 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
         }
     };
     var Share = /** @class */ (function (_super) {
-        __extends(Share, _super);
+        tslib_1.__extends(Share, _super);
         function Share(params) {
             var _this = _super.call(this, params) || this;
             //----------------------------------
@@ -402,33 +381,33 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
                 copyIframeCodeNode,
                 widget_1.tsx("div", { class: CSS.shareModal.shareIframe.iframeContainer }, embedMap ? (state === "ready" ? (this.shareModalOpened ? (widget_1.tsx("iframe", { class: CSS.shareModal.shareIframe.iframePreview, src: this.shareUrl, tabIndex: "-1", scrolling: "no" })) : null) : null) : null))) : (widget_1.tsx("div", { class: CSS.icons.esriLoader })))) : null));
         };
-        __decorate([
+        tslib_1.__decorate([
             decorators_1.aliasOf("viewModel.view"),
             decorators_1.property()
         ], Share.prototype, "view", void 0);
-        __decorate([
+        tslib_1.__decorate([
             decorators_1.aliasOf("viewModel.shareModalOpened"),
             widget_1.renderable()
         ], Share.prototype, "shareModalOpened", void 0);
-        __decorate([
+        tslib_1.__decorate([
             decorators_1.aliasOf("viewModel.shareItems"),
             widget_1.renderable()
         ], Share.prototype, "shareItems", void 0);
-        __decorate([
+        tslib_1.__decorate([
             decorators_1.aliasOf("viewModel.shareFeatures"),
             widget_1.renderable()
         ], Share.prototype, "shareFeatures", void 0);
-        __decorate([
+        tslib_1.__decorate([
             decorators_1.aliasOf("viewModel.shareUrl"),
             widget_1.renderable()
         ], Share.prototype, "shareUrl", void 0);
-        __decorate([
+        tslib_1.__decorate([
             decorators_1.property()
         ], Share.prototype, "iconClass", void 0);
-        __decorate([
+        tslib_1.__decorate([
             decorators_1.property()
         ], Share.prototype, "label", void 0);
-        __decorate([
+        tslib_1.__decorate([
             widget_1.renderable([
                 "viewModel.state",
                 "viewModel.embedCode",
@@ -438,32 +417,32 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
                 type: ShareViewModel
             })
         ], Share.prototype, "viewModel", void 0);
-        __decorate([
+        tslib_1.__decorate([
             widget_1.accessibleHandler()
         ], Share.prototype, "_toggleShareModal", null);
-        __decorate([
+        tslib_1.__decorate([
             widget_1.accessibleHandler()
         ], Share.prototype, "_copyUrlInput", null);
-        __decorate([
+        tslib_1.__decorate([
             widget_1.accessibleHandler()
         ], Share.prototype, "_copyIframeInput", null);
-        __decorate([
+        tslib_1.__decorate([
             widget_1.accessibleHandler()
         ], Share.prototype, "_linkTab", null);
-        __decorate([
+        tslib_1.__decorate([
             widget_1.accessibleHandler()
         ], Share.prototype, "_embedTab", null);
-        __decorate([
+        tslib_1.__decorate([
             widget_1.accessibleHandler()
         ], Share.prototype, "_processShareItem", null);
-        __decorate([
+        tslib_1.__decorate([
             widget_1.accessibleHandler()
         ], Share.prototype, "_stopPropagation", null);
-        Share = __decorate([
+        Share = tslib_1.__decorate([
             decorators_1.subclass("Share")
         ], Share);
         return Share;
-    }(decorators_1.declared(Widget)));
+    }(Widget));
     return Share;
 });
 //# sourceMappingURL=Share.js.map

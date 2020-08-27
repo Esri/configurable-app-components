@@ -1,6 +1,3 @@
-/// <amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" />
-/// <amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" />
-
 // dojo
 import i18n = require("dojo/i18n!./Share/nls/resources");
 
@@ -12,7 +9,6 @@ import { substitute } from "esri/intl";
 // esri.core.accessorSupport
 import {
   subclass,
-  declared,
   property,
   aliasOf
 } from "esri/core/accessorSupport/decorators";
@@ -136,7 +132,7 @@ const CSS = {
 };
 
 @subclass("Share")
-class Share extends declared(Widget) {
+class Share extends Widget {
   constructor(params?: any) {
     super(params);
   }

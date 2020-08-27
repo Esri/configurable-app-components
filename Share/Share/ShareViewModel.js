@@ -1,25 +1,4 @@
-/// <amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" />
-/// <amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" />
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/core/tsSupport/decorateHelper", "esri/core/Accessor", "esri/core/Collection", "esri/core/requireUtils", "esri/core/promiseUtils", "esri/core/accessorSupport/decorators", "esri/geometry/Point", "esri/request", "require", "./ShareItem", "./ShareFeatures"], function (require, exports, __extends, __decorate, Accessor, Collection, requireUtils, promiseUtils, decorators_1, Point, esriRequest, moduleRequire, ShareItem, ShareFeatures) {
+define(["require", "exports", "tslib", "esri/core/Accessor", "esri/core/Collection", "esri/core/accessorSupport/decorators", "esri/geometry/Point", "esri/request", "./ShareItem", "./ShareFeatures", "esri/geometry/projection", "esri/geometry/SpatialReference"], function (require, exports, tslib_1, Accessor, Collection, decorators_1, Point, esriRequest, ShareItem, ShareFeatures, projection, SpatialReference) {
     "use strict";
     //----------------------------------
     //
@@ -59,7 +38,7 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
     //----------------------------------
     var SHORTEN_API = "https://arcg.is/prod/shorten";
     var ShareViewModel = /** @class */ (function (_super) {
-        __extends(ShareViewModel, _super);
+        tslib_1.__extends(ShareViewModel, _super);
         function ShareViewModel() {
             //----------------------------------
             //
@@ -72,9 +51,9 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
             //  Private Variables
             //
             //----------------------------------
-            // Promises for widget state
-            _this._shortenPromise = null;
-            _this._projectionPromise = null;
+            // To keep track of widget state
+            _this._shortening = false;
+            _this._projecting = false;
             //----------------------------------
             //
             //  Properties
@@ -130,16 +109,16 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
             get: function () {
                 var ready = this.get("view.ready");
                 return ready
-                    ? this._projectionPromise
+                    ? this._projecting
                         ? "projecting"
-                        : this._shortenPromise
+                        : this._shortening
                             ? "shortening"
                             : "ready"
                     : this.view
                         ? "loading"
                         : "disabled";
             },
-            enumerable: true,
+            enumerable: false,
             configurable: true
         });
         Object.defineProperty(ShareViewModel.prototype, "embedCode", {
@@ -151,7 +130,7 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
             get: function () {
                 return "<iframe src=\"" + this.shareUrl + "\" width=\"600\" height=\"450\" frameborder=\"0\" style=\"border:0\" allowfullscreen></iframe>";
             },
-            enumerable: true,
+            enumerable: false,
             configurable: true
         });
         //----------------------------------
@@ -160,19 +139,25 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
         //
         //----------------------------------
         ShareViewModel.prototype.generateUrl = function () {
-            var _this = this;
-            return this._generateShareUrl().then(function (url) {
-                var shortenLink = _this.shareFeatures.shortenLink;
-                if (shortenLink) {
-                    return _this._shorten(url).then(function (shortenedUrl) {
-                        _this._shortenPromise = null;
-                        _this.notifyChange("state");
-                        _this._set("shareUrl", shortenedUrl);
-                        return promiseUtils.resolve(shortenedUrl);
-                    });
-                }
-                _this._set("shareUrl", url);
-                return promiseUtils.resolve(url);
+            return tslib_1.__awaiter(this, void 0, void 0, function () {
+                var url, shortenLink, shortenedUrl;
+                return tslib_1.__generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this._generateShareUrl()];
+                        case 1:
+                            url = _a.sent();
+                            shortenLink = this.shareFeatures.shortenLink;
+                            if (!shortenLink) return [3 /*break*/, 3];
+                            return [4 /*yield*/, this._shorten(url)];
+                        case 2:
+                            shortenedUrl = _a.sent();
+                            this._set("shareUrl", shortenedUrl);
+                            return [2 /*return*/, shortenedUrl];
+                        case 3:
+                            this._set("shareUrl", url);
+                            return [2 /*return*/, url];
+                    }
+                });
             });
         };
         //----------------------------------
@@ -181,54 +166,63 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
         //
         //----------------------------------
         ShareViewModel.prototype._generateShareUrl = function () {
-            var _this = this;
-            var href = window.location.href;
-            // If view is not ready
-            if (!this.get("view.ready")) {
-                return promiseUtils.resolve(href);
-            }
-            // Use x/y values and the spatial reference of the view to instantiate a geometry point
-            var _a = this.view.center, x = _a.x, y = _a.y;
-            var spatialReference = this.view.spatialReference;
-            var centerPoint = new Point({
-                x: x,
-                y: y,
-                spatialReference: spatialReference
-            });
-            // Use pointToConvert to project point. Once projected, pass point to generate the share URL parameters
-            return this._processPoint(centerPoint).then(function (point) {
-                _this._projectionPromise = null;
-                _this.notifyChange("state");
-                return _this._generateShareUrlParams(point);
+            return tslib_1.__awaiter(this, void 0, void 0, function () {
+                var href, _a, x, y, spatialReference, centerPoint, point;
+                return tslib_1.__generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            href = window.location.href;
+                            // If view is not ready
+                            if (!this.get("view.ready")) {
+                                return [2 /*return*/, href];
+                            }
+                            _a = this.view.center, x = _a.x, y = _a.y;
+                            spatialReference = this.view.spatialReference;
+                            centerPoint = new Point({
+                                x: x,
+                                y: y,
+                                spatialReference: spatialReference
+                            });
+                            return [4 /*yield*/, this._processPoint(centerPoint)];
+                        case 1:
+                            point = _b.sent();
+                            return [2 /*return*/, this._generateShareUrlParams(point)];
+                    }
+                });
             });
         };
         ShareViewModel.prototype._processPoint = function (point) {
-            var _a = point.spatialReference, isWGS84 = _a.isWGS84, isWebMercator = _a.isWebMercator;
-            // If spatial reference is WGS84 or Web Mercator, use longitude/latitude values to generate the share URL parameters
-            if (isWGS84 || isWebMercator) {
-                return promiseUtils.resolve(point);
-            }
-            this._projectionPromise = requireUtils.when(moduleRequire, [
-                "esri/geometry/projection",
-                "esri/geometry/SpatialReference"
-            ]);
-            this.notifyChange("state");
-            return this._projectionPromise.then(function (_a) {
-                var projection = _a[0], SpatialReference = _a[1];
-                var outputSpatialReference = new SpatialReference({
-                    wkid: 4326
-                });
-                return projection.load().then(function () {
-                    // Check if client side projection is not supported
-                    if (!projection.isSupported()) {
-                        var point_1 = new Point({
-                            x: null,
-                            y: null
-                        });
-                        return promiseUtils.resolve(point_1);
+            return tslib_1.__awaiter(this, void 0, void 0, function () {
+                var _a, isWGS84, isWebMercator, point_1, outputSpatialReference, projectedPoint;
+                return tslib_1.__generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            _a = point.spatialReference, isWGS84 = _a.isWGS84, isWebMercator = _a.isWebMercator;
+                            // If spatial reference is WGS84 or Web Mercator, use longitude/latitude values to generate the share URL parameters
+                            if (isWGS84 || isWebMercator) {
+                                return [2 /*return*/, point];
+                            }
+                            // Check if client side projection is not supported
+                            if (!projection.isSupported()) {
+                                point_1 = new Point({
+                                    x: null,
+                                    y: null
+                                });
+                                return [2 /*return*/, point_1];
+                            }
+                            outputSpatialReference = new SpatialReference({
+                                wkid: 4326
+                            });
+                            this._projecting = true;
+                            this.notifyChange("state");
+                            return [4 /*yield*/, projection.load()];
+                        case 1:
+                            _b.sent();
+                            projectedPoint = projection.project(point, outputSpatialReference);
+                            this._projecting = false;
+                            this.notifyChange("state");
+                            return [2 /*return*/, projectedPoint];
                     }
-                    var projectedPoint = projection.project(point, outputSpatialReference);
-                    return promiseUtils.resolve(projectedPoint);
                 });
             });
         };
@@ -264,63 +258,71 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
             return shareParams;
         };
         ShareViewModel.prototype._shorten = function (url) {
-            this._shortenPromise = esriRequest(SHORTEN_API, {
-                query: {
-                    longUrl: url,
-                    f: "json"
-                }
-            });
-            this.notifyChange("state");
-            return this._shortenPromise
-                .catch(function (res) {
-                return res;
-            })
-                .then(function (res) {
-                var shortUrl = res.data && res.data.data && res.data.data.url;
-                if (shortUrl) {
-                    return shortUrl;
-                }
+            return tslib_1.__awaiter(this, void 0, void 0, function () {
+                var request, shortUrl;
+                return tslib_1.__generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            this._shortening = true;
+                            this.notifyChange("state");
+                            return [4 /*yield*/, esriRequest(SHORTEN_API, {
+                                    query: {
+                                        longUrl: url,
+                                        f: "json"
+                                    }
+                                })];
+                        case 1:
+                            request = _a.sent();
+                            this._shortening = false;
+                            this.notifyChange("state");
+                            shortUrl = request.data && request.data.data && request.data.data.url;
+                            if (shortUrl) {
+                                return [2 /*return*/, shortUrl];
+                            }
+                            return [2 /*return*/];
+                    }
+                });
             });
         };
         ShareViewModel.prototype._roundValue = function (val) {
             return parseFloat(val.toFixed(4));
         };
-        __decorate([
+        tslib_1.__decorate([
             decorators_1.property({
                 dependsOn: ["view.ready"],
                 readOnly: true
             })
         ], ShareViewModel.prototype, "state", null);
-        __decorate([
+        tslib_1.__decorate([
             decorators_1.property({
                 dependsOn: ["shareUrl"],
                 readOnly: true
             })
         ], ShareViewModel.prototype, "embedCode", null);
-        __decorate([
+        tslib_1.__decorate([
             decorators_1.property()
         ], ShareViewModel.prototype, "view", void 0);
-        __decorate([
+        tslib_1.__decorate([
             decorators_1.property()
         ], ShareViewModel.prototype, "shareModalOpened", void 0);
-        __decorate([
+        tslib_1.__decorate([
             decorators_1.property({
                 type: ShareItemCollection
             })
         ], ShareViewModel.prototype, "shareItems", void 0);
-        __decorate([
+        tslib_1.__decorate([
             decorators_1.property({
                 type: ShareFeatures
             })
         ], ShareViewModel.prototype, "shareFeatures", void 0);
-        __decorate([
+        tslib_1.__decorate([
             decorators_1.property({ readOnly: true })
         ], ShareViewModel.prototype, "shareUrl", void 0);
-        ShareViewModel = __decorate([
+        ShareViewModel = tslib_1.__decorate([
             decorators_1.subclass("ShareViewModel")
         ], ShareViewModel);
         return ShareViewModel;
-    }(decorators_1.declared(Accessor)));
+    }(Accessor));
     return ShareViewModel;
 });
 //# sourceMappingURL=ShareViewModel.js.map
