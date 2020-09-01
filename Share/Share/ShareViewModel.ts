@@ -40,18 +40,18 @@ const ShareItemCollection = Collection.ofType<ShareItem>(ShareItem);
 const FACEBOOK_ITEM = new ShareItem({
   id: "facebook",
   name: "Facebook",
-  urlTemplate: "https://www.facebook.com/sharer/sharer.php?s=100&u={url}"
+  urlTemplate: "https://facebook.com/sharer/sharer.php?s=100&u={url}"
 });
 const TWITTER_ITEM = new ShareItem({
   id: "twitter",
   name: "Twitter",
-  urlTemplate: "https://twitter.com/intent/tweet?text={summary}&url={url}"
+  urlTemplate: "https://twitter.com/intent/tweet?text={title}&url={url}"
 });
 const LINKEDIN_ITEM = new ShareItem({
   id: "linkedin",
   name: "LinkedIn",
   urlTemplate:
-    "https://www.linkedin.com/shareArticle?url={url}&title={title}&summary={summary}"
+    "https://linkedin.com/sharing/share-offsite/?url={url}&title={title}"
 });
 const EMAIL_ITEM = new ShareItem({
   id: "email",

@@ -14,17 +14,17 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "esri/core/Collecti
     var FACEBOOK_ITEM = new ShareItem({
         id: "facebook",
         name: "Facebook",
-        urlTemplate: "https://www.facebook.com/sharer/sharer.php?s=100&u={url}"
+        urlTemplate: "https://facebook.com/sharer/sharer.php?s=100&u={url}"
     });
     var TWITTER_ITEM = new ShareItem({
         id: "twitter",
         name: "Twitter",
-        urlTemplate: "https://twitter.com/intent/tweet?text={summary}&url={url}"
+        urlTemplate: "https://twitter.com/intent/tweet?text={title}&url={url}"
     });
     var LINKEDIN_ITEM = new ShareItem({
         id: "linkedin",
         name: "LinkedIn",
-        urlTemplate: "https://www.linkedin.com/shareArticle?url={url}&title={title}&summary={summary}"
+        urlTemplate: "https://linkedin.com/sharing/share-offsite/?url={url}&title={title}"
     });
     var EMAIL_ITEM = new ShareItem({
         id: "email",
