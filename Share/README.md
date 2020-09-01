@@ -19,9 +19,9 @@ Share widget built for version 4.x of the ArcGIS API for Javascript
     - Shorten URL
     - Embed Map
 
-**\*Note:** Share Widget uses Esri's Calcite CSS Styles.\*
+**\*Note:** Share Widget uses Esri's design framework - Calcite Components.\*
 
-Calcite Web Documentation: https://esri.github.io/calcite-web/documentation/
+Calcite Components Repository: https://github.com/Esri/calcite-components
 
 ## ShareWidget
 
@@ -52,7 +52,7 @@ Calcite Web Documentation: https://esri.github.io/calcite-web/documentation/
 
 | Name        | Type   | Summary                                                                                                                                             |
 | ----------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| className   | String | Class name of share item icon.                                                                                                                      |
+| iconName   | String | Icon name of share item icon.                                                                                                                      |
 | id          | String | Unique ID of share item service i.e. `facebook`, `twitter`, `linkedin`, `email`, etc.                                                               |
 | name        | String | Name of Share Item.                                                                                                                                 |
 | urlTemplate | String | URL template of share item. Consists of share service URL along with URL parameters i.e `"https://pinterest.com/pin/create/bookmarklet?&url={url}"` |
@@ -159,7 +159,7 @@ Esri welcomes contributions from anyone and everyone. Please see our [guidelines
 
 ## Licensing
 
-Copyright 2019 Esri
+Copyright 2020 Esri
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
