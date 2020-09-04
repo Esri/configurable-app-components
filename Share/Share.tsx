@@ -133,6 +133,9 @@ class Share extends Widget {
   @property()
   label = i18n.widgetLabel;
 
+  @property()
+  theme = "light";
+
   @renderable([
     "viewModel.state",
     "viewModel.embedCode",
@@ -167,6 +170,7 @@ class Share extends Widget {
         <button
           class={this.classes(CSS.icons.widgetIcon, CSS.shareButton)}
           bind={this}
+          theme={this.theme}
           title={i18n.heading}
           onclick={this._toggleShareModal}
           onkeydown={this._toggleShareModal}
@@ -261,6 +265,7 @@ class Share extends Widget {
         data-node-ref="_shareModal"
         scale="s"
         width="s"
+        theme={this.theme}
       >
         <h3 slot="header" id="shareModal" class={CSS.shareModal.header.heading}>
           {i18n.heading}
@@ -284,8 +289,8 @@ class Share extends Widget {
         <calcite-tab>{embedMapContentNode}</calcite-tab>
       </calcite-tabs>
     ) : (
-      sendALinkContentNode
-    );
+        sendALinkContentNode
+      );
   }
 
   private _renderShareItem(shareItem: ShareItem): any {
@@ -303,12 +308,12 @@ class Share extends Widget {
         {shareItem.id === "facebook"
           ? this._renderFacebookIcon()
           : shareItem.id === "twitter"
-          ? this._renderTwitterIcon()
-          : shareItem.id === "linkedin"
-          ? this._renderLinkedInIcon()
-          : shareItem.id === "email"
-          ? this._renderMailIcon()
-          : null}
+            ? this._renderTwitterIcon()
+            : shareItem.id === "linkedin"
+              ? this._renderLinkedInIcon()
+              : shareItem.id === "email"
+                ? this._renderMailIcon()
+                : null}
       </button>
     );
   }
@@ -410,8 +415,8 @@ class Share extends Widget {
         {copyUrlNode}
       </div>
     ) : (
-      <calcite-loader active />
-    );
+        <calcite-loader active />
+      );
   }
 
   private _renderCopyIframe(): any {
@@ -438,10 +443,10 @@ class Share extends Widget {
             readOnly
           />
         ) : (
-          <div class={CSS.shareModal.main.mainUrl.linkGenerating}>
-            {i18n.generateLink}
-          </div>
-        )}
+            <div class={CSS.shareModal.main.mainUrl.linkGenerating}>
+              {i18n.generateLink}
+            </div>
+          )}
       </div>
     );
   }
@@ -476,8 +481,8 @@ class Share extends Widget {
             </div>
           </div>
         ) : (
-          <calcite-loader active />
-        )}
+            <calcite-loader active />
+          )}
       </div>
     ) : null;
   }

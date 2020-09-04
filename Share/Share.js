@@ -8,7 +8,26 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.​
-define(["require", "exports", "tslib", "dojo/i18n!./Share/nls/resources", "esri/core/watchUtils", "esri/intl", "esri/core/accessorSupport/decorators", "esri/widgets/Widget", "esri/widgets/support/widget", "./Share/ShareViewModel"], function (require, exports, tslib_1, i18n, watchUtils, intl_1, decorators_1, Widget, widget_1, ShareViewModel) {
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+define(["require", "exports", "dojo/i18n!./Share/nls/resources", "esri/core/watchUtils", "esri/intl", "esri/core/accessorSupport/decorators", "esri/widgets/Widget", "esri/widgets/support/widget", "./Share/ShareViewModel"], function (require, exports, i18n, watchUtils, intl_1, decorators_1, Widget, widget_1, ShareViewModel) {
     "use strict";
     var CSS = {
         base: "esri-share",
@@ -63,7 +82,7 @@ define(["require", "exports", "tslib", "dojo/i18n!./Share/nls/resources", "esri/
         shareIcon: "esri-share__share-icon"
     };
     var Share = /** @class */ (function (_super) {
-        tslib_1.__extends(Share, _super);
+        __extends(Share, _super);
         function Share(params) {
             var _this = _super.call(this, params) || this;
             _this._shareModal = null;
@@ -77,6 +96,7 @@ define(["require", "exports", "tslib", "dojo/i18n!./Share/nls/resources", "esri/
             _this.shareUrl = null;
             _this.iconClass = CSS.icons.widgetIcon;
             _this.label = i18n.widgetLabel;
+            _this.theme = "light";
             _this.viewModel = new ShareViewModel();
             return _this;
         }
@@ -99,7 +119,7 @@ define(["require", "exports", "tslib", "dojo/i18n!./Share/nls/resources", "esri/
         Share.prototype.render = function () {
             var modal = this._renderShareModal();
             return (widget_1.tsx("div", { class: CSS.base, "aria-labelledby": "shareModal" },
-                widget_1.tsx("button", { class: this.classes(CSS.icons.widgetIcon, CSS.shareButton), bind: this, title: i18n.heading, onclick: this._toggleShareModal, onkeydown: this._toggleShareModal }),
+                widget_1.tsx("button", { class: this.classes(CSS.icons.widgetIcon, CSS.shareButton), bind: this, theme: this.theme, title: i18n.heading, onclick: this._toggleShareModal, onkeydown: this._toggleShareModal }),
                 modal));
         };
         Share.prototype._toggleShareModal = function () {
@@ -158,7 +178,7 @@ define(["require", "exports", "tslib", "dojo/i18n!./Share/nls/resources", "esri/
         };
         Share.prototype._renderShareModal = function () {
             var modalContentNode = this._renderModalContent();
-            return (widget_1.tsx("calcite-modal", { bind: this, class: this.classes(CSS.shareModalStyles), "aria-labelledby": "shareModal", afterCreate: widget_1.storeNode, afterUpdate: this._setBeforeClose, "data-modal": this, "data-node-ref": "_shareModal", scale: "s", width: "s" },
+            return (widget_1.tsx("calcite-modal", { bind: this, class: this.classes(CSS.shareModalStyles), "aria-labelledby": "shareModal", afterCreate: widget_1.storeNode, afterUpdate: this._setBeforeClose, "data-modal": this, "data-node-ref": "_shareModal", scale: "s", width: "s", theme: this.theme },
                 widget_1.tsx("h3", { slot: "header", id: "shareModal", class: CSS.shareModal.header.heading }, i18n.heading),
                 widget_1.tsx("div", { slot: "content" }, modalContentNode)));
         };
@@ -283,33 +303,36 @@ define(["require", "exports", "tslib", "dojo/i18n!./Share/nls/resources", "esri/
             return (widget_1.tsx("svg", { class: this.classes(CSS.icons.mail, CSS.icons.svgIcon) },
                 widget_1.tsx("path", { d: "M14.8,11.7l9.1-7.3C24,4.7,24,4.9,24,5.1v14.6c0,0.3-0.1,0.6-0.3,0.9L14.8,11.7z M12,12.8l11.3-9.1\n\tc-0.3-0.2-0.6-0.3-0.9-0.3H1.6c-0.3,0-0.6,0.1-0.9,0.3L12,12.8z M14.1,12.4L12,14.1l-2.1-1.7l-8.9,8.9c0.2,0.1,0.4,0.1,0.6,0.1h20.9\n\tc0.2,0,0.4,0,0.6-0.1L14.1,12.4z M0.1,4.5C0.1,4.7,0,4.9,0,5.1v14.6c0,0.3,0.1,0.6,0.3,0.9l8.9-8.9L0.1,4.5z" })));
         };
-        tslib_1.__decorate([
+        __decorate([
             decorators_1.aliasOf("viewModel.view"),
             decorators_1.property()
         ], Share.prototype, "view", void 0);
-        tslib_1.__decorate([
+        __decorate([
             decorators_1.aliasOf("viewModel.shareModalOpened"),
             widget_1.renderable()
         ], Share.prototype, "shareModalOpened", void 0);
-        tslib_1.__decorate([
+        __decorate([
             decorators_1.aliasOf("viewModel.shareItems"),
             widget_1.renderable()
         ], Share.prototype, "shareItems", void 0);
-        tslib_1.__decorate([
+        __decorate([
             decorators_1.aliasOf("viewModel.shareFeatures"),
             widget_1.renderable()
         ], Share.prototype, "shareFeatures", void 0);
-        tslib_1.__decorate([
+        __decorate([
             decorators_1.aliasOf("viewModel.shareUrl"),
             widget_1.renderable()
         ], Share.prototype, "shareUrl", void 0);
-        tslib_1.__decorate([
+        __decorate([
             decorators_1.property()
         ], Share.prototype, "iconClass", void 0);
-        tslib_1.__decorate([
+        __decorate([
             decorators_1.property()
         ], Share.prototype, "label", void 0);
-        tslib_1.__decorate([
+        __decorate([
+            decorators_1.property()
+        ], Share.prototype, "theme", void 0);
+        __decorate([
             widget_1.renderable([
                 "viewModel.state",
                 "viewModel.embedCode",
@@ -319,19 +342,19 @@ define(["require", "exports", "tslib", "dojo/i18n!./Share/nls/resources", "esri/
                 type: ShareViewModel
             })
         ], Share.prototype, "viewModel", void 0);
-        tslib_1.__decorate([
+        __decorate([
             widget_1.accessibleHandler()
         ], Share.prototype, "_toggleShareModal", null);
-        tslib_1.__decorate([
+        __decorate([
             widget_1.accessibleHandler()
         ], Share.prototype, "_copyUrlInput", null);
-        tslib_1.__decorate([
+        __decorate([
             widget_1.accessibleHandler()
         ], Share.prototype, "_copyIframeInput", null);
-        tslib_1.__decorate([
+        __decorate([
             widget_1.accessibleHandler()
         ], Share.prototype, "_processShareItem", null);
-        Share = tslib_1.__decorate([
+        Share = __decorate([
             decorators_1.subclass("Share")
         ], Share);
         return Share;
