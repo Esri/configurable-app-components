@@ -14,8 +14,8 @@ define({
     popup: "Pop-up",
     enterTitle: "Enter title",
     screenshotLayout: "Screenshot layout",
-    row: "Row",
-    column: "Column"
+    horizontal: "Horizontal",
+    vertical: "Vertical"
   }),
   "ar": 1,
   "bs": 1,

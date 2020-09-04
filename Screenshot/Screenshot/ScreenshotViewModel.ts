@@ -60,7 +60,7 @@ class ScreenshotViewModel extends Accessor {
   }
 
   @property()
-  outputLayout: "row" | "column" = "row";
+  outputLayout: "horizontal" | "vertical" = "horizontal";
 
   @property()
   custom: { label: string; element: HTMLElement } = null;
@@ -539,6 +539,7 @@ class ScreenshotViewModel extends Accessor {
             this._thirdMapComponent
           );
           this._canvasElement = combinedCanvasElements;
+          console.log(this._canvasElement);
           this._showPreview(
             combinedCanvasElements,
             screenshotImageElement,
@@ -567,15 +568,15 @@ class ScreenshotViewModel extends Accessor {
     ) as CanvasRenderingContext2D;
     const mapComponentHeight = mapComponent.height as number;
     const height =
-      this.outputLayout === "row"
+      this.outputLayout === "horizontal"
         ? Math.max(mapComponentHeight, viewScreenshotHeight)
-        : this.outputLayout === "column"
+        : this.outputLayout === "vertical"
         ? mapComponentHeight + viewScreenshotHeight
         : null;
     const width =
-      this.outputLayout === "row"
+      this.outputLayout === "horizontal"
         ? viewScreenshot.data.width + mapComponent.width
-        : this.outputLayout === "column"
+        : this.outputLayout === "vertical"
         ? Math.max(viewScreenshot.data.width, mapComponent.width)
         : null;
     combinedCanvas.width = width;
@@ -587,10 +588,10 @@ class ScreenshotViewModel extends Accessor {
       combinedCanvas.width,
       combinedCanvas.height
     );
-    if (this.outputLayout === "row") {
+    if (this.outputLayout === "horizontal") {
       viewLegendCanvasContext.drawImage(mapComponent, 0, 0);
       viewLegendCanvasContext.drawImage(viewCanvas, mapComponent.width, 0);
-    } else if (this.outputLayout === "column") {
+    } else if (this.outputLayout === "vertical") {
       viewLegendCanvasContext.drawImage(viewCanvas, 0, 0);
       viewLegendCanvasContext.drawImage(mapComponent, 0, viewScreenshotHeight);
     }
@@ -609,7 +610,7 @@ class ScreenshotViewModel extends Accessor {
     const firstMapComponentHeight = firstMapComponent.height as number;
     const secondMapComponentHeight = secondMapComponent.height as number;
     const viewScreenshotHeight = viewScreenshot.data.height as number;
-    if (this.outputLayout === "row") {
+    if (this.outputLayout === "horizontal") {
       combinedCanvasElements.width =
         viewScreenshot.data.width +
         firstMapComponent.width +
@@ -619,7 +620,7 @@ class ScreenshotViewModel extends Accessor {
         firstMapComponentHeight,
         secondMapComponentHeight
       );
-    } else if (this.outputLayout === "column") {
+    } else if (this.outputLayout === "vertical") {
       combinedCanvasElements.width = Math.max(
         viewScreenshot.data.width,
         firstMapComponent.width,
@@ -638,7 +639,7 @@ class ScreenshotViewModel extends Accessor {
       combinedCanvasElements.width,
       combinedCanvasElements.height
     );
-    if (this.outputLayout === "row") {
+    if (this.outputLayout === "horizontal") {
       combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
       combinedCanvasContext.drawImage(viewCanvas, firstMapComponent.width, 0);
       combinedCanvasContext.drawImage(
@@ -646,7 +647,7 @@ class ScreenshotViewModel extends Accessor {
         viewScreenshot.data.width + firstMapComponent.width,
         0
       );
-    } else if (this.outputLayout === "column") {
+    } else if (this.outputLayout === "vertical") {
       combinedCanvasContext.drawImage(viewCanvas, 0, 0);
       combinedCanvasContext.drawImage(
         firstMapComponent,
@@ -676,7 +677,7 @@ class ScreenshotViewModel extends Accessor {
     const secondMapComponentHeight = secondMapComponent.height as number;
     const thirdMapComponentHeight = thirdMapComponent.height as number;
     const viewScreenshotHeight = viewScreenshot.data.height as number;
-    if (this.outputLayout === "row") {
+    if (this.outputLayout === "horizontal") {
       combinedCanvasElements.width =
         viewScreenshot.data.width +
         firstMapComponent.width +
@@ -688,7 +689,7 @@ class ScreenshotViewModel extends Accessor {
         secondMapComponentHeight,
         thirdMapComponentHeight
       );
-    } else if (this.outputLayout === "column") {
+    } else if (this.outputLayout === "vertical") {
       combinedCanvasElements.width = Math.max(
         viewScreenshot.data.width,
         firstMapComponent.width,
@@ -708,7 +709,7 @@ class ScreenshotViewModel extends Accessor {
       combinedCanvasElements.width,
       combinedCanvasElements.height
     );
-    if (this.outputLayout === "row") {
+    if (this.outputLayout === "horizontal") {
       combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
       combinedCanvasContext.drawImage(viewCanvas, firstMapComponent.width, 0);
       combinedCanvasContext.drawImage(
@@ -723,7 +724,7 @@ class ScreenshotViewModel extends Accessor {
           secondMapComponent.width,
         0
       );
-    } else if (this.outputLayout === "column") {
+    } else if (this.outputLayout === "vertical") {
       combinedCanvasContext.drawImage(viewCanvas, 0, 0);
       combinedCanvasContext.drawImage(
         firstMapComponent,
