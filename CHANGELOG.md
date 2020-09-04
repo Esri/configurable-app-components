@@ -8,13 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 1.1.5
 
 - Screenshot
-  1. Updated layout terms to 'Vertical' and 'Horizontal'.
+  1. Updated terms to 'Horizontal' and 'Vertical'
 
 ## 1.1.4
 
 - Share
-  1. Removed usage of calcite web
-  2. Integrated calcite-modal and calcite-tabs from calcite components.
+  1. Add support for light/dark theme
 
 ## 1.1.3
 
