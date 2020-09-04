@@ -143,7 +143,7 @@ class Screenshot extends Widget {
 
   @aliasOf("viewModel.outputLayout")
   @property()
-  outputLayout: "row" | "column" = null;
+  outputLayout: "vertical" | "horizontal" = null;
 
   @aliasOf("viewModel.previewTitleInputNode")
   @property()
@@ -286,16 +286,16 @@ class Screenshot extends Widget {
           disabled={allDisabled}
         >
           <option
-            value="row"
-            selected={this.outputLayout === "row" ? true : false}
+            value="horizontal"
+            selected={this.outputLayout === "horizontal" ? true : false}
           >
-            {i18n.row}
+            {i18n.horizontal}
           </option>
           <option
-            value="column"
-            selected={this.outputLayout === "column" ? true : false}
+            value="vertical"
+            selected={this.outputLayout === "vertical" ? true : false}
           >
-            {i18n.column}
+            {i18n.vertical}
           </option>
         </select>
       </label>
@@ -661,7 +661,7 @@ class Screenshot extends Widget {
 
   private _updateLayoutOption(e: Event) {
     const node = e.target as HTMLSelectElement;
-    this.outputLayout = node.value as "row" | "column";
+    this.outputLayout = node.value as "horizontal" | "vertical";
   }
 }
 

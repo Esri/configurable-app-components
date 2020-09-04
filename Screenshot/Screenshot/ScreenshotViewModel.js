@@ -27,7 +27,7 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
                 ".esri-screenshot__offscreen-legend-container",
                 ".esri-screenshot__offscreen-pop-up-container"
             ];
-            _this.outputLayout = "row";
+            _this.outputLayout = "horizontal";
             _this.custom = null;
             _this.dragHandler = null;
             _this.enableLegendOption = null;
@@ -350,6 +350,7 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
                         viewCanvasContext.drawImage(img, 0, 0);
                         _this._generateImageForThreeComponents(viewCanvas, combinedCanvasElements, viewScreenshot, _this._firstMapComponent, _this._secondMapComponent, _this._thirdMapComponent);
                         _this._canvasElement = combinedCanvasElements;
+                        console.log(_this._canvasElement);
                         _this._showPreview(combinedCanvasElements, screenshotImageElement, maskDiv, downloadBtnNode);
                         _this._firstMapComponent = null;
                         _this._secondMapComponent = null;
@@ -364,25 +365,25 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
             var viewScreenshotHeight = viewScreenshot.data.height;
             var viewLegendCanvasContext = combinedCanvas.getContext("2d");
             var mapComponentHeight = mapComponent.height;
-            var height = this.outputLayout === "row"
+            var height = this.outputLayout === "horizontal"
                 ? Math.max(mapComponentHeight, viewScreenshotHeight)
-                : this.outputLayout === "column"
+                : this.outputLayout === "vertical"
                     ? mapComponentHeight + viewScreenshotHeight
                     : null;
-            var width = this.outputLayout === "row"
+            var width = this.outputLayout === "horizontal"
                 ? viewScreenshot.data.width + mapComponent.width
-                : this.outputLayout === "column"
+                : this.outputLayout === "vertical"
                     ? Math.max(viewScreenshot.data.width, mapComponent.width)
                     : null;
             combinedCanvas.width = width;
             combinedCanvas.height = height;
             viewLegendCanvasContext.fillStyle = "#fff";
             viewLegendCanvasContext.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
-            if (this.outputLayout === "row") {
+            if (this.outputLayout === "horizontal") {
                 viewLegendCanvasContext.drawImage(mapComponent, 0, 0);
                 viewLegendCanvasContext.drawImage(viewCanvas, mapComponent.width, 0);
             }
-            else if (this.outputLayout === "column") {
+            else if (this.outputLayout === "vertical") {
                 viewLegendCanvasContext.drawImage(viewCanvas, 0, 0);
                 viewLegendCanvasContext.drawImage(mapComponent, 0, viewScreenshotHeight);
             }
@@ -392,14 +393,14 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
             var firstMapComponentHeight = firstMapComponent.height;
             var secondMapComponentHeight = secondMapComponent.height;
             var viewScreenshotHeight = viewScreenshot.data.height;
-            if (this.outputLayout === "row") {
+            if (this.outputLayout === "horizontal") {
                 combinedCanvasElements.width =
                     viewScreenshot.data.width +
                         firstMapComponent.width +
                         secondMapComponent.width;
                 combinedCanvasElements.height = Math.max(viewScreenshotHeight, firstMapComponentHeight, secondMapComponentHeight);
             }
-            else if (this.outputLayout === "column") {
+            else if (this.outputLayout === "vertical") {
                 combinedCanvasElements.width = Math.max(viewScreenshot.data.width, firstMapComponent.width, secondMapComponent.width);
                 combinedCanvasElements.height =
                     viewScreenshot.data.height +
@@ -408,12 +409,12 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
             }
             combinedCanvasContext.fillStyle = "#fff";
             combinedCanvasContext.fillRect(0, 0, combinedCanvasElements.width, combinedCanvasElements.height);
-            if (this.outputLayout === "row") {
+            if (this.outputLayout === "horizontal") {
                 combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
                 combinedCanvasContext.drawImage(viewCanvas, firstMapComponent.width, 0);
                 combinedCanvasContext.drawImage(secondMapComponent, viewScreenshot.data.width + firstMapComponent.width, 0);
             }
-            else if (this.outputLayout === "column") {
+            else if (this.outputLayout === "vertical") {
                 combinedCanvasContext.drawImage(viewCanvas, 0, 0);
                 combinedCanvasContext.drawImage(firstMapComponent, 0, viewScreenshotHeight);
                 combinedCanvasContext.drawImage(secondMapComponent, 0, viewScreenshotHeight + firstMapComponentHeight);
@@ -425,7 +426,7 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
             var secondMapComponentHeight = secondMapComponent.height;
             var thirdMapComponentHeight = thirdMapComponent.height;
             var viewScreenshotHeight = viewScreenshot.data.height;
-            if (this.outputLayout === "row") {
+            if (this.outputLayout === "horizontal") {
                 combinedCanvasElements.width =
                     viewScreenshot.data.width +
                         firstMapComponent.width +
@@ -433,7 +434,7 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
                         thirdMapComponent.width;
                 combinedCanvasElements.height = Math.max(viewScreenshotHeight, firstMapComponentHeight, secondMapComponentHeight, thirdMapComponentHeight);
             }
-            else if (this.outputLayout === "column") {
+            else if (this.outputLayout === "vertical") {
                 combinedCanvasElements.width = Math.max(viewScreenshot.data.width, firstMapComponent.width, secondMapComponent.width, thirdMapComponent.width);
                 combinedCanvasElements.height =
                     viewScreenshot.data.height +
@@ -443,7 +444,7 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
             }
             combinedCanvasContext.fillStyle = "#fff";
             combinedCanvasContext.fillRect(0, 0, combinedCanvasElements.width, combinedCanvasElements.height);
-            if (this.outputLayout === "row") {
+            if (this.outputLayout === "horizontal") {
                 combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
                 combinedCanvasContext.drawImage(viewCanvas, firstMapComponent.width, 0);
                 combinedCanvasContext.drawImage(secondMapComponent, viewScreenshot.data.width + firstMapComponent.width, 0);
@@ -451,7 +452,7 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
                     firstMapComponent.width +
                     secondMapComponent.width, 0);
             }
-            else if (this.outputLayout === "column") {
+            else if (this.outputLayout === "vertical") {
                 combinedCanvasContext.drawImage(viewCanvas, 0, 0);
                 combinedCanvasContext.drawImage(firstMapComponent, 0, viewScreenshotHeight);
                 combinedCanvasContext.drawImage(secondMapComponent, 0, viewScreenshot.data.height + firstMapComponent.height);

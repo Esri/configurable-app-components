@@ -164,8 +164,8 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
                     " ",
                     i18n.screenshotLayout),
                 widget_1.tsx("select", { bind: this, onchange: this._updateLayoutOption, disabled: allDisabled },
-                    widget_1.tsx("option", { value: "row", selected: this.outputLayout === "row" ? true : false }, i18n.row),
-                    widget_1.tsx("option", { value: "column", selected: this.outputLayout === "column" ? true : false }, i18n.column))));
+                    widget_1.tsx("option", { value: "horizontal", selected: this.outputLayout === "horizontal" ? true : false }, i18n.horizontal),
+                    widget_1.tsx("option", { value: "vertical", selected: this.outputLayout === "vertical" ? true : false }, i18n.vertical))));
         };
         Screenshot.prototype._renderFeatureWarning = function () {
             return (widget_1.tsx("div", { key: "feature-warning", class: CSS.featureWarning }, this._selectFeatureAlertIsVisible ? (widget_1.tsx("div", { class: CSS.featureWarningTextContainer },
