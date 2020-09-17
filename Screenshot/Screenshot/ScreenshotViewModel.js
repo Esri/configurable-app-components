@@ -93,12 +93,14 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
                                         y: y,
                                         width: 1,
                                         height: 1
-                                    }
+                                    },
+                                    ignorePadding: true
                                 };
                             }
                             else {
                                 this._screenshotConfig = {
-                                    area: this._area
+                                    area: this._area,
+                                    ignorePadding: true
                                 };
                             }
                             this._screenshotPromise = true;
@@ -125,12 +127,14 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
                                         y: y,
                                         width: 1,
                                         height: 1
-                                    }
+                                    },
+                                    ignorePadding: true
                                 };
                             }
                             else {
                                 this._screenshotConfig = {
-                                    area: this._area
+                                    area: this._area,
+                                    ignorePadding: true
                                 };
                             }
                             this._screenshotPromise = true;
@@ -649,16 +653,14 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
         ScreenshotViewModel.prototype._removeHighlight = function () {
             var _this = this;
             return watchUtils.watch(this, "view.popup.visible", function () {
+                var _a, _b, _c, _d;
                 if (!_this.view) {
                     return;
                 }
-                if (!_this.view.popup.visible &&
+                if (!((_b = (_a = _this.view) === null || _a === void 0 ? void 0 : _a.popup) === null || _b === void 0 ? void 0 : _b.visible) &&
                     _this.screenshotModeIsActive &&
-                    _this.enablePopupOption &&
-                    _this.view.popup.selectedFeature) {
-                    var layerView = _this.view.layerViews.find(function (layerView) {
-                        return layerView.layer.id === _this.view.popup.selectedFeature.layer.id;
-                    });
+                    _this.enablePopupOption && ((_d = (_c = _this.view) === null || _c === void 0 ? void 0 : _c.popup) === null || _d === void 0 ? void 0 : _d.selectedFeature)) {
+                    var layerView = _this.view.layerViews.find(function (layerView) { var _a, _b, _c, _d; return layerView.layer.id === ((_d = (_c = (_b = (_a = _this.view) === null || _a === void 0 ? void 0 : _a.popup) === null || _b === void 0 ? void 0 : _b.selectedFeature) === null || _c === void 0 ? void 0 : _c.layer) === null || _d === void 0 ? void 0 : _d.id); });
                     _this._highlightedFeature = layerView.highlight(_this.view.popup.selectedFeature);
                 }
                 var watchHighlight = "watch-highlight";
@@ -680,10 +682,11 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
         ScreenshotViewModel.prototype._watchScreenshotMode = function () {
             var _this = this;
             return watchUtils.watch(this, "screenshotModeIsActive", function () {
+                var _a;
                 if (!_this.view) {
                     return;
                 }
-                if (_this.view.popup) {
+                if ((_a = _this.view) === null || _a === void 0 ? void 0 : _a.popup) {
                     _this.view.popup.visible = false;
                 }
             });

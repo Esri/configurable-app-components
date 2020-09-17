@@ -267,10 +267,13 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
         };
         Screenshot.prototype._closePreview = function () {
             var _this = this;
+            var _a;
             var viewModel = this.viewModel;
             viewModel.previewIsVisible = false;
             viewModel.screenshotModeIsActive = false;
-            this.view.popup.clear();
+            if ((_a = this === null || this === void 0 ? void 0 : this.view) === null || _a === void 0 ? void 0 : _a.popup) {
+                this.view.popup.clear();
+            }
             window.setTimeout(function () {
                 _this._activeScreenshotBtnNode.focus();
             }, 10);
@@ -279,10 +282,11 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
         Screenshot.prototype._generateOffScreenPopup = function () {
             var _this = this;
             return watchUtils.watch(this, "view.popup.visible", function () {
+                var _a, _b;
                 if (!_this.view) {
                     return;
                 }
-                if (_this.view.popup.visible && _this._offscreenPopupContainer) {
+                if (((_b = (_a = _this === null || _this === void 0 ? void 0 : _this.view) === null || _a === void 0 ? void 0 : _a.popup) === null || _b === void 0 ? void 0 : _b.visible) && _this._offscreenPopupContainer) {
                     if (!_this.featureWidget) {
                         _this._set("featureWidget", new FeatureWidget({
                             container: _this._offscreenPopupContainer,
@@ -329,10 +333,9 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
         Screenshot.prototype._watchSelectedFeature = function () {
             var _this = this;
             return watchUtils.watch(this, "view.popup.selectedFeature", function () {
+                var _a, _b, _c, _d;
                 if (_this.featureWidget &&
-                    _this.view &&
-                    _this.view.popup &&
-                    _this.view.popup.selectedFeature) {
+                    _this.view && ((_a = _this.view) === null || _a === void 0 ? void 0 : _a.popup) && ((_c = (_b = _this.view) === null || _b === void 0 ? void 0 : _b.popup) === null || _c === void 0 ? void 0 : _c.selectedFeature)) {
                     while (_this._offscreenPopupContainer &&
                         _this._offscreenPopupContainer.firstChild) {
                         _this._offscreenPopupContainer.removeChild(_this._offscreenPopupContainer.firstChild);
@@ -340,12 +343,14 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
                     _this.featureWidget.graphic = null;
                     _this._set("featureWidget", null);
                 }
-                _this._set("featureWidget", new FeatureWidget({
-                    container: _this._offscreenPopupContainer,
-                    graphic: _this.view.popup.selectedFeature,
-                    map: _this.view.map,
-                    spatialReference: _this.view.spatialReference
-                }));
+                if ((_d = _this === null || _this === void 0 ? void 0 : _this.view) === null || _d === void 0 ? void 0 : _d.popup) {
+                    _this._set("featureWidget", new FeatureWidget({
+                        container: _this._offscreenPopupContainer,
+                        graphic: _this.view.popup.selectedFeature,
+                        map: _this.view.map,
+                        spatialReference: _this.view.spatialReference
+                    }));
+                }
                 _this.scheduleRender();
             });
         };

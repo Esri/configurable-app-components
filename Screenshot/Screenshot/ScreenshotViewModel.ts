@@ -143,11 +143,13 @@ class ScreenshotViewModel extends Accessor {
               y,
               width: 1,
               height: 1
-            }
+            },
+            ignorePadding: true
           };
         } else {
           this._screenshotConfig = {
-            area: this._area
+            area: this._area,
+            ignorePadding: true
           };
         }
         this._screenshotPromise = true;
@@ -178,11 +180,13 @@ class ScreenshotViewModel extends Accessor {
               y,
               width: 1,
               height: 1
-            }
+            },
+            ignorePadding: true
           };
         } else {
           this._screenshotConfig = {
-            area: this._area
+            area: this._area,
+            ignorePadding: true
           };
         }
         this._screenshotPromise = true;
@@ -1116,14 +1120,14 @@ class ScreenshotViewModel extends Accessor {
         return;
       }
       if (
-        !this.view.popup.visible &&
+        !this.view?.popup?.visible &&
         this.screenshotModeIsActive &&
         this.enablePopupOption &&
-        this.view.popup.selectedFeature
+        this.view?.popup?.selectedFeature
       ) {
         const layerView = this.view.layerViews.find(
           layerView =>
-            layerView.layer.id === this.view.popup.selectedFeature.layer.id
+            layerView.layer.id === this.view?.popup?.selectedFeature?.layer?.id
         ) as __esri.FeatureLayerView;
         this._highlightedFeature = layerView.highlight(
           this.view.popup.selectedFeature
@@ -1154,7 +1158,7 @@ class ScreenshotViewModel extends Accessor {
       if (!this.view) {
         return;
       }
-      if (this.view.popup) {
+      if (this.view?.popup) {
         this.view.popup.visible = false;
       }
     });

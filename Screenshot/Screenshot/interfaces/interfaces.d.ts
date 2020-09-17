@@ -36,4 +36,5 @@ interface ScreenshotConfig {
   width?: number;
   height?: number;
   area?: Area;
+  ignorePadding?: boolean;
 }
