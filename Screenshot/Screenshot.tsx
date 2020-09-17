@@ -561,7 +561,9 @@ class Screenshot extends Widget {
     const { viewModel } = this;
     viewModel.previewIsVisible = false;
     viewModel.screenshotModeIsActive = false;
-    this.view.popup.clear();
+    if (this?.view?.popup) {
+      this.view.popup.clear();
+    }
     window.setTimeout(() => {
       this._activeScreenshotBtnNode.focus();
     }, 10);
@@ -573,7 +575,7 @@ class Screenshot extends Widget {
       if (!this.view) {
         return;
       }
-      if (this.view.popup.visible && this._offscreenPopupContainer) {
+      if (this?.view?.popup?.visible && this._offscreenPopupContainer) {
         if (!this.featureWidget) {
           this._set(
             "featureWidget",
@@ -632,8 +634,8 @@ class Screenshot extends Widget {
       if (
         this.featureWidget &&
         this.view &&
-        this.view.popup &&
-        this.view.popup.selectedFeature
+        this.view?.popup &&
+        this.view?.popup?.selectedFeature
       ) {
         while (
           this._offscreenPopupContainer &&
@@ -646,15 +648,18 @@ class Screenshot extends Widget {
         this.featureWidget.graphic = null;
         this._set("featureWidget", null);
       }
-      this._set(
-        "featureWidget",
-        new FeatureWidget({
-          container: this._offscreenPopupContainer,
-          graphic: this.view.popup.selectedFeature,
-          map: this.view.map,
-          spatialReference: this.view.spatialReference
-        })
-      );
+      if (this?.view?.popup) {
+        this._set(
+          "featureWidget",
+          new FeatureWidget({
+            container: this._offscreenPopupContainer,
+            graphic: this.view.popup.selectedFeature,
+            map: this.view.map,
+            spatialReference: this.view.spatialReference
+          })
+        );
+      }
+
       this.scheduleRender();
     });
   }
