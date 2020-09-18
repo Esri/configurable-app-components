@@ -124,8 +124,7 @@ class ScreenshotViewModel extends Accessor {
     event: any,
     maskDiv: HTMLElement,
     screenshotImageElement: HTMLImageElement,
-    dragHandler: any,
-    downloadBtnNode: HTMLButtonElement
+    dragHandler: any
   ): Promise<void> {
     if (event.action !== "end") {
       event.stopPropagation();
@@ -161,8 +160,7 @@ class ScreenshotViewModel extends Accessor {
         this._processScreenshot(
           viewScreenshot,
           screenshotImageElement,
-          maskDiv,
-          downloadBtnNode
+          maskDiv
         );
         this._screenshotPromise = false;
         this.notifyChange("state");
@@ -197,8 +195,7 @@ class ScreenshotViewModel extends Accessor {
         this._processScreenshot(
           viewScreenshot,
           screenshotImageElement,
-          maskDiv,
-          downloadBtnNode
+          maskDiv
         );
         this._screenshotPromise = false;
         this.notifyChange("state");
@@ -275,8 +272,7 @@ class ScreenshotViewModel extends Accessor {
     viewCanvas: HTMLCanvasElement,
     img: HTMLImageElement,
     screenshotImageElement: HTMLImageElement,
-    maskDiv: HTMLElement,
-    downloadBtnNode: HTMLButtonElement
+    maskDiv: HTMLElement
   ): void {
     viewCanvas.height = viewScreenshot.data.height;
     viewCanvas.width = viewScreenshot.data.width;
@@ -284,12 +280,7 @@ class ScreenshotViewModel extends Accessor {
     img.src = viewScreenshot.dataUrl;
     img.onload = () => {
       context.drawImage(img, 0, 0);
-      this._showPreview(
-        viewCanvas,
-        screenshotImageElement,
-        maskDiv,
-        downloadBtnNode
-      );
+      this._showPreview(viewCanvas, screenshotImageElement, maskDiv);
       this._canvasElement = viewCanvas;
     };
   }
@@ -299,8 +290,7 @@ class ScreenshotViewModel extends Accessor {
     viewCanvas: HTMLCanvasElement,
     img: HTMLImageElement,
     screenshotImageElement: HTMLImageElement,
-    maskDiv: HTMLElement,
-    downloadBtnNode: HTMLButtonElement
+    maskDiv: HTMLElement
   ): Promise<void> {
     const context = viewCanvas.getContext("2d") as CanvasRenderingContext2D;
     const combinedCanvas = document.createElement(
@@ -324,8 +314,7 @@ class ScreenshotViewModel extends Accessor {
     this.notifyChange("state");
 
     const mapComponentCanvas = await html2canvas(mapComponent, {
-      removeContainer: true,
-      logging: false
+      logging: true
     });
 
     viewCanvas.height = viewScreenshot.data.height;
@@ -340,12 +329,7 @@ class ScreenshotViewModel extends Accessor {
         mapComponentCanvas
       );
       this._canvasElement = combinedCanvas;
-      this._showPreview(
-        combinedCanvas,
-        screenshotImageElement,
-        maskDiv,
-        downloadBtnNode
-      );
+      this._showPreview(combinedCanvas, screenshotImageElement, maskDiv);
       this._screenshotPromise = false;
       this.notifyChange("state");
     };
@@ -357,7 +341,6 @@ class ScreenshotViewModel extends Accessor {
     img: HTMLImageElement,
     screenshotImageElement: HTMLImageElement,
     maskDiv: HTMLElement,
-    downloadBtnNode: HTMLButtonElement,
     firstNode: HTMLElement,
     secondNode: HTMLElement
   ): Promise<void> {
@@ -398,8 +381,7 @@ class ScreenshotViewModel extends Accessor {
         combinedCanvasElements,
         screenshotImageElement,
         maskDiv,
-        screenshotKey,
-        downloadBtnNode
+        screenshotKey
       ),
       screenshotKey
     );
@@ -411,7 +393,6 @@ class ScreenshotViewModel extends Accessor {
     img: HTMLImageElement,
     screenshotImageElement: HTMLImageElement,
     maskDiv: HTMLElement,
-    downloadBtnNode: HTMLButtonElement,
     firstNode: HTMLElement,
     secondNode: HTMLElement,
     thirdNode: HTMLElement
@@ -459,8 +440,7 @@ class ScreenshotViewModel extends Accessor {
         combinedCanvasElements,
         screenshotImageElement,
         maskDiv,
-        screenshotKey,
-        downloadBtnNode
+        screenshotKey
       ),
       screenshotKey
     );
@@ -474,8 +454,7 @@ class ScreenshotViewModel extends Accessor {
     combinedCanvasElements: HTMLCanvasElement,
     screenshotImageElement: HTMLImageElement,
     maskDiv: HTMLElement,
-    screenshotKey: string,
-    downloadBtnNode: HTMLButtonElement
+    screenshotKey: string
   ) {
     return watchUtils.init(this, "state", () => {
       if (
@@ -499,8 +478,7 @@ class ScreenshotViewModel extends Accessor {
           this._showPreview(
             combinedCanvasElements,
             screenshotImageElement,
-            maskDiv,
-            downloadBtnNode
+            maskDiv
           );
           this._firstMapComponent = null;
           this._secondMapComponent = null;
@@ -519,8 +497,7 @@ class ScreenshotViewModel extends Accessor {
     combinedCanvasElements: HTMLCanvasElement,
     screenshotImageElement: HTMLImageElement,
     maskDiv: HTMLElement,
-    screenshotKey: string,
-    downloadBtnNode: HTMLButtonElement
+    screenshotKey: string
   ) {
     return watchUtils.init(this, "state", () => {
       if (
@@ -543,12 +520,11 @@ class ScreenshotViewModel extends Accessor {
             this._thirdMapComponent
           );
           this._canvasElement = combinedCanvasElements;
-          console.log(this._canvasElement);
+
           this._showPreview(
             combinedCanvasElements,
             screenshotImageElement,
-            maskDiv,
-            downloadBtnNode
+            maskDiv
           );
           this._firstMapComponent = null;
           this._secondMapComponent = null;
@@ -753,8 +729,7 @@ class ScreenshotViewModel extends Accessor {
   private _showPreview(
     canvasElement: HTMLCanvasElement,
     screenshotImageElement: HTMLImageElement,
-    maskDiv: HTMLElement,
-    downloadBtnNode: HTMLButtonElement
+    maskDiv: HTMLElement
   ): void {
     screenshotImageElement.width = canvasElement.width;
     screenshotImageElement.src = canvasElement.toDataURL();
@@ -769,9 +744,6 @@ class ScreenshotViewModel extends Accessor {
     ) {
       this.featureWidget.graphic = null;
     }
-    window.setTimeout(() => {
-      downloadBtnNode.focus();
-    }, 750);
     this.notifyChange("state");
   }
 
@@ -834,8 +806,7 @@ class ScreenshotViewModel extends Accessor {
   private _processScreenshot(
     viewScreenshot: Screenshot,
     screenshotImageElement: HTMLImageElement,
-    maskDiv: HTMLElement,
-    downloadBtnNode: HTMLButtonElement
+    maskDiv: HTMLElement
   ): void {
     const viewCanvas = document.createElement("canvas") as HTMLCanvasElement;
     const img = document.createElement("img") as HTMLImageElement;
@@ -856,8 +827,7 @@ class ScreenshotViewModel extends Accessor {
         viewCanvas,
         img,
         screenshotImageElement,
-        maskDiv,
-        downloadBtnNode
+        maskDiv
       );
     } else {
       if (
@@ -871,8 +841,7 @@ class ScreenshotViewModel extends Accessor {
             viewCanvas,
             img,
             screenshotImageElement,
-            maskDiv,
-            downloadBtnNode
+            maskDiv
           );
         } else {
           this._onlyTakeScreenshotOfView(
@@ -880,8 +849,7 @@ class ScreenshotViewModel extends Accessor {
             viewCanvas,
             img,
             screenshotImageElement,
-            maskDiv,
-            downloadBtnNode
+            maskDiv
           );
         }
       } else if (
@@ -895,8 +863,7 @@ class ScreenshotViewModel extends Accessor {
             viewCanvas,
             img,
             screenshotImageElement,
-            maskDiv,
-            downloadBtnNode
+            maskDiv
           );
         } else {
           this._onlyTakeScreenshotOfView(
@@ -904,8 +871,7 @@ class ScreenshotViewModel extends Accessor {
             viewCanvas,
             img,
             screenshotImageElement,
-            maskDiv,
-            downloadBtnNode
+            maskDiv
           );
         }
       } else if (
@@ -922,8 +888,7 @@ class ScreenshotViewModel extends Accessor {
             viewCanvas,
             img,
             screenshotImageElement,
-            maskDiv,
-            downloadBtnNode
+            maskDiv
           );
         } else {
           this._onlyTakeScreenshotOfView(
@@ -931,8 +896,7 @@ class ScreenshotViewModel extends Accessor {
             viewCanvas,
             img,
             screenshotImageElement,
-            maskDiv,
-            downloadBtnNode
+            maskDiv
           );
         }
       } else if (
@@ -952,7 +916,6 @@ class ScreenshotViewModel extends Accessor {
             img,
             screenshotImageElement,
             maskDiv,
-            downloadBtnNode,
             document.querySelector(`${this._mapComponentSelectors[0]}`),
             document.querySelector(`${this._mapComponentSelectors[1]}`)
           );
@@ -967,8 +930,7 @@ class ScreenshotViewModel extends Accessor {
             viewCanvas,
             img,
             screenshotImageElement,
-            maskDiv,
-            downloadBtnNode
+            maskDiv
           );
         } else {
           this._onlyTakeScreenshotOfView(
@@ -976,8 +938,7 @@ class ScreenshotViewModel extends Accessor {
             viewCanvas,
             img,
             screenshotImageElement,
-            maskDiv,
-            downloadBtnNode
+            maskDiv
           );
         }
       } else if (
@@ -997,7 +958,6 @@ class ScreenshotViewModel extends Accessor {
             img,
             screenshotImageElement,
             maskDiv,
-            downloadBtnNode,
             document.querySelector(`${this._mapComponentSelectors[0]}`),
             this.custom.element
           );
@@ -1012,8 +972,7 @@ class ScreenshotViewModel extends Accessor {
             viewCanvas,
             img,
             screenshotImageElement,
-            maskDiv,
-            downloadBtnNode
+            maskDiv
           );
         } else {
           this._onlyTakeScreenshotOfView(
@@ -1021,8 +980,7 @@ class ScreenshotViewModel extends Accessor {
             viewCanvas,
             img,
             screenshotImageElement,
-            maskDiv,
-            downloadBtnNode
+            maskDiv
           );
         }
       } else if (
@@ -1042,7 +1000,6 @@ class ScreenshotViewModel extends Accessor {
             img,
             screenshotImageElement,
             maskDiv,
-            downloadBtnNode,
             document.querySelector(`${this._mapComponentSelectors[1]}`),
             this.custom.element
           );
@@ -1057,8 +1014,7 @@ class ScreenshotViewModel extends Accessor {
             viewCanvas,
             img,
             screenshotImageElement,
-            maskDiv,
-            downloadBtnNode
+            maskDiv
           );
         } else {
           this._onlyTakeScreenshotOfView(
@@ -1066,8 +1022,7 @@ class ScreenshotViewModel extends Accessor {
             viewCanvas,
             img,
             screenshotImageElement,
-            maskDiv,
-            downloadBtnNode
+            maskDiv
           );
         }
       } else if (
@@ -1081,7 +1036,6 @@ class ScreenshotViewModel extends Accessor {
           img,
           screenshotImageElement,
           maskDiv,
-          downloadBtnNode,
           document.querySelector(`${this._mapComponentSelectors[0]}`),
           document.querySelector(`${this._mapComponentSelectors[1]}`),
           this.custom.element
@@ -1095,7 +1049,6 @@ class ScreenshotViewModel extends Accessor {
       return;
     }
     const boundClientRect = this.view.container.getBoundingClientRect();
-    const calibratedMaskTop = (window.innerHeight - this.view.height) as number;
     if (area) {
       maskDiv.style.top = `${area.y + boundClientRect.top}px`;
       maskDiv.style.left = `${area.x + boundClientRect.left}px`;

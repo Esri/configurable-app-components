@@ -50,7 +50,6 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
             var _this = _super.call(this, value) || this;
             _this._maskNode = null;
             _this._screenshotImgNode = null;
-            _this._downloadBtnNode = null;
             _this._activeScreenshotBtnNode = null;
             _this._selectFeatureAlertIsVisible = null;
             _this._offscreenPopupContainer = null;
@@ -97,13 +96,20 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
                     }
                 })
             ]);
+            var offScreenPopupContainer = document.createElement("div");
+            var offScreenLegendContainer = document.createElement("div");
+            offScreenPopupContainer.classList.add(CSS.offScreenPopupContainer);
+            offScreenLegendContainer.classList.add(CSS.offScreenLegendContainer);
+            document.body.appendChild(offScreenPopupContainer);
+            document.body.appendChild(offScreenLegendContainer);
+            this._offscreenPopupContainer = offScreenPopupContainer;
+            this._offscreenLegendContainer = offScreenLegendContainer;
         };
         Screenshot.prototype.render = function () {
             var screenshotModeIsActive = this.viewModel.screenshotModeIsActive;
             var screenshotPanel = this._renderScreenshotPanel();
             var screenshotPreviewOverlay = this._renderScreenshotPreviewOverlay();
             var maskNode = this._renderMaskNode(screenshotModeIsActive);
-            var offScreenNodes = this._renderOffScreenNodes();
             var optOutOfScreenshotButton = this._renderOptOutOfScreenshotButton();
             if (this.legendWidget && !this.legendWidget.container) {
                 this.legendWidget.container = this._offscreenLegendContainer;
@@ -111,8 +117,7 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
             return (widget_1.tsx("div", null,
                 screenshotModeIsActive ? (widget_1.tsx("div", { key: "screenshot-container", class: CSS.closeButtonContainer }, optOutOfScreenshotButton)) : (screenshotPanel),
                 screenshotPreviewOverlay,
-                maskNode,
-                offScreenNodes));
+                maskNode));
         };
         Screenshot.prototype.destroy = function () {
             this._handles.removeAll();
@@ -129,7 +134,7 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
             this.viewModel.screenshotModeIsActive = true;
             this.view.container.classList.add(CSS.screenshotCursor);
             this.viewModel.dragHandler = this.view.on("drag", function (event) {
-                _this.viewModel.setScreenshotArea(event, _this._maskNode, _this._screenshotImgNode, _this.viewModel.dragHandler, _this._downloadBtnNode);
+                _this.viewModel.setScreenshotArea(event, _this._maskNode, _this._screenshotImgNode, _this.viewModel.dragHandler);
             });
             this.scheduleRender();
         };
@@ -203,7 +208,7 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
                 _a[CSS.hideOverlay] = !previewIsVisible,
                 _a);
             var screenshotPreviewBtns = this._renderScreenshotPreviewBtns();
-            return (widget_1.tsx("div", { class: this.classes(CSS.screenshotDiv, overlayIsVisible) },
+            return (widget_1.tsx("div", { afterCreate: this._attachToBody, class: this.classes(CSS.screenshotDiv, overlayIsVisible) },
                 widget_1.tsx("div", { class: CSS.screenshotPreviewContainer },
                     widget_1.tsx("div", { class: CSS.screenshotImgContainer },
                         widget_1.tsx("img", { bind: this, afterCreate: widget_1.storeNode, "data-node-ref": "_screenshotImgNode", class: CSS.screenshotImg })),
@@ -212,8 +217,20 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
         };
         Screenshot.prototype._renderScreenshotPreviewBtns = function () {
             return (widget_1.tsx("div", null,
-                widget_1.tsx("button", { bind: this, tabIndex: 0, class: CSS.actionBtn, onclick: this._downloadImage, onkeydown: this._downloadImage, afterCreate: widget_1.storeNode, "data-node-ref": "_downloadBtnNode", "aria-label": i18n.downloadImage, title: i18n.downloadImage }, i18n.downloadImage),
-                widget_1.tsx("button", { bind: this, tabIndex: 0, class: this.classes(CSS.actionBtn, CSS.backBtn), onclick: this._closePreview, onkeydown: this._closePreview }, i18n.backButton)));
+                widget_1.tsx("button", { bind: this, class: CSS.actionBtn, afterCreate: this._downloadEventListener, "aria-label": i18n.downloadImage, title: i18n.downloadImage }, i18n.downloadImage),
+                widget_1.tsx("button", { bind: this, class: this.classes(CSS.actionBtn, CSS.backBtn), afterCreate: this._addCloseEventListener, "aria-label": i18n.backButton, title: i18n.backButton }, i18n.backButton)));
+        };
+        Screenshot.prototype._addCloseEventListener = function (node) {
+            var _this = this;
+            node.addEventListener("click", function () {
+                _this._closePreview();
+            });
+        };
+        Screenshot.prototype._downloadEventListener = function (node) {
+            var _this = this;
+            node.addEventListener("click", function () {
+                _this._downloadImage();
+            });
         };
         Screenshot.prototype._renderMaskNode = function (screenshotModeIsActive) {
             var _a;
@@ -225,11 +242,6 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
         Screenshot.prototype._renderOptOutOfScreenshotButton = function () {
             return (widget_1.tsx("calcite-button", { bind: this, tabIndex: 0, class: this.classes(CSS.pointerCursor, CSS.screenshotClose), onclick: this.deactivateScreenshot, onkeydown: this.deactivateScreenshot, title: i18n.deactivateScreenshot, color: "red" },
                 widget_1.tsx("calcite-icon", { icon: "x" })));
-        };
-        Screenshot.prototype._renderOffScreenNodes = function () {
-            return (widget_1.tsx("div", null,
-                widget_1.tsx("div", { bind: this, afterCreate: widget_1.storeNode, "data-node-ref": "_offscreenPopupContainer", class: CSS.offScreenPopupContainer }),
-                widget_1.tsx("div", { bind: this, afterCreate: widget_1.storeNode, "data-node-ref": "_offscreenLegendContainer", class: CSS.offScreenLegendContainer })));
         };
         Screenshot.prototype.deactivateScreenshot = function () {
             var _this = this;
@@ -358,6 +370,9 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
             var node = e.target;
             this.outputLayout = node.value;
         };
+        Screenshot.prototype._attachToBody = function (node) {
+            document.body.appendChild(node);
+        };
         tslib_1.__decorate([
             decorators_1.aliasOf("viewModel.custom")
         ], Screenshot.prototype, "custom", void 0);
@@ -438,9 +453,6 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
         ], Screenshot.prototype, "activateScreenshot", null);
         tslib_1.__decorate([
             widget_1.accessibleHandler()
-        ], Screenshot.prototype, "_downloadImage", null);
-        tslib_1.__decorate([
-            widget_1.accessibleHandler()
         ], Screenshot.prototype, "deactivateScreenshot", null);
         tslib_1.__decorate([
             widget_1.accessibleHandler()
@@ -451,9 +463,6 @@ define(["require", "exports", "tslib", "dojo/i18n!./Screenshot/nls/resources", "
         tslib_1.__decorate([
             widget_1.accessibleHandler()
         ], Screenshot.prototype, "_toggleCustom", null);
-        tslib_1.__decorate([
-            widget_1.accessibleHandler()
-        ], Screenshot.prototype, "_closePreview", null);
         Screenshot = tslib_1.__decorate([
             decorators_1.subclass("Screenshot")
         ], Screenshot);

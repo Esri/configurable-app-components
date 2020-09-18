@@ -74,7 +74,6 @@ class Screenshot extends Widget {
 
   private _maskNode: HTMLElement = null;
   private _screenshotImgNode: HTMLImageElement = null;
-  private _downloadBtnNode: HTMLButtonElement = null;
   private _activeScreenshotBtnNode: HTMLButtonElement = null;
   private _selectFeatureAlertIsVisible: boolean = null;
   private _offscreenPopupContainer: HTMLElement = null;
@@ -185,6 +184,14 @@ class Screenshot extends Widget {
         }
       )
     ]);
+    const offScreenPopupContainer = document.createElement("div");
+    const offScreenLegendContainer = document.createElement("div");
+    offScreenPopupContainer.classList.add(CSS.offScreenPopupContainer);
+    offScreenLegendContainer.classList.add(CSS.offScreenLegendContainer);
+    document.body.appendChild(offScreenPopupContainer);
+    document.body.appendChild(offScreenLegendContainer);
+    this._offscreenPopupContainer = offScreenPopupContainer;
+    this._offscreenLegendContainer = offScreenLegendContainer;
   }
 
   render(): any {
@@ -192,7 +199,6 @@ class Screenshot extends Widget {
     const screenshotPanel = this._renderScreenshotPanel();
     const screenshotPreviewOverlay = this._renderScreenshotPreviewOverlay();
     const maskNode = this._renderMaskNode(screenshotModeIsActive);
-    const offScreenNodes = this._renderOffScreenNodes();
     const optOutOfScreenshotButton = this._renderOptOutOfScreenshotButton();
     if (this.legendWidget && !this.legendWidget.container) {
       this.legendWidget.container = this._offscreenLegendContainer;
@@ -209,7 +215,6 @@ class Screenshot extends Widget {
         )}
         {screenshotPreviewOverlay}
         {maskNode}
-        {offScreenNodes}
       </div>
     );
   }
@@ -234,14 +239,12 @@ class Screenshot extends Widget {
         event,
         this._maskNode,
         this._screenshotImgNode,
-        this.viewModel.dragHandler,
-        this._downloadBtnNode
+        this.viewModel.dragHandler
       );
     });
     this.scheduleRender();
   }
 
-  @accessibleHandler()
   private _downloadImage() {
     this.viewModel.downloadImage();
   }
@@ -411,7 +414,10 @@ class Screenshot extends Widget {
     };
     const screenshotPreviewBtns = this._renderScreenshotPreviewBtns();
     return (
-      <div class={this.classes(CSS.screenshotDiv, overlayIsVisible)}>
+      <div
+        afterCreate={this._attachToBody}
+        class={this.classes(CSS.screenshotDiv, overlayIsVisible)}
+      >
         <div class={CSS.screenshotPreviewContainer}>
           <div class={CSS.screenshotImgContainer}>
             <img
@@ -440,12 +446,8 @@ class Screenshot extends Widget {
       <div>
         <button
           bind={this}
-          tabIndex={0}
           class={CSS.actionBtn}
-          onclick={this._downloadImage}
-          onkeydown={this._downloadImage}
-          afterCreate={storeNode}
-          data-node-ref="_downloadBtnNode"
+          afterCreate={this._downloadEventListener}
           aria-label={i18n.downloadImage}
           title={i18n.downloadImage}
         >
@@ -453,15 +455,27 @@ class Screenshot extends Widget {
         </button>
         <button
           bind={this}
-          tabIndex={0}
           class={this.classes(CSS.actionBtn, CSS.backBtn)}
-          onclick={this._closePreview}
-          onkeydown={this._closePreview}
+          afterCreate={this._addCloseEventListener}
+          aria-label={i18n.backButton}
+          title={i18n.backButton}
         >
           {i18n.backButton}
         </button>
       </div>
     );
+  }
+
+  private _addCloseEventListener(node: HTMLElement): void {
+    node.addEventListener("click", () => {
+      this._closePreview();
+    });
+  }
+
+  private _downloadEventListener(node: HTMLElement) {
+    node.addEventListener("click", () => {
+      this._downloadImage();
+    });
   }
 
   private _renderMaskNode(screenshotModeIsActive: boolean): any {
@@ -491,25 +505,6 @@ class Screenshot extends Widget {
       >
         <calcite-icon icon="x"></calcite-icon>
       </calcite-button>
-    );
-  }
-
-  private _renderOffScreenNodes(): any {
-    return (
-      <div>
-        <div
-          bind={this}
-          afterCreate={storeNode}
-          data-node-ref="_offscreenPopupContainer"
-          class={CSS.offScreenPopupContainer}
-        />
-        <div
-          bind={this}
-          afterCreate={storeNode}
-          data-node-ref="_offscreenLegendContainer"
-          class={CSS.offScreenLegendContainer}
-        ></div>
-      </div>
     );
   }
 
@@ -556,7 +551,6 @@ class Screenshot extends Widget {
     this.scheduleRender();
   }
 
-  @accessibleHandler()
   private _closePreview(): void {
     const { viewModel } = this;
     viewModel.previewIsVisible = false;
@@ -667,6 +661,10 @@ class Screenshot extends Widget {
   private _updateLayoutOption(e: Event) {
     const node = e.target as HTMLSelectElement;
     this.outputLayout = node.value as "horizontal" | "vertical";
+  }
+
+  private _attachToBody(this: HTMLElement, node) {
+    document.body.appendChild(node);
   }
 }
 
