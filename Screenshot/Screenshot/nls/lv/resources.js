@@ -9,5 +9,9 @@ define({
   "screenshotTitle": "Tvert attēlu",
   "screenshotSubtitle": "Izvēlieties papildu elementus, kas jāiekļauj kartē.",
   "legend": "Apzīmējumi",
-  "popup": "Uznirstošie logi"
+  "popup": "Uznirstošie logi",
+  "enterTitle": "Ievadiet virsrakstu",
+  "screenshotLayout": "Ekrānuzņēmuma izkārtojums",
+  "horizontal": "Horizontāls",
+  "vertical": "Vertikāls"
 });

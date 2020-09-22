@@ -9,5 +9,9 @@ define({
   "screenshotTitle": "التقاط صورة",
   "screenshotSubtitle": "تحديد عناصر إضافية لتضمينها مع الخريطة.",
   "legend": "وسيلة الإيضاح",
-  "popup": "القائمة المنبثقة"
+  "popup": "القائمة المنبثقة",
+  "enterTitle": "أدخل عنوانًا",
+  "screenshotLayout": "التخطيط الطباعي للقطة الشاشة",
+  "horizontal": "أفقياً",
+  "vertical": "رأسي"
 });

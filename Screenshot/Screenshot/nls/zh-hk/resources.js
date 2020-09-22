@@ -9,5 +9,9 @@ define({
   "screenshotTitle": "擷取圖片",
   "screenshotSubtitle": "選擇其他元素以包含地圖。",
   "legend": "圖例",
-  "popup": "快顯視窗"
+  "popup": "快顯",
+  "enterTitle": "輸入標題",
+  "screenshotLayout": "螢幕截圖版面配置",
+  "horizontal": "水平對齊",
+  "vertical": "垂直"
 });

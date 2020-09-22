@@ -9,5 +9,9 @@ define({
   "screenshotTitle": "捕获图像",
   "screenshotSubtitle": "选择要包含在地图中的其他元素。",
   "legend": "图例",
-  "popup": "弹出窗口"
+  "popup": "弹出窗口",
+  "enterTitle": "输入标题",
+  "screenshotLayout": "屏幕截图布局",
+  "horizontal": "水平对齐",
+  "vertical": "垂直对齐"
 });

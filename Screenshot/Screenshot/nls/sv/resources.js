@@ -9,5 +9,9 @@ define({
   "screenshotTitle": "Ta en bild",
   "screenshotSubtitle": "Välj ytterligare element som ska ingå i kartan.",
   "legend": "Teckenförklaring",
-  "popup": "Popupfönster"
+  "popup": "Popupfönster",
+  "enterTitle": "Ange en titel",
+  "screenshotLayout": "Layout för skärmbild",
+  "horizontal": "Horisontell",
+  "vertical": "Vertikal"
 });

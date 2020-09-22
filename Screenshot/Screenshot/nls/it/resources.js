@@ -9,5 +9,9 @@ define({
   "screenshotTitle": "Acquisisci immagine",
   "screenshotSubtitle": "Selezionare altri elementi da includere con la mappa.",
   "legend": "Legenda",
-  "popup": "Popup"
+  "popup": "Popup",
+  "enterTitle": "Immettere titolo",
+  "screenshotLayout": "Layout schermata",
+  "horizontal": "Orizzontale",
+  "vertical": "Verticale"
 });

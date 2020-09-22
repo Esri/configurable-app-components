@@ -9,5 +9,9 @@ define({
   "screenshotTitle": "Ambil gambar",
   "screenshotSubtitle": "Pilih elemen tambahan untuk diikutsertakan di peta.",
   "legend": "Legenda",
-  "popup": "Pop-up"
+  "popup": "Pop-up",
+  "enterTitle": "Masukkan judul",
+  "screenshotLayout": "Tata letak tangkapan layar",
+  "horizontal": "Horisontal",
+  "vertical": "Vertikal"
 });
