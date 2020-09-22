@@ -470,12 +470,22 @@ define(["require", "exports", "tslib", "esri/core/Accessor", "./html2canvas/html
             this._area = null;
             this._setMaskPosition(maskDiv, null);
             this.previewIsVisible = true;
+            this._focusTitleInput();
             if (this.enablePopupOption &&
                 this.includePopupInScreenshot &&
                 this.featureWidget) {
                 this.featureWidget.graphic = null;
             }
             this.notifyChange("state");
+        };
+        ScreenshotViewModel.prototype._focusTitleInput = function () {
+            var _this = this;
+            var focusInterval = setInterval(function () {
+                _this.previewTitleInputNode.focus();
+                if (document.activeElement === _this.previewTitleInputNode) {
+                    clearInterval(focusInterval);
+                }
+            }, 10);
         };
         ScreenshotViewModel.prototype._downloadImage = function (filename, dataUrl) {
             if (!window.navigator.msSaveOrOpenBlob) {

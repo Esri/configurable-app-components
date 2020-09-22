@@ -737,6 +737,7 @@ class ScreenshotViewModel extends Accessor {
     this._area = null;
     this._setMaskPosition(maskDiv, null);
     this.previewIsVisible = true;
+    this._focusTitleInput();
     if (
       this.enablePopupOption &&
       this.includePopupInScreenshot &&
@@ -745,6 +746,15 @@ class ScreenshotViewModel extends Accessor {
       this.featureWidget.graphic = null;
     }
     this.notifyChange("state");
+  }
+
+  private _focusTitleInput() {
+    const focusInterval = setInterval(() => {
+      this.previewTitleInputNode.focus();
+      if (document.activeElement === this.previewTitleInputNode) {
+        clearInterval(focusInterval);
+      }
+    }, 10);
   }
 
   private _downloadImage(filename: any, dataUrl: string): void {
