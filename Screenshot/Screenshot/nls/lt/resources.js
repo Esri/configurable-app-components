@@ -1,6 +1,6 @@
 define({
   "takeAScreenshot": "Užfiksuoti ekrano vaizdą",
-  "downloadImage": "Atsisiųsti paveikslėlį",
+  "downloadImage": "Atsisiųsti vaizdą",
   "backButton": "Grįžti į žemėlapį",
   "widgetLabel": "Ekrano vaizdas",
   "deactivateScreenshot": "Išjungti ekrano vaizdo režimą",
@@ -9,5 +9,9 @@ define({
   "screenshotTitle": "Fiksuoti vaizdą",
   "screenshotSubtitle": "Pasirinkite papildomus elementus, kurie bus įtraukti į žemėlapį.",
   "legend": "Legenda",
-  "popup": "Iškylantis langas"
+  "popup": "Iškylantis langas",
+  "enterTitle": "Įveskite pavadinimą",
+  "screenshotLayout": "Ekrano vaizdo maketas",
+  "horizontal": "Horizontaliai",
+  "vertical": "Vertikaliai"
 });

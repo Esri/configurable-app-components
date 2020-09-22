@@ -9,5 +9,9 @@ define({
   "screenshotTitle": "Chụp ảnh",
   "screenshotSubtitle": "Chọn các yếu tố bổ sung để đưa vào bản đồ.",
   "legend": "Chú giải",
-  "popup": "Cửa sổ pop-up"
+  "popup": "Cửa sổ pop-up",
+  "enterTitle": "Nhập tiêu đề",
+  "screenshotLayout": "Bố cục ảnh màn hình",
+  "horizontal": "Ngang",
+  "vertical": "Dọc"
 });

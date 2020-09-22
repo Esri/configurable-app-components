@@ -9,5 +9,9 @@ define({
   "screenshotTitle": "Rögzítsen képet",
   "screenshotSubtitle": "Válassza ki a térképen megjeleníteni kívánt további elemeket.",
   "legend": "Jelmagyarázat",
-  "popup": "Felugró ablak"
+  "popup": "Felugró ablak",
+  "enterTitle": "Cím megadása",
+  "screenshotLayout": "Képernyőkép elrendezése",
+  "horizontal": "Vízszintes",
+  "vertical": "Függőleges"
 });

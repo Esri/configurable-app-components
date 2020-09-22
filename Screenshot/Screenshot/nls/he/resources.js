@@ -9,5 +9,9 @@ define({
   "screenshotTitle": "צלם תמונה",
   "screenshotSubtitle": "בחר רכיבים נוספים שייכללו במפה.",
   "legend": "מקרא",
-  "popup": "חלונית קופצת"
+  "popup": "חלונית קופצת",
+  "enterTitle": "הזן כותרת",
+  "screenshotLayout": "פריסת צילום מסך",
+  "horizontal": "אופקי",
+  "vertical": "אנכי"
 });

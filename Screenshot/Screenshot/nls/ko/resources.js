@@ -9,5 +9,9 @@ define({
   "screenshotTitle": "이미지 캡처",
   "screenshotSubtitle": "맵에 포함할 추가 요소를 선택합니다.",
   "legend": "범례",
-  "popup": "팝업"
+  "popup": "팝업",
+  "enterTitle": "제목 입력",
+  "screenshotLayout": "스크린샷 레이아웃",
+  "horizontal": "수평",
+  "vertical": "수직"
 });

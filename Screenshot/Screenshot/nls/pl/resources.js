@@ -9,5 +9,9 @@ define({
   "screenshotTitle": "Przechwyć obraz",
   "screenshotSubtitle": "Wybierz dodatkowe elementy do uwzględnienia na mapie.",
   "legend": "Legenda",
-  "popup": "Okno podręczne"
+  "popup": "Okno podręczne",
+  "enterTitle": "Wprowadź tytuł",
+  "screenshotLayout": "Kompozycja zrzutu ekranu",
+  "horizontal": "Poziomo",
+  "vertical": "Pionowo"
 });

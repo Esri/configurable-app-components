@@ -9,5 +9,9 @@ define({
   "screenshotTitle": "Sieppaa kuva",
   "screenshotSubtitle": "Valitse muut kartan mukana tallennettavat elementit.",
   "legend": "Selite",
-  "popup": "Ponnahdusikkuna"
+  "popup": "Ponnahdusikkuna",
+  "enterTitle": "Anna otsikko",
+  "screenshotLayout": "Näyttökuva-asettelu",
+  "horizontal": "Vaaka",
+  "vertical": "Pysty"
 });

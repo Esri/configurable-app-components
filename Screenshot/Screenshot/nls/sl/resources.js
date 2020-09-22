@@ -9,5 +9,9 @@ define({
   "screenshotTitle": "Zajemi sliko",
   "screenshotSubtitle": "Izberi dodatne elemente, ki bodo vključeni na karti",
   "legend": "Legenda",
-  "popup": "Pojavno okno"
+  "popup": "Pojavno okno",
+  "enterTitle": "Vnesi ime",
+  "screenshotLayout": "Postavitev posnetka zaslona",
+  "horizontal": "Horizontalno",
+  "vertical": "Vertikalno"
 });

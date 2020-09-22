@@ -9,5 +9,9 @@ define({
   "screenshotTitle": "Een foto nemen",
   "screenshotSubtitle": "Selecteer aanvullende elementen om op te nemen op de kaart.",
   "legend": "Legenda",
-  "popup": "Pop-upvenster"
+  "popup": "Pop-up",
+  "enterTitle": "Voer een titel in",
+  "screenshotLayout": "Lay-out schermafbeelding",
+  "horizontal": "Horizontaal",
+  "vertical": "Verticaal"
 });

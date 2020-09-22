@@ -8,6 +8,10 @@ define({
   "selectAFeature": "Vali objekt kaardil",
   "screenshotTitle": "Jäädvusta pilt",
   "screenshotSubtitle": "Vali kaardile kaasatavad lisaelemendid.",
-  "legend": "Legendiga kaart",
-  "popup": "Hüpikaken"
+  "legend": "Legend",
+  "popup": "Hüpikaken",
+  "enterTitle": "Sisesta filter",
+  "screenshotLayout": "Kuvatõmmise paigutus",
+  "horizontal": "Horisontaalne",
+  "vertical": "Vertikaalne"
 });

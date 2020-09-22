@@ -9,5 +9,9 @@ define({
   "screenshotTitle": "Resim yakala",
   "screenshotSubtitle": "Haritaya dahil edilecek ek ögeleri seçin.",
   "legend": "Lejant",
-  "popup": "Açılır pencere"
+  "popup": "Açılır pencere",
+  "enterTitle": "Başlık gir",
+  "screenshotLayout": "Ekran görüntüsü çıktı düzeni",
+  "horizontal": "Yatay",
+  "vertical": "Dikey"
 });

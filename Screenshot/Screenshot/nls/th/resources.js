@@ -9,5 +9,9 @@ define({
   "screenshotTitle": "บันทึกภาพ",
   "screenshotSubtitle": "เลือกองค์ประกอบเพิ่มเติมเพื่อเพิ่มลงในแผนที่",
   "legend": "คำอธิบายสัญลักษณ์",
-  "popup": "ป๊อปอัพ"
+  "popup": "ป๊อปอัพ",
+  "enterTitle": "ใส่ชื่อ",
+  "screenshotLayout": "เค้าโครงภาพหน้าจอ",
+  "horizontal": "แนวนอน",
+  "vertical": "ตั้งฉาก"
 });

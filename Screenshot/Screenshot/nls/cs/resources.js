@@ -9,5 +9,9 @@ define({
   "screenshotTitle": "Zachyťte snímek",
   "screenshotSubtitle": "Vyberte další mapové elementy, které mají být v mapě zahrnuty.",
   "legend": "Legenda",
-  "popup": "Vyskakovací okno"
+  "popup": "Vyskakovací okno",
+  "enterTitle": "Zadat název",
+  "screenshotLayout": "Rozvržení snímku obrazovky",
+  "horizontal": "Vodorovně",
+  "vertical": "Svisle"
 });

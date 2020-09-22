@@ -9,5 +9,9 @@ define({
   "screenshotTitle": "Capturare imagine",
   "screenshotSubtitle": "Selectare elemente suplimentare pentru a le include cu harta.",
   "legend": "Legendă",
-  "popup": "Mesaj pop-up"
+  "popup": "Pop-up",
+  "enterTitle": "Introducere titlu",
+  "screenshotLayout": "Configurație captură de ecran",
+  "horizontal": "Orizontal",
+  "vertical": "Vertical"
 });

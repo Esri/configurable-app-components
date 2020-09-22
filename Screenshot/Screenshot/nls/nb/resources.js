@@ -9,5 +9,9 @@ define({
   "screenshotTitle": "Ta et bilde",
   "screenshotSubtitle": "Velge flere elementer å ta med på kartet.",
   "legend": "Tegnforklaring",
-  "popup": "Popup"
+  "popup": "Oppsprett",
+  "enterTitle": "Angi tittel",
+  "screenshotLayout": "Skjermbildelayout",
+  "horizontal": "Vannrett",
+  "vertical": "Loddrett"
 });
