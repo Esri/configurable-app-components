@@ -5,15 +5,6 @@
   font-size: 18px;
 }
 
-.esri-share__loader {
-  margin: 0 auto;
-  width: 150px;
-  height: 150px;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-color: #fff;
-}
-
 .copy-icon .esri-share__iframe-container,
 .esri-share__iframe-preview {
   border: none;
@@ -229,30 +220,6 @@ html[dir=rtl] .esri-share .esri-share__share-modal .esri-share__main-container .
     right: 0;
     overflow: hidden;
   }
-
-  .tab-contents {
-    border-left: none;
-    border-right: none;
-    border-bottom: none;
-  }
-  .tab-contents .esri-share__iframe-input-container {
-    margin-top: 1%;
-    margin-bottom: 10px;
-  }
-}
-@media screen and (max-width: 415px) {
-  .esri-share__share-modal .esri-share__main-container .js-tab-group {
-    height: 100%;
-  }
-  .esri-share__share-modal .tab-contents {
-    height: 100%;
-  }
-  .esri-share__share-modal .tab-contents .esri-share__iframe-tab-section {
-    height: 89vh;
-  }
-  .esri-share__share-modal .tab-contents .esri-share__iframe-tab-section .esri-share__iframe-tab-section-container {
-    height: 100%;
-  }
 }
 @media screen and (max-height: 830px) {
   .esri-share__main-container {
@@ -304,6 +271,19 @@ html[dir=rtl] .esri-share .esri-share__share-modal .esri-share__main-container .
 @media screen and (max-height: 568px) {
   .esri-share__iframe-container {
     height: 83%;
+  }
+}
+@media screen and (max-width: 415px), (max-width: 825px) and (orientation: landscape) {
+  .esri-share__share-modal {
+    width: 100vw;
+    height: 100vh;
+    max-height: none;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
   }
 }
 
