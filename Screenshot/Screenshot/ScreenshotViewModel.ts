@@ -1092,6 +1092,9 @@ class ScreenshotViewModel extends Accessor {
           layerView =>
             layerView.layer.id === this.view?.popup?.selectedFeature?.layer?.id
         ) as __esri.FeatureLayerView;
+        if (!layerView) {
+          return;
+        }
         this._highlightedFeature = layerView.highlight(
           this.view.popup.selectedFeature
         );
