@@ -1,0 +1,94 @@
+// Copyright 2020 Esri
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//     http://www.apache.org/licenses/LICENSE-2.0
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.​
+
+.esri-filter-list {
+
+  calcite-accordion {
+    border: unset;
+  }
+
+  &__reset-btn {
+    width: 162px;
+    padding: 20px;
+  }
+
+  &__filter-container {
+    height: 100%;
+    border: 1px solid rgb(217, 218, 218);
+    box-sizing: border-box;
+    background: #f4f3f4;
+  }
+
+  &__header-container {
+    padding: 20px;
+    border-bottom: 1px solid rgb(217, 218, 218);
+    display: flex;
+    justify-content: space-between;
+
+    > h3 {
+      font-size: 18px;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    &--light {
+      background: #fff;
+    }
+
+    &--dark {
+      background: #2b2b2b;
+      color: #fff;
+    }
+  }
+
+  &__reset-container {
+    background: rgb(244, 243, 244);
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__filter-item-container {
+    border-bottom: 1px solid rgb(217, 218, 218);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &--light {
+      background: #fff;
+    }
+
+    &--dark {
+      background: #353535;
+    }
+
+    &--accordion {
+      padding: 20px 20px 20px 48px;
+    }
+
+    &--single {
+      padding: 20px;
+    }
+  }
+
+  &__filter-title {
+    margin-right: 20px;
+  }
+
+  &__filter-title > p {
+    font-size: 14px;
+    font-weight: normal;
+    margin: 0;
+  }
+
+  &__checkbox-container {
+    display: flex;
+  }
+}
