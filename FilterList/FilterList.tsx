@@ -1,4 +1,4 @@
-// Copyright 2020 Esri
+// Copyright 2021 Esri
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,8 +22,8 @@ import Widget = require("esri/widgets/Widget");
 // dojo
 import i18n = require("dojo/i18n!./Filter/nls/resources");
 
-import { LayerExpression, ResetFilter } from "./Filter/interfaces/interfaces";
-import FilterViewModel = require("./Filter/FilterViewModel");
+import { LayerExpression, ResetFilter } from "./FilterList/interfaces/interfaces";
+import FilterListViewModel = require("./FilterList/FilterListViewModel");
 
 const CSS = {
   base: "filter-list",
@@ -42,8 +42,8 @@ const CSS = {
   checkboxContainer: "filter-list__checkbox-container"
 };
 
-@subclass("Filter")
-class Filter extends Widget {
+@subclass("FilterList")
+class FilterList extends Widget {
   // ----------------------------------
   //
   //  Public Variables
@@ -55,7 +55,7 @@ class Filter extends Widget {
   layerExpressions: LayerExpression[];
 
   @property()
-  viewModel: FilterViewModel = new FilterViewModel();
+  viewModel: FilterListViewModel = new FilterListViewModel();
 
   @property()
   @aliasOf("viewModel.theme")
@@ -71,7 +71,7 @@ class Filter extends Widget {
   // ----------------------------------
 
   private _reset: ResetFilter;
-  private _isSingleFilter: boolean;
+  private _isSingleFilterList: boolean;
 
   // ----------------------------------
   //
@@ -97,14 +97,14 @@ class Filter extends Widget {
   }
 
   render() {
-    const filters = this._initFilter();
+    const filterList = this._initFilterList();
     const header = this._renderFilterHeader();
     const reset = this._renderReset();
     return (
       <div class={CSS.base}>
         <div class={CSS.filterContainer}>
           {header}
-          {filters}
+          {filterList}
           {reset}
         </div>
       </div>
@@ -155,7 +155,7 @@ class Filter extends Widget {
       return (
         <div
           class={
-            this._isSingleFilter
+            this._isSingleFilterList
               ? this.classes(CSS.filterItem.single, itemTheme)
               : this.classes(CSS.filterItem.accordion, itemTheme)
           }
@@ -196,13 +196,13 @@ class Filter extends Widget {
     );
   }
 
-  private _initFilter(): any {
+  private _initFilterList(): any {
     if (this.layerExpressions) {
       if (this.layerExpressions.length === 1) {
-        this._isSingleFilter = true;
+        this._isSingleFilterList = true;
         return this._renderFilter(this.layerExpressions[0]);
       } else if (this.layerExpressions.length > 1) {
-        this._isSingleFilter = false;
+        this._isSingleFilterList = false;
         return this._renderLayerAccordion();
       }
     }
@@ -210,4 +210,4 @@ class Filter extends Widget {
   }
 }
 
-export = Filter;
+export = FilterList;

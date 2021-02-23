@@ -1,4 +1,4 @@
-// Copyright 2020 Esri
+// Copyright 2021 Esri
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,8 +22,8 @@ let accordionStyle = `
   .accordion-item-content { padding: 0!important; }
   .accordion-item-header-text { flex-direction: unset!important }`;
 
-@subclass("FilterViewModel")
-class FilterViewModel extends Accessor {
+@subclass("FilterListViewModel")
+class FilterListViewModel extends Accessor {
   // ----------------------------------
   //
   //  Public Variables
@@ -133,4 +133,4 @@ class FilterViewModel extends Accessor {
   }
 }
 
-export = FilterViewModel;
+export = FilterListViewModel;

@@ -1,4 +1,4 @@
-// Copyright 2020 Esri
+// Copyright 2021 Esri
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -30,14 +30,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core/Accessor"], function (require, exports, decorators_1, Accessor) {
     "use strict";
     var accordionStyle = "\n  .accordion-item-content { padding: 0!important; }\n  .accordion-item-header-text { flex-direction: unset!important }";
-    var FilterViewModel = /** @class */ (function (_super) {
-        __extends(FilterViewModel, _super);
+    var FilterListViewModel = /** @class */ (function (_super) {
+        __extends(FilterListViewModel, _super);
         // ----------------------------------
         //
         //  Lifecycle methods
         //
         // ----------------------------------
-        function FilterViewModel(params) {
+        function FilterListViewModel(params) {
             var _this = _super.call(this, params) || this;
             // ----------------------------------
             //
@@ -59,7 +59,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         //  Public methods
         //
         // ----------------------------------
-        FilterViewModel.prototype.initExpressions = function () {
+        FilterListViewModel.prototype.initExpressions = function () {
             var _this = this;
             this.layerExpressions.map(function (layerExpression) {
                 layerExpression.expressions.map(function (expression) {
@@ -75,7 +75,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                 this._generateDefinitionExpression();
             }
         };
-        FilterViewModel.prototype.initLayerHeader = function (accordionItem) {
+        FilterListViewModel.prototype.initLayerHeader = function (accordionItem) {
             var style = document.createElement("style");
             if (this.theme === "dark") {
                 accordionStyle += " .accordion-item-header {\n        border-bottom: 1px solid rgb(217, 218, 218)!important;\n        padding: 14px 20px!important;\n      }";
@@ -86,7 +86,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             style.innerHTML = accordionStyle;
             accordionItem.shadowRoot.prepend(style);
         };
-        FilterViewModel.prototype.initCheckbox = function (expression, checkbox) {
+        FilterListViewModel.prototype.initCheckbox = function (expression, checkbox) {
             var _this = this;
             checkbox.addEventListener("calciteCheckboxChange", function (event) {
                 var node = event.target;
@@ -103,7 +103,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                 _this._generateDefinitionExpression();
             });
         };
-        FilterViewModel.prototype.handleResetFilter = function () {
+        FilterListViewModel.prototype.handleResetFilter = function () {
             this.layerExpressions.map(function (layerExpression) {
                 layerExpression.expressions.map(function (expression) { return (expression.checked = false); });
             });
@@ -115,24 +115,24 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         //  Private methods
         //
         // ----------------------------------
-        FilterViewModel.prototype._generateDefinitionExpression = function () {
+        FilterListViewModel.prototype._generateDefinitionExpression = function () {
             var newDefinitionExpression = this._expressions.join(" AND ");
             this.set("definitionExpression", newDefinitionExpression);
         };
         __decorate([
             decorators_1.property()
-        ], FilterViewModel.prototype, "layerExpressions", void 0);
+        ], FilterListViewModel.prototype, "layerExpressions", void 0);
         __decorate([
             decorators_1.property()
-        ], FilterViewModel.prototype, "theme", void 0);
+        ], FilterListViewModel.prototype, "theme", void 0);
         __decorate([
             decorators_1.property()
-        ], FilterViewModel.prototype, "definitionExpression", void 0);
-        FilterViewModel = __decorate([
-            decorators_1.subclass("FilterViewModel")
-        ], FilterViewModel);
-        return FilterViewModel;
+        ], FilterListViewModel.prototype, "definitionExpression", void 0);
+        FilterListViewModel = __decorate([
+            decorators_1.subclass("FilterListViewModel")
+        ], FilterListViewModel);
+        return FilterListViewModel;
     }(Accessor));
-    return FilterViewModel;
+    return FilterListViewModel;
 });
-//# sourceMappingURL=FilterViewModel.js.map
+//# sourceMappingURL=FilterListViewModel.js.map

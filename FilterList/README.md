@@ -1,10 +1,13 @@
-# filter-widget
+# filter-list-widget
 
-filter widget built for version 4.x of the ArcGIS API for Javascript
+filter list widget built for version 4.x of the ArcGIS API for Javascript
 
-![filter widget, one layer](images/filter.png)
+
+### Filters from one layer:
+![filter list widget, one layer](images/filter.png)
 ​
-![filter widget, multiple layers](images/filter-multiple.png)​
+### Filters from multiple layers:
+![filter list widget, multiple layers](images/filter-multiple.png)​
 
 ## Features:
 
@@ -16,20 +19,20 @@ filter widget built for version 4.x of the ArcGIS API for Javascript
 
 Calcite Components Repository: https://github.com/Esri/calcite-components
 
-## Filter Widget
+## Filter List Widget
 
 ### Constructor:
 
-#### new **Filter(_properties?_)**
+#### new **FilterList(_properties?_)**
 
 ##### Property Overview:
 
-| Name                 | Type              | Summary                                                    |
-| -------------------- | ----------------- | ---------------------------------------------------------- |
-| layerExpressions     | LayerExpression[] | An array of custom type LayerExpression.                   |
-| definitionExpression | String            | definitionExpression created by clicking filter checkboxes |
-| viewModel            | FilterViewModel   | The view model for this widget.                            |
-| theme                | "light" | "dark"  | The theme for this widget (defaults to "light")            |
+| Name                 | Type                  | Summary                                                    |
+| -------------------- | -----------------     | ---------------------------------------------------------- |
+| layerExpressions     | LayerExpression[]     | An array of custom type LayerExpression.                   |
+| definitionExpression | String                | definitionExpression created by clicking filter checkboxes |
+| viewModel            | FilterListViewModel   | The view model for this widget.                            |
+| theme                | "light" | "dark"      | The theme for this widget (defaults to "light")            |
 
 ## LayerExpression
 
@@ -123,7 +126,7 @@ Esri welcomes contributions from anyone and everyone. Please see our [guidelines
 
 ## Licensing
 
-Copyright 2020 Esri
+Copyright 2021 Esri
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
