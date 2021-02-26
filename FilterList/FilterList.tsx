@@ -50,14 +50,12 @@ class FilterList extends Widget {
   //
   // ----------------------------------
 
-  @property()
   @aliasOf("viewModel.layerExpressions")
   layerExpressions: LayerExpression[];
 
   @property()
   viewModel: FilterListViewModel = new FilterListViewModel();
 
-  @property()
   @aliasOf("viewModel.theme")
   theme: "dark" | "light";
 

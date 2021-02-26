@@ -145,6 +145,48 @@ declare namespace __esriConfigApps {
     className: string;
     urlTemplate: string;
   }
+
+
+  //----------------------------------
+  //
+  //  FilterList
+  //
+  //----------------------------------
+
+
+  interface FilterList extends __esri.Widget {
+    new (widgetProperties: any);
+  }
+
+  interface FilterListViewModel extends __esri.Accessor {
+    new (widgetProperties: any);
+  }
+
+  interface Expression {
+    definitionExpression: string;
+    name: string;
+    checked?: boolean;
+  }
+
+  interface LayerExpression {
+    id: string;
+    title: string;
+    expressions: Expression[];
+  }
+
+  export class FilterList extends __esri.Widget {
+    constructor(value?: any);
+    new(widgetProperties: any);
+    layerExpressions: LayerExpression[];
+    theme: "dark" | "light";
+    definitionExpression: string;
+  }
+
+  export class FilterListViewModel extends __esri.Accessor {
+    layerExpressions: LayerExpression[];
+    theme: "dark" | "light";
+    definitionExpression: string;
+  }
 }
 
 declare module "Components/Share/Share" {
@@ -190,4 +232,14 @@ declare module "Components/Info/Info/InfoItem" {
 declare module "Components/Info/Info/InfoViewModel" {
   const InfoViewModel: __esriConfigApps.InfoViewModel;
   export = InfoViewModel;
+}
+
+declare module "Components/FilterList/FilterList/FilterListViewModel" {
+  const FilterListViewModel: __esriConfigApps.FilterListViewModel;
+  export = FilterListViewModel;
+}
+
+declare module "Components/FilterList/FilterList/FilterList" {
+  const FilterList: __esriConfigApps.FilterList;
+  export = FilterList;
 }
