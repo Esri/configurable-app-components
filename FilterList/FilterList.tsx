@@ -20,7 +20,7 @@ import { tsx } from "esri/widgets/support/widget";
 import Widget = require("esri/widgets/Widget");
 
 // dojo
-import i18n = require("dojo/i18n!./Filter/nls/resources");
+import i18n = require("dojo/i18n!./FilterList/nls/resources");
 
 import { LayerExpression, ResetFilter } from "./FilterList/interfaces/interfaces";
 import FilterListViewModel = require("./FilterList/FilterListViewModel");
