@@ -27,7 +27,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core/watchUtils", "esri/widgets/support/widget", "esri/widgets/Widget", "dojo/i18n!./Filter/nls/resources", "./FilterList/FilterListViewModel"], function (require, exports, decorators_1, watchUtils_1, widget_1, Widget, i18n, FilterListViewModel) {
+define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core/watchUtils", "esri/widgets/support/widget", "esri/widgets/Widget", "dojo/i18n!./FilterList/nls/resources", "./FilterList/FilterListViewModel"], function (require, exports, decorators_1, watchUtils_1, widget_1, Widget, i18n, FilterListViewModel) {
     "use strict";
     var CSS = {
         base: "filter-list",
@@ -129,14 +129,12 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             return;
         };
         __decorate([
-            decorators_1.property(),
             decorators_1.aliasOf("viewModel.layerExpressions")
         ], FilterList.prototype, "layerExpressions", void 0);
         __decorate([
             decorators_1.property()
         ], FilterList.prototype, "viewModel", void 0);
         __decorate([
-            decorators_1.property(),
             decorators_1.aliasOf("viewModel.theme")
         ], FilterList.prototype, "theme", void 0);
         __decorate([
