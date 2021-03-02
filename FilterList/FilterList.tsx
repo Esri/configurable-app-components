@@ -26,20 +26,20 @@ import { FilterOutput, LayerExpression, ResetFilter } from "./FilterList/interfa
 import FilterListViewModel = require("./FilterList/FilterListViewModel");
 
 const CSS = {
-  base: "filter-list",
-  filterContainer: "filter-list__filter-container",
-  headerContainerDark: "filter-list__header-container filter-list__header-container--dark",
-  headerContainerLight: "filter-list__header-container filter-list__header-container--light",
-  resetContainer: "filter-list__reset-container",
-  resetBtn: "filter-list__reset-btn",
+  base: "esri-filter-list",
+  filterContainer: "esri-filter-list__filter-container",
+  headerContainerDark: "esri-filter-list__header-container esri-filter-list__header-container--dark",
+  headerContainerLight: "esri-filter-list__header-container esri-filter-list__header-container--light",
+  resetContainer: "esri-filter-list__reset-container",
+  resetBtn: "esri-filter-list__reset-btn",
   filterItem: {
-    single: "filter-list__filter-item-container filter-list__filter-item-container--single",
-    accordion: "filter-list__filter-item-container filter-list__filter-item-container--accordion",
-    light: "filter-list__filter-item-container--light",
-    dark: "filter-list__filter-item-container--dark"
+    single: "esri-filter-list__filter-item-container esri-filter-list__filter-item-container--single",
+    accordion: "esri-filter-list__filter-item-container esri-filter-list__filter-item-container--accordion",
+    light: "esri-filter-list__filter-item-container--light",
+    dark: "esri-filter-list__filter-item-container--dark"
   },
-  filterItemTitle: "filter-list__filter-title",
-  checkboxContainer: "filter-list__checkbox-container"
+  filterItemTitle: "esri-filter-list__filter-title",
+  checkboxContainer: "esri-filter-list__checkbox-container"
 };
 
 @subclass("FilterList")
