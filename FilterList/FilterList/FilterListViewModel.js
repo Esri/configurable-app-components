@@ -46,12 +46,13 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             // ----------------------------------
             _this.layerExpressions = [];
             _this.theme = "light";
+            _this.updatingExpression = false;
             // ----------------------------------
             //
             //  Private Variables
             //
             // ----------------------------------
-            _this._expressions = [];
+            _this._layers = {};
             return _this;
         }
         // ----------------------------------
@@ -62,18 +63,21 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         FilterListViewModel.prototype.initExpressions = function () {
             var _this = this;
             this.layerExpressions.map(function (layerExpression) {
+                var tmpExp = [];
+                var id = layerExpression.id;
                 layerExpression.expressions.map(function (expression) {
                     if (!expression.checked) {
                         expression.checked = false;
                     }
                     else {
-                        _this._expressions.push(expression.definitionExpression);
+                        tmpExp.push(expression.definitionExpression);
                     }
                 });
+                _this._layers[id] = { expressions: tmpExp };
+                if (tmpExp.length > 0) {
+                    _this._generateOutput(id);
+                }
             });
-            if (this._expressions.length > 0) {
-                this._generateDefinitionExpression();
-            }
         };
         FilterListViewModel.prototype.initLayerHeader = function (accordionItem) {
             var style = document.createElement("style");
@@ -86,38 +90,43 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             style.innerHTML = accordionStyle;
             accordionItem.shadowRoot.prepend(style);
         };
-        FilterListViewModel.prototype.initCheckbox = function (expression, checkbox) {
+        FilterListViewModel.prototype.initCheckbox = function (id, expression, checkbox) {
             var _this = this;
             checkbox.addEventListener("calciteCheckboxChange", function (event) {
                 var node = event.target;
                 expression.checked = node.checked;
                 if (node.checked) {
-                    _this._expressions.push(expression.definitionExpression);
+                    _this._layers[id].expressions.push(expression.definitionExpression);
                 }
                 else {
-                    var i = _this._expressions.findIndex(function (expr) { return expr === expression.definitionExpression; });
+                    var i = _this._layers[id].expressions.findIndex(function (expr) { return expr === expression.definitionExpression; });
                     if (i > -1) {
-                        _this._expressions.splice(i, 1);
+                        _this._layers[id].expressions.splice(i, 1);
                     }
                 }
-                _this._generateDefinitionExpression();
+                _this._generateOutput(id);
             });
         };
         FilterListViewModel.prototype.handleResetFilter = function () {
+            var _this = this;
             this.layerExpressions.map(function (layerExpression) {
+                var id = layerExpression.id;
                 layerExpression.expressions.map(function (expression) { return (expression.checked = false); });
+                _this._layers[id].expressions = [];
             });
-            this._expressions = [];
-            this._generateDefinitionExpression();
         };
         // ----------------------------------
         //
         //  Private methods
         //
         // ----------------------------------
-        FilterListViewModel.prototype._generateDefinitionExpression = function () {
-            var newDefinitionExpression = this._expressions.join(" AND ");
-            this.set("definitionExpression", newDefinitionExpression);
+        FilterListViewModel.prototype._generateOutput = function (id) {
+            var newOutput = {
+                id: id,
+                definitionExpression: this._layers[id].expressions.join(" AND ")
+            };
+            this.updatingExpression = true;
+            this.set("output", newOutput);
         };
         __decorate([
             decorators_1.property()
@@ -127,7 +136,10 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         ], FilterListViewModel.prototype, "theme", void 0);
         __decorate([
             decorators_1.property()
-        ], FilterListViewModel.prototype, "definitionExpression", void 0);
+        ], FilterListViewModel.prototype, "updatingExpression", void 0);
+        __decorate([
+            decorators_1.property()
+        ], FilterListViewModel.prototype, "output", void 0);
         FilterListViewModel = __decorate([
             decorators_1.subclass("FilterListViewModel")
         ], FilterListViewModel);

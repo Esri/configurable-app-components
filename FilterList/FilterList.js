@@ -55,6 +55,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         function FilterList(properties) {
             var _this = _super.call(this, properties) || this;
             _this.viewModel = new FilterListViewModel();
+            _this.headerTag = "h3";
             return _this;
         }
         FilterList.prototype.postInitialize = function () {
@@ -64,8 +65,9 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                 disabled: this.layerExpressions && this.layerExpressions.length ? false : true,
                 color: this.layerExpressions && this.layerExpressions.length ? "blue" : "dark"
             };
-            this.own(watchUtils_1.watch(this, "definitionExpression", function () {
+            this.own(watchUtils_1.whenTrue(this, "updatingExpression", function () {
                 _this.scheduleRender();
+                _this.updatingExpression = false;
             }));
         };
         FilterList.prototype.render = function () {
@@ -84,8 +86,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         //
         // ----------------------------------
         FilterList.prototype._renderFilterHeader = function () {
-            return (widget_1.tsx("div", { class: this.theme === "light" ? CSS.headerContainerLight : CSS.headerContainerDark },
-                widget_1.tsx("h3", null, i18n.selectFilter)));
+            return (widget_1.tsx("div", { bind: this, afterCreate: this._createHeaderTitle, class: this.theme === "light" ? CSS.headerContainerLight : CSS.headerContainerDark }));
         };
         FilterList.prototype._renderLayerAccordion = function () {
             var _this = this;
@@ -100,6 +101,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         FilterList.prototype._renderFilter = function (layerExpression) {
             var _this = this;
             var itemTheme = CSS.filterItem[this.theme];
+            var id = layerExpression.id;
             return layerExpression.expressions.map(function (expression) {
                 return (widget_1.tsx("div", { class: _this._isSingleFilterList
                         ? _this.classes(CSS.filterItem.single, itemTheme)
@@ -107,13 +109,13 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                     widget_1.tsx("div", { class: CSS.filterItemTitle },
                         widget_1.tsx("p", null, expression.name)),
                     widget_1.tsx("div", { class: CSS.checkboxContainer },
-                        widget_1.tsx("calcite-checkbox", { scale: "l", checked: expression.checked, theme: _this.theme, afterCreate: _this.viewModel.initCheckbox.bind(_this.viewModel, expression) }))));
+                        widget_1.tsx("calcite-checkbox", { scale: "l", checked: expression.checked, theme: _this.theme, afterCreate: _this.viewModel.initCheckbox.bind(_this.viewModel, id, expression) }))));
             });
         };
         FilterList.prototype._renderReset = function () {
             return (widget_1.tsx("div", { class: CSS.resetContainer },
                 widget_1.tsx("div", { class: CSS.resetBtn },
-                    widget_1.tsx("calcite-button", { bind: this.viewModel, appearance: "outline", width: "full", color: this._reset.color, theme: this.theme, disabled: this._reset.disabled, onclick: this.viewModel.handleResetFilter }, i18n.resetFilter))));
+                    widget_1.tsx("calcite-button", { bind: this, appearance: "outline", width: "full", color: this._reset.color, theme: this.theme, disabled: this._reset.disabled, onclick: this._handleResetFilter }, i18n.resetFilter))));
         };
         FilterList.prototype._initFilterList = function () {
             if (this.layerExpressions) {
@@ -128,6 +130,22 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             }
             return;
         };
+        FilterList.prototype._handleResetFilter = function () {
+            var resetLayers = [];
+            this.layerExpressions.map(function (layerExpression) {
+                resetLayers.push({
+                    id: layerExpression.id,
+                    definitionExpression: ""
+                });
+            });
+            this.viewModel.handleResetFilter();
+            this.emit("filterListReset", resetLayers);
+        };
+        FilterList.prototype._createHeaderTitle = function (header) {
+            this._headerTitle = document.createElement(this.headerTag);
+            this._headerTitle.innerHTML = i18n.selectFilter;
+            header.prepend(this._headerTitle);
+        };
         __decorate([
             decorators_1.aliasOf("viewModel.layerExpressions")
         ], FilterList.prototype, "layerExpressions", void 0);
@@ -138,8 +156,14 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             decorators_1.aliasOf("viewModel.theme")
         ], FilterList.prototype, "theme", void 0);
         __decorate([
-            decorators_1.aliasOf("viewModel.definitionExpression")
-        ], FilterList.prototype, "definitionExpression", void 0);
+            decorators_1.aliasOf("viewModel.updatingExpression")
+        ], FilterList.prototype, "updatingExpression", void 0);
+        __decorate([
+            decorators_1.property()
+        ], FilterList.prototype, "headerTag", void 0);
+        __decorate([
+            decorators_1.aliasOf("viewModel.output")
+        ], FilterList.prototype, "output", void 0);
         FilterList = __decorate([
             decorators_1.subclass("FilterList")
         ], FilterList);

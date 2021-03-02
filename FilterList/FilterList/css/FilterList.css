@@ -17,7 +17,7 @@
   display: flex;
   justify-content: space-between;
 }
-.esri-filter-list__header-container > h3 {
+.esri-filter-list__header-container > * {
   font-size: 18px;
   font-weight: 500;
   margin: 0;
