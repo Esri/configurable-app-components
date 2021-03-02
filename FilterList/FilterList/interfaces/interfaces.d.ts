@@ -25,3 +25,16 @@ export interface ResetFilter {
   disabled: boolean;
   color: string;
 }
+
+export interface FilterOutput {
+  id: string;
+  definitionExpression: string;
+}
+
+interface Expressions {
+  expressions: string[];
+}
+
+export interface FilterLayers {
+  [key: string]: Expressions;
+}

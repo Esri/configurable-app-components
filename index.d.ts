@@ -239,7 +239,7 @@ declare module "Components/FilterList/FilterList/FilterListViewModel" {
   export = FilterListViewModel;
 }
 
-declare module "Components/FilterList/FilterList/FilterList" {
+declare module "Components/FilterList/FilterList" {
   const FilterList: __esriConfigApps.FilterList;
   export = FilterList;
 }

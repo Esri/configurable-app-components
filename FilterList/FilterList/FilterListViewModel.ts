@@ -16,7 +16,7 @@ import { property, subclass } from "esri/core/accessorSupport/decorators";
 import Accessor = require("esri/core/Accessor");
 
 // Config Panel Imports
-import { Expression, LayerExpression } from "./interfaces/interfaces";
+import { Expression, FilterLayers, FilterOutput, LayerExpression } from "./interfaces/interfaces";
 
 let accordionStyle = `
   .accordion-item-content { padding: 0!important; }
@@ -37,7 +37,10 @@ class FilterListViewModel extends Accessor {
   theme: "dark" | "light" = "light";
 
   @property()
-  definitionExpression: string;
+  updatingExpression: boolean = false;
+
+  @property()
+  output: FilterOutput;
 
   // ----------------------------------
   //
@@ -45,7 +48,7 @@ class FilterListViewModel extends Accessor {
   //
   // ----------------------------------
 
-  private _expressions: string[] = [];
+  private _layers: FilterLayers = {};
 
   // ----------------------------------
   //
@@ -65,18 +68,20 @@ class FilterListViewModel extends Accessor {
 
   initExpressions(): void {
     this.layerExpressions.map((layerExpression) => {
+      const tmpExp = [];
+      const { id } = layerExpression;
       layerExpression.expressions.map((expression) => {
         if (!expression.checked) {
           expression.checked = false;
         } else {
-          this._expressions.push(expression.definitionExpression);
+          tmpExp.push(expression.definitionExpression);
         }
       });
+      this._layers[id] = { expressions: tmpExp };
+      if (tmpExp.length > 0) {
+        this._generateOutput(id);
+      }
     });
-
-    if (this._expressions.length > 0) {
-      this._generateDefinitionExpression();
-    }
   }
 
   initLayerHeader(accordionItem: HTMLCalciteAccordionItemElement) {
@@ -97,28 +102,28 @@ class FilterListViewModel extends Accessor {
     accordionItem.shadowRoot.prepend(style);
   }
 
-  initCheckbox(expression: Expression, checkbox: HTMLCalciteCheckboxElement) {
+  initCheckbox(id: string, expression: Expression, checkbox: HTMLCalciteCheckboxElement) {
     checkbox.addEventListener("calciteCheckboxChange", (event: CustomEvent) => {
       const node = event.target as HTMLCalciteCheckboxElement;
       expression.checked = node.checked;
       if (node.checked) {
-        this._expressions.push(expression.definitionExpression);
+        this._layers[id].expressions.push(expression.definitionExpression);
       } else {
-        const i = this._expressions.findIndex((expr) => expr === expression.definitionExpression);
+        const i = this._layers[id].expressions.findIndex((expr) => expr === expression.definitionExpression);
         if (i > -1) {
-          this._expressions.splice(i, 1);
+          this._layers[id].expressions.splice(i, 1);
         }
       }
-      this._generateDefinitionExpression();
+      this._generateOutput(id);
     });
   }
 
   handleResetFilter(): void {
     this.layerExpressions.map((layerExpression) => {
+      const { id } = layerExpression;
       layerExpression.expressions.map((expression) => (expression.checked = false));
+      this._layers[id].expressions = [];
     });
-    this._expressions = [];
-    this._generateDefinitionExpression();
   }
 
   // ----------------------------------
@@ -127,9 +132,13 @@ class FilterListViewModel extends Accessor {
   //
   // ----------------------------------
 
-  private _generateDefinitionExpression(): void {
-    const newDefinitionExpression = this._expressions.join(" AND ");
-    this.set("definitionExpression", newDefinitionExpression);
+  private _generateOutput(id: string): void {
+    const newOutput = {
+      id,
+      definitionExpression: this._layers[id].expressions.join(" AND ")
+    };
+    this.updatingExpression = true;
+    this.set("output", newOutput);
   }
 }
 

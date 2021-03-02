@@ -15,11 +15,11 @@ filter list widget built for version 4.x of the ArcGIS API for Javascript
 2.  Generate filter list
     - Filter list with expressions from 2 or more layers are placed in accordions
 
-**\*Note:** Filter Widget uses Esri's design framework - Calcite Components.\*
+**\*Note:** FilterList Widget uses Esri's design framework - Calcite Components.\*
 
 Calcite Components Repository: https://github.com/Esri/calcite-components
 
-## Filter List Widget
+## FilterList Widget
 
 ### Constructor:
 
@@ -30,11 +30,12 @@ Calcite Components Repository: https://github.com/Esri/calcite-components
 | Name                 | Type                  | Summary                                                    |
 | -------------------- | -----------------     | ---------------------------------------------------------- |
 | layerExpressions     | LayerExpression[]     | An array of custom type LayerExpression.                   |
-| definitionExpression | String                | definitionExpression created by clicking filter checkboxes |
 | viewModel            | FilterListViewModel   | The view model for this widget.                            |
 | theme                | "light" | "dark"      | The theme for this widget (defaults to "light")            |
+| headerTag            | String                | The HTML tag used for header title (defaults to "h3")      |
+| output               | FilterOutput          | Output to watch for to update layer's definitionExpression (defaults to "h3")      |
 
-## LayerExpression
+## Type: LayerExpression
 
 ### **Interface:**
 
@@ -54,7 +55,7 @@ Calcite Components Repository: https://github.com/Esri/calcite-components
 | title      | String       | Layer display name.                 |
 | expression | Expression[] | An array of custom type Expression. |
 
-## Expression
+## Type: Expression
 
 ### **Interface:**
 
@@ -98,7 +99,7 @@ Calcite Components Repository: https://github.com/Esri/calcite-components
       expressions: [
         {
           definitionExpression: "ID = 'zero",
-          name: "First definition expression"
+          name: "First definition expression",
           checked: true
         },
         {
@@ -109,6 +110,71 @@ Calcite Components Repository: https://github.com/Esri/calcite-components
     }
   ]
 ```
+
+## Type: FilterOutput
+
+### **Interface:**
+
+```
+  {
+    id: string;
+    definitionExpression: string;
+  }
+```
+
+##### Property Overview:
+
+| Name       | Type         | Summary                             |
+| ---------- | ------------ | ----------------------------------- |
+| id         | String       | Layer id.                           |
+| definitionExpression | String  | definition expression for this layer. |
+
+## Watch Properties
+
+### output
+
+Watch output for changes and update the layer accordingly
+
+```
+  filterList.watch("output", (output: FilterOutput) => {
+    console.log("filterList output:", output);
+  });
+```
+
+Results from console.log:
+
+```
+  filterList output: {
+    id: "layer1ID",
+    definitionExpression: "ID = 1"
+  };
+```
+
+### filterListReset
+
+Listen for "filterListReset" event. An array of type FilterOutput will be returned after the "filterListReset" event is fired.
+
+```
+  filterList.on("filterListReset", (resetLayerExpressions: FilterOutput[]) => {
+    console.log('on filterListReset: ', resetLayerExpressions);
+  })
+```
+
+Results from console.log:
+
+```
+  on filterListReset: [
+    {
+      id: "layer1ID",
+      definitionExpression: ""
+    },
+    {
+      id: "layer2ID",
+      definitionExpression: ""
+    }
+  ];
+```
+
 
 ## Resources
 
