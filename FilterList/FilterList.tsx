@@ -11,7 +11,7 @@
 
 // esri.core.accessorSupport
 import { aliasOf, property, subclass } from "esri/core/accessorSupport/decorators";
-import { watch } from "esri/core/watchUtils";
+import { whenTrue } from "esri/core/watchUtils";
 
 // esri.widgets.support.widget
 import { tsx } from "esri/widgets/support/widget";
@@ -22,7 +22,7 @@ import Widget = require("esri/widgets/Widget");
 // dojo
 import i18n = require("dojo/i18n!./FilterList/nls/resources");
 
-import { LayerExpression, ResetFilter } from "./FilterList/interfaces/interfaces";
+import { FilterOutput, LayerExpression, ResetFilter } from "./FilterList/interfaces/interfaces";
 import FilterListViewModel = require("./FilterList/FilterListViewModel");
 
 const CSS = {
@@ -59,8 +59,14 @@ class FilterList extends Widget {
   @aliasOf("viewModel.theme")
   theme: "dark" | "light";
 
-  @aliasOf("viewModel.definitionExpression")
-  definitionExpression: string;
+  @aliasOf("viewModel.updatingExpression")
+  updatingExpression: boolean;
+
+  @property()
+  headerTag: string = "h3";
+
+  @aliasOf("viewModel.output")
+  output: FilterOutput;
 
   // ----------------------------------
   //
@@ -70,6 +76,7 @@ class FilterList extends Widget {
 
   private _reset: ResetFilter;
   private _isSingleFilterList: boolean;
+  private _headerTitle: HTMLElement;
 
   // ----------------------------------
   //
@@ -88,8 +95,9 @@ class FilterList extends Widget {
       color: this.layerExpressions && this.layerExpressions.length ? "blue" : "dark"
     };
     this.own(
-      watch(this, "definitionExpression", () => {
+      whenTrue(this, "updatingExpression", () => {
         this.scheduleRender();
+        this.updatingExpression = false;
       })
     );
   }
@@ -117,9 +125,11 @@ class FilterList extends Widget {
 
   private _renderFilterHeader(): any {
     return (
-      <div class={this.theme === "light" ? CSS.headerContainerLight : CSS.headerContainerDark}>
-        <h3>{i18n.selectFilter}</h3>
-      </div>
+      <div
+        bind={this}
+        afterCreate={this._createHeaderTitle}
+        class={this.theme === "light" ? CSS.headerContainerLight : CSS.headerContainerDark}
+      ></div>
     );
   }
 
@@ -149,6 +159,7 @@ class FilterList extends Widget {
 
   private _renderFilter(layerExpression: LayerExpression): any {
     const itemTheme = CSS.filterItem[this.theme];
+    const { id } = layerExpression;
     return layerExpression.expressions.map((expression) => {
       return (
         <div
@@ -166,7 +177,7 @@ class FilterList extends Widget {
               scale="l"
               checked={expression.checked}
               theme={this.theme}
-              afterCreate={this.viewModel.initCheckbox.bind(this.viewModel, expression)}
+              afterCreate={this.viewModel.initCheckbox.bind(this.viewModel, id, expression)}
             ></calcite-checkbox>
           </div>
         </div>
@@ -179,13 +190,13 @@ class FilterList extends Widget {
       <div class={CSS.resetContainer}>
         <div class={CSS.resetBtn}>
           <calcite-button
-            bind={this.viewModel}
+            bind={this}
             appearance="outline"
             width="full"
             color={this._reset.color}
             theme={this.theme}
             disabled={this._reset.disabled}
-            onclick={this.viewModel.handleResetFilter}
+            onclick={this._handleResetFilter}
           >
             {i18n.resetFilter}
           </calcite-button>
@@ -205,6 +216,24 @@ class FilterList extends Widget {
       }
     }
     return;
+  }
+
+  private _handleResetFilter(): void {
+    const resetLayers: FilterOutput[] = [];
+    this.layerExpressions.map((layerExpression) => {
+      resetLayers.push({
+        id: layerExpression.id,
+        definitionExpression: ""
+      });
+    });
+    this.viewModel.handleResetFilter();
+    this.emit("filterListReset", resetLayers);
+  }
+
+  private _createHeaderTitle(header: HTMLDivElement): void {
+    this._headerTitle = document.createElement(this.headerTag);
+    this._headerTitle.innerHTML = i18n.selectFilter;
+    header.prepend(this._headerTitle);
   }
 }
 
