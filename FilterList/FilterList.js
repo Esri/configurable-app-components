@@ -57,7 +57,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             var _this = _super.call(this, properties) || this;
             _this.viewModel = new FilterListViewModel();
             _this.headerTag = "h3";
-            _this.optionalBtnText = "Close";
+            _this.optionalBtnText = "Close Filter";
             return _this;
         }
         FilterList.prototype.postInitialize = function () {

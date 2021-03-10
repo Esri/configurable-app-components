@@ -67,7 +67,7 @@ class FilterList extends Widget {
   headerTag: string = "h3";
 
   @property()
-  optionalBtnText: string = "Close";
+  optionalBtnText: string = "Close Filter";
 
   @property()
   optionalBtnOnClick: Function;
