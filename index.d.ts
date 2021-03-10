@@ -163,6 +163,7 @@ declare namespace __esriConfigApps {
   }
 
   interface Expression {
+    id: number;
     definitionExpression: string;
     name: string;
     checked?: boolean;
@@ -174,18 +175,28 @@ declare namespace __esriConfigApps {
     expressions: Expression[];
   }
 
+  interface FilterOutput {
+    id: string;
+    definitionExpression: string;
+  }
+
   export class FilterList extends __esri.Widget {
     constructor(value?: any);
     new(widgetProperties: any);
     layerExpressions: LayerExpression[];
+    viewModel: FilterListViewModel;
     theme: "dark" | "light";
-    definitionExpression: string;
+    headerTag: string;
+    optionalBtnText: string;
+    optionalBtnOnClick: Function;
+    output: FilterOutput;
   }
 
   export class FilterListViewModel extends __esri.Accessor {
     layerExpressions: LayerExpression[];
     theme: "dark" | "light";
     definitionExpression: string;
+    output: FilterOutput;
   }
 }
 

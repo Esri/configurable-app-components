@@ -10,6 +10,7 @@
 // limitations under the License.​
 
 export interface Expression {
+  id: number;
   definitionExpression: string;
   name: string;
   checked?: boolean;

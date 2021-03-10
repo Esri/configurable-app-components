@@ -27,13 +27,15 @@ Calcite Components Repository: https://github.com/Esri/calcite-components
 
 ##### Property Overview:
 
-| Name                 | Type                  | Summary                                                    |
-| -------------------- | -----------------     | ---------------------------------------------------------- |
-| layerExpressions     | LayerExpression[]     | An array of custom type LayerExpression.                   |
-| viewModel            | FilterListViewModel   | The view model for this widget.                            |
-| theme                | "light" | "dark"      | The theme for this widget (defaults to "light")            |
-| headerTag            | String                | The HTML tag used for header title (defaults to "h3")      |
-| output               | FilterOutput          | Output to watch for to update layer's definitionExpression (defaults to "h3")      |
+| Name                 | Type                | Summary                                                    |
+| -------------------- | -----------------   | ---------------------------------------------------------- |
+| layerExpressions     | LayerExpression[]   | An array of custom type LayerExpression.                   |
+| viewModel            | FilterListViewModel | The view model for this widget.                            |
+| theme                | "light" | "dark"    | The theme for this widget (defaults to "light")            |
+| headerTag            | String              | The HTML tag used for header title (defaults to "h3")      |
+| output               | FilterOutput        | Output to watch for to update layer's definitionExpression (defaults to "h3")      |
+| optionalBtnText      | String              | Add custom text to optional button next to the "Reset Filter" button (defaults to "Close Filter")      |
+| optionalBtnOnClick   | Function            | Add custom function to the optional button's onClick       |
 
 ## Type: LayerExpression
 
@@ -71,8 +73,9 @@ Calcite Components Repository: https://github.com/Esri/calcite-components
 
 | Name                 | Type    | Summary                                                                                                         |
 | -------------------- | ------- | --------------------------------------------------------------------------------------------------------------- |
-| definitionExpression | String  | definition expression for this layer.                                                                           |
-| name                 | String  | Display name of definition expression in filter list.                                                           |
+| id                   | Number \| String  | Unique identifier. |
+| definitionExpression | String  | Definition expression for this layer. |
+| name                 | String  | Display name of definition expression in filter list. |
 | checked(?)           | boolean | Determines if corresponding checkbox is checked and definition expression is used in filter (defaults to false) |
 
 ### Example layerExpressions value:

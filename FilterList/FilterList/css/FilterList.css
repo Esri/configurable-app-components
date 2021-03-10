@@ -5,6 +5,10 @@
   width: 162px;
   padding: 20px;
 }
+.esri-filter-list__optional-btn {
+  width: 100%;
+  padding: 20px;
+}
 .esri-filter-list__filter-container {
   height: 100%;
   border: 1px solid #d9dada;

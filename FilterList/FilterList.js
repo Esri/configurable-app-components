@@ -36,6 +36,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         headerContainerLight: "esri-filter-list__header-container esri-filter-list__header-container--light",
         resetContainer: "esri-filter-list__reset-container",
         resetBtn: "esri-filter-list__reset-btn",
+        optionalBtn: "esri-filter-list__optional-btn",
         filterItem: {
             single: "esri-filter-list__filter-item-container esri-filter-list__filter-item-container--single",
             accordion: "esri-filter-list__filter-item-container esri-filter-list__filter-item-container--accordion",
@@ -56,6 +57,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             var _this = _super.call(this, properties) || this;
             _this.viewModel = new FilterListViewModel();
             _this.headerTag = "h3";
+            _this.optionalBtnText = "Close";
             return _this;
         }
         FilterList.prototype.postInitialize = function () {
@@ -73,7 +75,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         FilterList.prototype.render = function () {
             var filterList = this._initFilterList();
             var header = this._renderFilterHeader();
-            var reset = this._renderReset();
+            var reset = this.optionalBtnOnClick ? this._renderOptionalButton() : this._renderReset();
             return (widget_1.tsx("div", { class: CSS.base },
                 widget_1.tsx("div", { class: CSS.filterContainer },
                     header,
@@ -116,6 +118,12 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             return (widget_1.tsx("div", { class: CSS.resetContainer },
                 widget_1.tsx("div", { class: CSS.resetBtn },
                     widget_1.tsx("calcite-button", { bind: this, appearance: "outline", width: "full", color: this._reset.color, theme: this.theme, disabled: this._reset.disabled, onclick: this._handleResetFilter }, i18n.resetFilter))));
+        };
+        FilterList.prototype._renderOptionalButton = function () {
+            return (widget_1.tsx("div", { class: CSS.resetContainer },
+                widget_1.tsx("div", { class: CSS.optionalBtn },
+                    widget_1.tsx("calcite-button", { bind: this, appearance: "outline", width: "half", color: this._reset.color, theme: this.theme, disabled: this._reset.disabled, onclick: this._handleResetFilter }, i18n.resetFilter),
+                    widget_1.tsx("calcite-button", { bind: this, appearance: "solid", width: "half", color: "blue", theme: this.theme, onclick: this.optionalBtnOnClick }, this.optionalBtnText))));
         };
         FilterList.prototype._initFilterList = function () {
             if (this.layerExpressions) {
@@ -161,6 +169,12 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         __decorate([
             decorators_1.property()
         ], FilterList.prototype, "headerTag", void 0);
+        __decorate([
+            decorators_1.property()
+        ], FilterList.prototype, "optionalBtnText", void 0);
+        __decorate([
+            decorators_1.property()
+        ], FilterList.prototype, "optionalBtnOnClick", void 0);
         __decorate([
             decorators_1.aliasOf("viewModel.output")
         ], FilterList.prototype, "output", void 0);
