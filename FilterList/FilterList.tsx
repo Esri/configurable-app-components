@@ -32,6 +32,7 @@ const CSS = {
   headerContainerLight: "esri-filter-list__header-container esri-filter-list__header-container--light",
   resetContainer: "esri-filter-list__reset-container",
   resetBtn: "esri-filter-list__reset-btn",
+  optionalBtn: "esri-filter-list__optional-btn",
   filterItem: {
     single: "esri-filter-list__filter-item-container esri-filter-list__filter-item-container--single",
     accordion: "esri-filter-list__filter-item-container esri-filter-list__filter-item-container--accordion",
@@ -64,6 +65,12 @@ class FilterList extends Widget {
 
   @property()
   headerTag: string = "h3";
+
+  @property()
+  optionalBtnText: string = "Close Filter";
+
+  @property()
+  optionalBtnOnClick: Function;
 
   @aliasOf("viewModel.output")
   output: FilterOutput;
@@ -105,7 +112,7 @@ class FilterList extends Widget {
   render() {
     const filterList = this._initFilterList();
     const header = this._renderFilterHeader();
-    const reset = this._renderReset();
+    const reset = this.optionalBtnOnClick ? this._renderOptionalButton() : this._renderReset();
     return (
       <div class={CSS.base}>
         <div class={CSS.filterContainer}>
@@ -199,6 +206,36 @@ class FilterList extends Widget {
             onclick={this._handleResetFilter}
           >
             {i18n.resetFilter}
+          </calcite-button>
+        </div>
+      </div>
+    );
+  }
+
+  private _renderOptionalButton(): any {
+    return (
+      <div class={CSS.resetContainer}>
+        <div class={CSS.optionalBtn}>
+          <calcite-button
+            bind={this}
+            appearance="outline"
+            width="half"
+            color={this._reset.color}
+            theme={this.theme}
+            disabled={this._reset.disabled}
+            onclick={this._handleResetFilter}
+          >
+            {i18n.resetFilter}
+          </calcite-button>
+          <calcite-button
+            bind={this}
+            appearance="solid"
+            width="half"
+            color="blue"
+            theme={this.theme}
+            onclick={this.optionalBtnOnClick}
+          >
+            {this.optionalBtnText}
           </calcite-button>
         </div>
       </div>
