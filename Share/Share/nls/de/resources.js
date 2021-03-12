@@ -1,7 +1,7 @@
 define({
   "heading": "Freigeben",
   "subHeading": "Diese Karte freigeben",
-  "urlTitle": "Esri ArcGIS - {title}",
+  "urlTitle": "Esri ArcGIS – {title}",
   "urlSummary": "Hier eine interessante Karte: {summary}",
   "widgetLabel": "Freigeben",
   "clipboard": "In Zwischenablage kopieren",

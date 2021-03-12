@@ -1,9 +1,9 @@
 define({
-  "heading": "Udostępnij",
+  "heading": "Udostępnianie",
   "subHeading": "Udostępnij tę mapę",
   "urlTitle": "Esri ArcGIS - {title}",
   "urlSummary": "Obejrzyj tę mapę - {summary}",
-  "widgetLabel": "Udostępnij",
+  "widgetLabel": "Udostępnianie",
   "clipboard": "Kopiuj do schowka",
   "sendLink": "Wyślij łącze",
   "embedMap": "Osadź mapę",

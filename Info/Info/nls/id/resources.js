@@ -1,5 +1,5 @@
 define({
-  "next": "Berikutnya",
+  "next": "Selanjutnya",
   "back": "kembali",
   "close": "Tutup",
   "widgetLabel": "Info"

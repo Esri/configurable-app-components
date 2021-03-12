@@ -1,8 +1,8 @@
 define({
   "heading": "Bendrinti",
   "subHeading": "Bendrinti šį žemėlapį",
-  "urlTitle": "Esri ArcGIS - {pavadinimas}",
-  "urlSummary": "Peržiūrėkite šį žemėlapį - {santrauka}",
+  "urlTitle": "Esri ArcGIS – {title}",
+  "urlSummary": "Peržiūrėkite šį žemėlapį: {summary}",
   "widgetLabel": "Bendrinti",
   "clipboard": "Kopijuoti į iškarpinę",
   "sendLink": "Siųsti nuorodą",

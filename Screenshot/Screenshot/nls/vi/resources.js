@@ -1,6 +1,6 @@
 define({
   "takeAScreenshot": "Chụp ảnh màn hình",
-  "downloadImage": "Tải Hình ảnh",
+  "downloadImage": "Tải về Hình ảnh",
   "backButton": "Quay lại bản đồ",
   "widgetLabel": "Ảnh chụp màn hình",
   "deactivateScreenshot": "Tắt chế độ chụp màn hình",
@@ -11,7 +11,7 @@ define({
   "legend": "Chú giải",
   "popup": "Cửa sổ pop-up",
   "enterTitle": "Nhập tiêu đề",
-  "screenshotLayout": "Bố cục ảnh màn hình",
+  "screenshotLayout": "Bố cục ảnh chụp màn hình",
   "horizontal": "Ngang",
   "vertical": "Dọc"
 });

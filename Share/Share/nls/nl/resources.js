@@ -6,6 +6,6 @@ define({
   "widgetLabel": "Delen",
   "clipboard": "Kopiëren naar klembord",
   "sendLink": "Een koppeling verzenden",
-  "embedMap": "Kaart inbedden",
+  "embedMap": "Kaart embedden",
   "copied": "Gekopieerd"
 });

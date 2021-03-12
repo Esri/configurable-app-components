@@ -1,4 +1,4 @@
 define({
-  "resetFilter": "ก้_Reset Filter_____________ษฺ",
-  "selectFilter": "ก้_Select filter______________ษฺ"
+  "resetFilter": "รีเซ็ตตัวกรอง",
+  "selectFilter": "เลือกตัวกรอง"
 });

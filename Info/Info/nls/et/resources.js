@@ -1,5 +1,5 @@
 define({
-  "next": "Järgmine",
+  "next": "Edasi",
   "back": "tagasi",
   "close": "Sule",
   "widgetLabel": "Teave"

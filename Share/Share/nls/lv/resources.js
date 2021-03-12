@@ -1,11 +1,11 @@
 define({
-  "heading": "Kopīgošana",
-  "subHeading": "Kopīgot šo karti",
-  "urlTitle": "Esri ArcGIS — {virsraksts}",
-  "urlSummary": "Aplūko šo karti— {kopsavilkums}",
-  "widgetLabel": "Kopīgošana",
+  "heading": "Koplietot",
+  "subHeading": "Koplietot šo karti",
+  "urlTitle": "Esri ArcGIS - {title}",
+  "urlSummary": "Aplūkot šo karti - {summary}",
+  "widgetLabel": "Koplietot",
   "clipboard": "Kopēt starpliktuvē",
   "sendLink": "Nosūtīt saiti",
-  "embedMap": "Iedarināt karti",
-  "copied": "Nokopēts"
+  "embedMap": "Iegult karti",
+  "copied": "Kopēts"
 });

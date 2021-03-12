@@ -1,6 +1,6 @@
 define({
   "next": "Seuraava",
-  "back": "takaosa",
+  "back": "takaisin",
   "close": "Sulje",
   "widgetLabel": "Tiedot"
 });

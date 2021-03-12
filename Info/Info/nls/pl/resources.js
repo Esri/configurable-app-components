@@ -1,5 +1,5 @@
 define({
-  "next": "Następny",
+  "next": "Dalej",
   "back": "wstecz",
   "close": "Zamknij",
   "widgetLabel": "Informacje"

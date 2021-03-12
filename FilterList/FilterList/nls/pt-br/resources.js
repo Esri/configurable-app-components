@@ -1,4 +1,4 @@
 define({
-  "resetFilter": "ã_Reset Filter_____________Ç",
-  "selectFilter": "ã_Select filter______________Ç"
+  "resetFilter": "Redefinir Filtro",
+  "selectFilter": "Selecionar filtro"
 });

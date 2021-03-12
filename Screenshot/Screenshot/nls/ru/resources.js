@@ -12,6 +12,6 @@ define({
   "popup": "Всплывающее окно",
   "enterTitle": "Введите заголовок",
   "screenshotLayout": "Скриншот компоновки",
-  "horizontal": "По горизонтали",
-  "vertical": "Вертикально"
+  "horizontal": "Горизонтальная",
+  "vertical": "Вертикальная"
 });

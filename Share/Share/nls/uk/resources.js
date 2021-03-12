@@ -1,8 +1,8 @@
 define({
   "heading": "Поділитися",
   "subHeading": "Поділитися цією картою",
-  "urlTitle": "Esri ArcGIS - {title}",
-  "urlSummary": "Ознайомтесь з цією картою - {summary}",
+  "urlTitle": "Esri ArcGIS – {title}",
+  "urlSummary": "Ознайомтесь з цією картою – {summary}",
   "widgetLabel": "Поділитися",
   "clipboard": "Копіювати до буферу обміну",
   "sendLink": "Надіслати посилання",

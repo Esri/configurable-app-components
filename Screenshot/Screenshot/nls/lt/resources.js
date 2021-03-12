@@ -12,6 +12,6 @@ define({
   "popup": "Iškylantis langas",
   "enterTitle": "Įveskite pavadinimą",
   "screenshotLayout": "Ekrano vaizdo maketas",
-  "horizontal": "Horizontaliai",
-  "vertical": "Vertikaliai"
+  "horizontal": "Horizontalus",
+  "vertical": "Vertikalus"
 });

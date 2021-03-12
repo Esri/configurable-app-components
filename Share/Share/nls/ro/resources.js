@@ -1,8 +1,8 @@
 define({
   "heading": "Partajare",
-  "subHeading": "Partajați această hartă",
-  "urlTitle": "Esri ArcGIS - {titlu}",
-  "urlSummary": "Consultați această hartă - {cuprins}",
+  "subHeading": "Partajare această hartă",
+  "urlTitle": "Esri ArcGIS - {title}",
+  "urlSummary": "Consultați această hartă - {summary}",
   "widgetLabel": "Partajare",
   "clipboard": "Copiere în clipboard",
   "sendLink": "Trimitere link",

@@ -1,10 +1,10 @@
 define({
   "heading": "Κοινοποίηση",
   "subHeading": "Κοινοποίηση αυτού του χάρτη",
-  "urlTitle": "Esri ArcGIS -{title}",
-  "urlSummary": "Δείτε αυτόν το χάρτη-{summary}",
+  "urlTitle": "Esri ArcGIS - {title}",
+  "urlSummary": "Δείτε αυτόν το χάρτη - {summary}",
   "widgetLabel": "Κοινοποίηση",
-  "clipboard": "Αντιγραφή στο πρόχειρο",
+  "clipboard": "Αντιγραφή στο Πρόχειρο",
   "sendLink": "Αποστολή συνδέσμου",
   "embedMap": "Ενσωμάτωση χάρτη",
   "copied": "Αντιγράφηκε"

@@ -3,15 +3,15 @@ define({
   "downloadImage": "Télécharger l’image",
   "backButton": "Revenir à la carte",
   "widgetLabel": "Capture d’écran",
-  "deactivateScreenshot": "Désactiver le mode capture d’écran",
+  "deactivateScreenshot": "Désactiver le mode Capture d’écran",
   "setScreenshotArea": "Définir la zone cartographique",
   "selectAFeature": "Sélectionner une entité sur la carte",
   "screenshotTitle": "Capturer une image",
-  "screenshotSubtitle": "Sélectionnez des éléments supplémentaires à inclure dans la carte.",
+  "screenshotSubtitle": "Sélectionner des éléments supplémentaires à inclure dans la carte.",
   "legend": "Légende",
   "popup": "Fenêtre contextuelle",
   "enterTitle": "Saisir un titre",
   "screenshotLayout": "Mise en page de la capture d’écran",
-  "horizontal": "Horizontal",
-  "vertical": "Vertical"
+  "horizontal": "Horizontale",
+  "vertical": "Verticale"
 });
