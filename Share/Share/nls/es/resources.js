@@ -7,5 +7,5 @@ define({
   "clipboard": "Copiar al portapapeles",
   "sendLink": "Enviar un vínculo",
   "embedMap": "Integrar mapa",
-  "copied": "Copiado"
+  "copied": "Copiada"
 });

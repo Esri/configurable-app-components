@@ -9,7 +9,7 @@ define({
   "screenshotTitle": "Capturar una imagen",
   "screenshotSubtitle": "Seleccione elementos adicionales para incluirlos en el mapa.",
   "legend": "Leyenda",
-  "popup": "Ventana emergente",
+  "popup": "Elemento emergente",
   "enterTitle": "Introducir título",
   "screenshotLayout": "Diseño de captura de pantalla",
   "horizontal": "Horizontal",

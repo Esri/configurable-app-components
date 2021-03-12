@@ -1,5 +1,5 @@
 define({
-  "next": "Következő",
+  "next": "Tovább",
   "back": "vissza",
   "close": "Bezárás",
   "widgetLabel": "Információ"

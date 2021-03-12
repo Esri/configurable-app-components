@@ -2,7 +2,7 @@ define({
   "heading": "مشاركة",
   "subHeading": "مشاركة هذه الخريطة",
   "urlTitle": "Esri ArcGIS - {title}",
-  "urlSummary": "اسحب هذه الخريطة - {summary}",
+  "urlSummary": "تحقق من هذه الخريطة -{summary}",
   "widgetLabel": "مشاركة",
   "clipboard": "نسخ إلى الحافظة",
   "sendLink": "إرسال رابط",

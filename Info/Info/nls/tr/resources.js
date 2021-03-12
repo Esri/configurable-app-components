@@ -1,5 +1,5 @@
 define({
-  "next": "Sonraki",
+  "next": "İleri",
   "back": "geri",
   "close": "Kapat",
   "widgetLabel": "Bilgi"

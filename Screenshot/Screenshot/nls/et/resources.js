@@ -8,7 +8,7 @@ define({
   "selectAFeature": "Vali objekt kaardil",
   "screenshotTitle": "Jäädvusta pilt",
   "screenshotSubtitle": "Vali kaardile kaasatavad lisaelemendid.",
-  "legend": "Legend",
+  "legend": "Legendiga kaart",
   "popup": "Hüpikaken",
   "enterTitle": "Sisesta filter",
   "screenshotLayout": "Kuvatõmmise paigutus",

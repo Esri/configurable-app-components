@@ -1,6 +1,6 @@
 define({
   "next": "הבא",
   "back": "חזרה",
-  "close": "סגור",
+  "close": "סגירה",
   "widgetLabel": "מידע"
 });

@@ -1,4 +1,4 @@
 define({
-  "resetFilter": "須_Reset Filter_____________鷗",
-  "selectFilter": "須_Select filter______________鷗"
+  "resetFilter": "フィルターのリセット",
+  "selectFilter": "フィルターの選択"
 });

@@ -1,9 +1,9 @@
 define({
-  "heading": "공유하기",
+  "heading": "공유",
   "subHeading": "이 맵 공유",
-  "urlTitle": "Esri ArcGIS - {제목}",
-  "urlSummary": "해당 맵 확인 - {요약}",
-  "widgetLabel": "공유하기",
+  "urlTitle": "Esri ArcGIS - {title}",
+  "urlSummary": "해당 맵 확인 - {summary}",
+  "widgetLabel": "공유",
   "clipboard": "클립보드에 복사",
   "sendLink": "링크 보내기",
   "embedMap": "맵 임베드",
