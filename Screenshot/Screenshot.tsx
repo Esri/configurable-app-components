@@ -149,6 +149,9 @@ class Screenshot extends Widget {
   previewTitleInputNode: HTMLInputElement = null;
 
   @property()
+  previewContainer: HTMLDivElement = null;
+
+  @property()
   @renderable([
     "viewModel.state",
     "viewModel.includeLegendInScreenshot",
@@ -182,7 +185,23 @@ class Screenshot extends Widget {
             this._elementOptions.custom = this.includeCustomInScreenshot;
           }
         }
-      )
+      ),
+      watchUtils.whenOnce(this, "previewContainer", () => {
+        document.addEventListener("keydown", e => {
+          if (this.viewModel.previewIsVisible) {
+            const selectors =
+              'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+            const focusableElements = this.previewContainer.querySelectorAll(
+              selectors
+            );
+            const firstFocusableElement = focusableElements[0] as HTMLInputElement;
+            const lastFocusableElement = focusableElements[
+              focusableElements.length - 1
+            ] as HTMLButtonElement;
+            this._handleTab(e, firstFocusableElement, lastFocusableElement);
+          }
+        });
+      })
     ]);
     const offScreenPopupContainer = document.createElement("div");
     const offScreenLegendContainer = document.createElement("div");
@@ -418,7 +437,14 @@ class Screenshot extends Widget {
         afterCreate={this._attachToBody}
         class={this.classes(CSS.screenshotDiv, overlayIsVisible)}
       >
-        <div class={CSS.screenshotPreviewContainer}>
+        <div
+          bind={this}
+          class={CSS.screenshotPreviewContainer}
+          role="dialog"
+          aria-label={i18n.downloadImage}
+          afterCreate={storeNode}
+          data-node-ref="previewContainer"
+        >
           <div class={CSS.screenshotImgContainer}>
             <img
               bind={this}
@@ -665,6 +691,38 @@ class Screenshot extends Widget {
 
   private _attachToBody(this: HTMLElement, node) {
     document.body.appendChild(node);
+  }
+
+  private _handleTab(e, firstFocusableElement, lastFocusableElement) {
+    let isTabPressed = e.key === "Tab" || e.keyCode === 9;
+
+    if (!isTabPressed) {
+      return;
+    }
+
+    if (e.shiftKey) {
+      if (document.activeElement === firstFocusableElement) {
+        const interval = setInterval(() => {
+          lastFocusableElement.focus();
+          if (document.activeElement === lastFocusableElement) {
+            clearInterval(interval);
+            return;
+          }
+        }, 0);
+        e.preventDefault();
+      }
+    } else {
+      if (document.activeElement === lastFocusableElement) {
+        const interval = setInterval(() => {
+          firstFocusableElement.focus();
+          if (document.activeElement === firstFocusableElement) {
+            clearInterval(interval);
+            return;
+          }
+        }, 0);
+        e.preventDefault();
+      }
+    }
   }
 }
 

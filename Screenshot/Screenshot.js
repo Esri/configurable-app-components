@@ -91,6 +91,7 @@ define(["require", "exports", "dojo/i18n!./Screenshot/nls/resources", "esri/widg
             _this.view = null;
             _this.outputLayout = null;
             _this.previewTitleInputNode = null;
+            _this.previewContainer = null;
             _this.viewModel = new ScreenshotViewModel();
             return _this;
         }
@@ -113,6 +114,17 @@ define(["require", "exports", "dojo/i18n!./Screenshot/nls/resources", "esri/widg
                     if (_this.custom) {
                         _this._elementOptions.custom = _this.includeCustomInScreenshot;
                     }
+                }),
+                watchUtils.whenOnce(this, "previewContainer", function () {
+                    document.addEventListener("keydown", function (e) {
+                        if (_this.viewModel.previewIsVisible) {
+                            var selectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+                            var focusableElements = _this.previewContainer.querySelectorAll(selectors);
+                            var firstFocusableElement = focusableElements[0];
+                            var lastFocusableElement = focusableElements[focusableElements.length - 1];
+                            _this._handleTab(e, firstFocusableElement, lastFocusableElement);
+                        }
+                    });
                 })
             ]);
             var offScreenPopupContainer = document.createElement("div");
@@ -228,7 +240,7 @@ define(["require", "exports", "dojo/i18n!./Screenshot/nls/resources", "esri/widg
                 _a);
             var screenshotPreviewBtns = this._renderScreenshotPreviewBtns();
             return (widget_1.tsx("div", { afterCreate: this._attachToBody, class: this.classes(CSS.screenshotDiv, overlayIsVisible) },
-                widget_1.tsx("div", { class: CSS.screenshotPreviewContainer },
+                widget_1.tsx("div", { bind: this, class: CSS.screenshotPreviewContainer, role: "dialog", "aria-label": i18n.downloadImage, afterCreate: widget_1.storeNode, "data-node-ref": "previewContainer" },
                     widget_1.tsx("div", { class: CSS.screenshotImgContainer },
                         widget_1.tsx("img", { bind: this, afterCreate: widget_1.storeNode, "data-node-ref": "_screenshotImgNode", class: CSS.screenshotImg })),
                     widget_1.tsx("input", { bind: this, type: "text", afterCreate: widget_1.storeNode, "data-node-ref": "previewTitleInputNode", placeholder: i18n.enterTitle }),
@@ -392,6 +404,36 @@ define(["require", "exports", "dojo/i18n!./Screenshot/nls/resources", "esri/widg
         Screenshot.prototype._attachToBody = function (node) {
             document.body.appendChild(node);
         };
+        Screenshot.prototype._handleTab = function (e, firstFocusableElement, lastFocusableElement) {
+            var isTabPressed = e.key === "Tab" || e.keyCode === 9;
+            if (!isTabPressed) {
+                return;
+            }
+            if (e.shiftKey) {
+                if (document.activeElement === firstFocusableElement) {
+                    var interval_1 = setInterval(function () {
+                        lastFocusableElement.focus();
+                        if (document.activeElement === lastFocusableElement) {
+                            clearInterval(interval_1);
+                            return;
+                        }
+                    }, 0);
+                    e.preventDefault();
+                }
+            }
+            else {
+                if (document.activeElement === lastFocusableElement) {
+                    var interval_2 = setInterval(function () {
+                        firstFocusableElement.focus();
+                        if (document.activeElement === firstFocusableElement) {
+                            clearInterval(interval_2);
+                            return;
+                        }
+                    }, 0);
+                    e.preventDefault();
+                }
+            }
+        };
         __decorate([
             decorators_1.aliasOf("viewModel.custom")
         ], Screenshot.prototype, "custom", void 0);
@@ -455,6 +497,9 @@ define(["require", "exports", "dojo/i18n!./Screenshot/nls/resources", "esri/widg
             decorators_1.aliasOf("viewModel.previewTitleInputNode"),
             decorators_1.property()
         ], Screenshot.prototype, "previewTitleInputNode", void 0);
+        __decorate([
+            decorators_1.property()
+        ], Screenshot.prototype, "previewContainer", void 0);
         __decorate([
             decorators_1.property(),
             widget_1.renderable([
