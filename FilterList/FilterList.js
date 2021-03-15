@@ -35,7 +35,8 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         headerContainerDark: "esri-filter-list__header-container esri-filter-list__header-container--dark",
         headerContainerLight: "esri-filter-list__header-container esri-filter-list__header-container--light",
         resetContainer: "esri-filter-list__reset-container",
-        resetBtn: "esri-filter-list__reset-btn",
+        resetBtnDark: "esri-filter-list__reset-btn esri-filter-list__reset-btn--dark",
+        resetBtnLight: "esri-filter-list__reset-btn esri-filter-list__reset-btn--light",
         optionalBtn: "esri-filter-list__optional-btn",
         filterItem: {
             single: "esri-filter-list__filter-item-container esri-filter-list__filter-item-container--single",
@@ -98,14 +99,14 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         };
         FilterList.prototype._renderFilterAccordionItem = function (layerExpression) {
             var filter = this._renderFilter(layerExpression);
-            return (widget_1.tsx("calcite-accordion-item", { bind: this, "item-title": layerExpression.title, "icon-position": "start", afterCreate: this.viewModel.initLayerHeader }, filter));
+            return (widget_1.tsx("calcite-accordion-item", { key: layerExpression.id, bind: this, "item-title": layerExpression.title, "icon-position": "start", afterCreate: this.viewModel.initLayerHeader }, filter));
         };
         FilterList.prototype._renderFilter = function (layerExpression) {
             var _this = this;
             var itemTheme = CSS.filterItem[this.theme];
             var id = layerExpression.id;
-            return layerExpression.expressions.map(function (expression) {
-                return (widget_1.tsx("div", { class: _this._isSingleFilterList
+            return layerExpression.expressions.map(function (expression, index) {
+                return (widget_1.tsx("div", { key: id + "-" + index, class: _this._isSingleFilterList
                         ? _this.classes(CSS.filterItem.single, itemTheme)
                         : _this.classes(CSS.filterItem.accordion, itemTheme) },
                     widget_1.tsx("div", { class: CSS.filterItemTitle },
@@ -116,8 +117,8 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         };
         FilterList.prototype._renderReset = function () {
             return (widget_1.tsx("div", { class: CSS.resetContainer },
-                widget_1.tsx("div", { class: CSS.resetBtn },
-                    widget_1.tsx("calcite-button", { bind: this, appearance: "outline", width: "full", color: this._reset.color, theme: this.theme, disabled: this._reset.disabled, onclick: this._handleResetFilter }, i18n.resetFilter))));
+                widget_1.tsx("div", { class: this.theme === "light" ? CSS.resetBtnLight : CSS.resetBtnDark },
+                    widget_1.tsx("calcite-button", { bind: this, appearance: "outline", width: "half", color: this._reset.color, theme: this.theme, disabled: this._reset.disabled, onclick: this._handleResetFilter }, i18n.resetFilter))));
         };
         FilterList.prototype._renderOptionalButton = function () {
             return (widget_1.tsx("div", { class: CSS.resetContainer },

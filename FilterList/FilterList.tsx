@@ -31,7 +31,8 @@ const CSS = {
   headerContainerDark: "esri-filter-list__header-container esri-filter-list__header-container--dark",
   headerContainerLight: "esri-filter-list__header-container esri-filter-list__header-container--light",
   resetContainer: "esri-filter-list__reset-container",
-  resetBtn: "esri-filter-list__reset-btn",
+  resetBtnDark: "esri-filter-list__reset-btn esri-filter-list__reset-btn--dark",
+  resetBtnLight: "esri-filter-list__reset-btn esri-filter-list__reset-btn--light",
   optionalBtn: "esri-filter-list__optional-btn",
   filterItem: {
     single: "esri-filter-list__filter-item-container esri-filter-list__filter-item-container--single",
@@ -154,6 +155,7 @@ class FilterList extends Widget {
     const filter = this._renderFilter(layerExpression);
     return (
       <calcite-accordion-item
+        key={layerExpression.id}
         bind={this}
         item-title={layerExpression.title}
         icon-position="start"
@@ -167,9 +169,10 @@ class FilterList extends Widget {
   private _renderFilter(layerExpression: LayerExpression): any {
     const itemTheme = CSS.filterItem[this.theme];
     const { id } = layerExpression;
-    return layerExpression.expressions.map((expression) => {
+    return layerExpression.expressions.map((expression, index) => {
       return (
         <div
+          key={id+"-"+index}
           class={
             this._isSingleFilterList
               ? this.classes(CSS.filterItem.single, itemTheme)
@@ -195,11 +198,11 @@ class FilterList extends Widget {
   private _renderReset(): any {
     return (
       <div class={CSS.resetContainer}>
-        <div class={CSS.resetBtn}>
+        <div class={this.theme === "light" ? CSS.resetBtnLight : CSS.resetBtnDark}>
           <calcite-button
             bind={this}
             appearance="outline"
-            width="full"
+            width="half"
             color={this._reset.color}
             theme={this.theme}
             disabled={this._reset.disabled}

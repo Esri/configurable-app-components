@@ -34,9 +34,14 @@
   color: #fff;
 }
 .esri-filter-list__reset-container {
-  background: #f4f3f4;
   display: flex;
   justify-content: flex-end;
+}
+.esri-filter-list__reset-container--light {
+  background: #f4f3f4;
+}
+.esri-filter-list__reset-container--dark {
+  background: #353535;
 }
 .esri-filter-list__filter-item-container {
   border-bottom: 1px solid #d9dada;

@@ -10,7 +10,6 @@
 // limitations under the License.​
 
 .esri-filter-list {
-
   calcite-accordion {
     border: unset;
   }
@@ -55,9 +54,16 @@
   }
 
   &__reset-container {
-    background: rgb(244, 243, 244);
     display: flex;
     justify-content: flex-end;
+
+    &--light {
+      background: rgb(244, 243, 244);
+    }
+
+    &--dark {
+      background: #353535;
+    }
   }
 
   &__filter-item-container {
