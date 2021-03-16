@@ -161,7 +161,7 @@ class FilterList extends Widget {
     const { id } = layerExpression;
     return layerExpression.expressions.map((expression, index) => {
       return (
-        <div key={id + "-" + index} class={this._isSingleFilterList ? CSS.filterItem.single : CSS.filterItem.accordion}>
+        <div key={`${id}-${index}`} class={this._isSingleFilterList ? CSS.filterItem.single : CSS.filterItem.accordion}>
           <div class={CSS.filterItemTitle}>
             <p>{expression.name}</p>
           </div>
