@@ -26,19 +26,16 @@ import { FilterOutput, LayerExpression, ResetFilter } from "./FilterList/interfa
 import FilterListViewModel = require("./FilterList/FilterListViewModel");
 
 const CSS = {
-  base: "esri-filter-list",
+  baseDark: "esri-filter-list esri-filter-list--dark",
+  baseLight: "esri-filter-list esri-filter-list--light",
   filterContainer: "esri-filter-list__filter-container",
-  headerContainerDark: "esri-filter-list__header-container esri-filter-list__header-container--dark",
-  headerContainerLight: "esri-filter-list__header-container esri-filter-list__header-container--light",
+  headerContainer: "esri-filter-list__header-container",
   resetContainer: "esri-filter-list__reset-container",
-  resetBtnDark: "esri-filter-list__reset-btn esri-filter-list__reset-btn--dark",
-  resetBtnLight: "esri-filter-list__reset-btn esri-filter-list__reset-btn--light",
+  resetBtn: "esri-filter-list__reset-btn",
   optionalBtn: "esri-filter-list__optional-btn",
   filterItem: {
     single: "esri-filter-list__filter-item-container esri-filter-list__filter-item-container--single",
-    accordion: "esri-filter-list__filter-item-container esri-filter-list__filter-item-container--accordion",
-    light: "esri-filter-list__filter-item-container--light",
-    dark: "esri-filter-list__filter-item-container--dark"
+    accordion: "esri-filter-list__filter-item-container esri-filter-list__filter-item-container--accordion"
   },
   filterItemTitle: "esri-filter-list__filter-title",
   checkboxContainer: "esri-filter-list__checkbox-container"
@@ -115,7 +112,7 @@ class FilterList extends Widget {
     const header = this._renderFilterHeader();
     const reset = this.optionalBtnOnClick ? this._renderOptionalButton() : this._renderReset();
     return (
-      <div class={CSS.base}>
+      <div class={this.theme === "light" ? CSS.baseLight : CSS.baseDark}>
         <div class={CSS.filterContainer}>
           {header}
           {filterList}
@@ -132,13 +129,7 @@ class FilterList extends Widget {
   // ----------------------------------
 
   private _renderFilterHeader(): any {
-    return (
-      <div
-        bind={this}
-        afterCreate={this._createHeaderTitle}
-        class={this.theme === "light" ? CSS.headerContainerLight : CSS.headerContainerDark}
-      ></div>
-    );
+    return <div bind={this} afterCreate={this._createHeaderTitle} class={CSS.headerContainer}></div>;
   }
 
   private _renderLayerAccordion(): any {
@@ -167,18 +158,10 @@ class FilterList extends Widget {
   }
 
   private _renderFilter(layerExpression: LayerExpression): any {
-    const itemTheme = CSS.filterItem[this.theme];
     const { id } = layerExpression;
     return layerExpression.expressions.map((expression, index) => {
       return (
-        <div
-          key={id+"-"+index}
-          class={
-            this._isSingleFilterList
-              ? this.classes(CSS.filterItem.single, itemTheme)
-              : this.classes(CSS.filterItem.accordion, itemTheme)
-          }
-        >
+        <div key={id + "-" + index} class={this._isSingleFilterList ? CSS.filterItem.single : CSS.filterItem.accordion}>
           <div class={CSS.filterItemTitle}>
             <p>{expression.name}</p>
           </div>
@@ -198,7 +181,7 @@ class FilterList extends Widget {
   private _renderReset(): any {
     return (
       <div class={CSS.resetContainer}>
-        <div class={this.theme === "light" ? CSS.resetBtnLight : CSS.resetBtnDark}>
+        <div class={CSS.resetBtn}>
           <calcite-button
             bind={this}
             appearance="outline"
