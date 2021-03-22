@@ -9,6 +9,9 @@
   width: 100%;
   padding: 20px;
 }
+.esri-filter-list__optional-btn > calcite-button:first-of-type {
+  margin-right: 6px;
+}
 .esri-filter-list__filter-container {
   height: 100%;
   border: 1px solid #d9dada;
