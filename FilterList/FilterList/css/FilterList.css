@@ -8,6 +8,10 @@
 .esri-filter-list__optional-btn {
   width: 100%;
   padding: 20px;
+  display: flex;
+}
+.esri-filter-list__optional-btn calcite-button {
+  width: 100%;
 }
 .esri-filter-list__optional-btn > calcite-button:first-of-type {
   margin-right: 6px;
