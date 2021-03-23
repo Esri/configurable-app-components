@@ -205,7 +205,6 @@ class FilterList extends Widget {
           <calcite-button
             bind={this}
             appearance="outline"
-            width="half"
             color={this._reset.color}
             theme={this.theme}
             disabled={this._reset.disabled}
@@ -216,7 +215,6 @@ class FilterList extends Widget {
           <calcite-button
             bind={this}
             appearance="solid"
-            width="half"
             color="blue"
             theme={this.theme}
             onclick={this.optionalBtnOnClick}
