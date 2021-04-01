@@ -62,7 +62,8 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         // ----------------------------------
         FilterListViewModel.prototype.initExpressions = function () {
             var _this = this;
-            this.layerExpressions.map(function (layerExpression) {
+            var _a;
+            (_a = this.layerExpressions) === null || _a === void 0 ? void 0 : _a.map(function (layerExpression) {
                 var tmpExp = [];
                 var id = layerExpression.id;
                 layerExpression.expressions.map(function (expression) {
