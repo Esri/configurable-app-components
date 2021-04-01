@@ -31,8 +31,8 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
     "use strict";
     var ShareFeatures = /** @class */ (function (_super) {
         __extends(ShareFeatures, _super);
-        function ShareFeatures() {
-            var _this = _super !== null && _super.apply(this, arguments) || this;
+        function ShareFeatures(value) {
+            var _this = _super.call(this, value) || this;
             _this.embedMap = true;
             _this.shortenLink = true;
             return _this;

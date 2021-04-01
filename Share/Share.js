@@ -83,8 +83,8 @@ define(["require", "exports", "dojo/i18n!./Share/nls/resources", "esri/core/watc
     };
     var Share = /** @class */ (function (_super) {
         __extends(Share, _super);
-        function Share(params) {
-            var _this = _super.call(this, params) || this;
+        function Share(value) {
+            var _this = _super.call(this, value) || this;
             _this._shareModal = null;
             _this._beforeCloseIsSet = false;
             _this._iframeInputNode = null;

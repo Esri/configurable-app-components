@@ -75,6 +75,10 @@ type State = "ready" | "loading" | "shortening" | "projecting" | "disabled";
 
 @subclass("ShareViewModel")
 class ShareViewModel extends Accessor {
+  constructor(value?: unknown) {
+    super(value);
+  }
+
   //----------------------------------
   //
   //  Lifecycle

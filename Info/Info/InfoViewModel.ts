@@ -31,6 +31,10 @@ type State = "ready" | "loading" | "disabled";
 
 @subclass("InfoViewModel")
 class InfoViewModel extends Accessor {
+  constructor(value?: unknown) {
+    super(value);
+  }
+
   // state
   @property({
     dependsOn: ["view.ready"],

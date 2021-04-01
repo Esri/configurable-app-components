@@ -21,8 +21,8 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
     "use strict";
     var InfoItem = /** @class */ (function (_super) {
         __extends(InfoItem, _super);
-        function InfoItem() {
-            var _this = _super !== null && _super.apply(this, arguments) || this;
+        function InfoItem(value) {
+            var _this = _super.call(this, value) || this;
             // type
             _this.type = null;
             // title

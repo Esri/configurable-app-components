@@ -14,6 +14,10 @@ import Accessor = require("esri/core/Accessor");
 
 @subclass("ShareItem")
 class ShareItem extends Accessor {
+  constructor(value?: unknown) {
+    super(value);
+  }
+
   @property() id: string = null;
 
   @property() name: string = null;

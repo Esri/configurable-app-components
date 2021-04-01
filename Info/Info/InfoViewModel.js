@@ -27,8 +27,8 @@ define(["require", "exports", "esri/core/Accessor", "esri/core/accessorSupport/d
     var InfoItemCollection = Collection.ofType(InfoItem);
     var InfoViewModel = /** @class */ (function (_super) {
         __extends(InfoViewModel, _super);
-        function InfoViewModel() {
-            var _this = _super !== null && _super.apply(this, arguments) || this;
+        function InfoViewModel(value) {
+            var _this = _super.call(this, value) || this;
             // view
             _this.view = null;
             // selectedItemIndex

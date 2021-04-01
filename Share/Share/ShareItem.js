@@ -31,8 +31,8 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
     "use strict";
     var ShareItem = /** @class */ (function (_super) {
         __extends(ShareItem, _super);
-        function ShareItem() {
-            var _this = _super !== null && _super.apply(this, arguments) || this;
+        function ShareItem(value) {
+            var _this = _super.call(this, value) || this;
             _this.id = null;
             _this.name = null;
             _this.iconName = null;

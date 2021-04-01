@@ -75,7 +75,7 @@ const CSS = {
 
 @subclass("Info")
 class Info extends Widget {
-  constructor(value: any) {
+  constructor(value?: unknown) {
     super(value);
   }
   // ----------------------------------

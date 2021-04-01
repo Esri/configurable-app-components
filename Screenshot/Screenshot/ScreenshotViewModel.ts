@@ -26,7 +26,7 @@ type State = "ready" | "takingScreenshot" | "complete" | "disabled";
 
 @subclass("ScreenshotViewModel")
 class ScreenshotViewModel extends Accessor {
-  constructor(value?: any) {
+  constructor(value?: unknown) {
     super(value);
   }
 

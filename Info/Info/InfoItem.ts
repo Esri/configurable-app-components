@@ -11,6 +11,10 @@ type InfoItemType = "list" | "explanation";
 
 @subclass("InfoItem")
 class InfoItem extends Accessor {
+  constructor(value?: unknown) {
+    super(value);
+  }
+
   // type
   @property()
   type: InfoItemType = null;

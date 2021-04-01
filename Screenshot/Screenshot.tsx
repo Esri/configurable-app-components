@@ -67,7 +67,7 @@ const CSS = {
 
 @subclass("Screenshot")
 class Screenshot extends Widget {
-  constructor(value?: any) {
+  constructor(value?: unknown) {
     super(value);
   }
 

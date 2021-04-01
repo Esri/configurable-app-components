@@ -94,13 +94,8 @@ define(["require", "exports", "esri/core/Accessor", "esri/core/Collection", "esr
     var SHORTEN_API = "https://arcg.is/prod/shorten";
     var ShareViewModel = /** @class */ (function (_super) {
         __extends(ShareViewModel, _super);
-        function ShareViewModel() {
-            //----------------------------------
-            //
-            //  Lifecycle
-            //
-            //----------------------------------
-            var _this = _super !== null && _super.apply(this, arguments) || this;
+        function ShareViewModel(value) {
+            var _this = _super.call(this, value) || this;
             //----------------------------------
             //
             //  Private Variables
@@ -151,6 +146,11 @@ define(["require", "exports", "esri/core/Accessor", "esri/core/Collection", "esr
             _this.shareUrl = null;
             return _this;
         }
+        //----------------------------------
+        //
+        //  Lifecycle
+        //
+        //----------------------------------
         ShareViewModel.prototype.destroy = function () {
             this.shareItems.removeAll();
             this.view = null;

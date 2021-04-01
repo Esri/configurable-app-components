@@ -14,6 +14,10 @@ import Accessor = require("esri/core/Accessor");
 
 @subclass("ShareFeatures")
 class ShareFeatures extends Accessor {
+  constructor(value?: unknown) {
+    super(value);
+  }
+
   @property({ value: true })
   set copyToClipboard(value: boolean) {
     if (!this.shareServices) {
