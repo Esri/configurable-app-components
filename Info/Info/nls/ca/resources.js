@@ -2,5 +2,5 @@ define({
   "next": "Següent",
   "back": "enrere",
   "close": "Tanca",
-  "widgetLabel": "Informació"
+  "widgetLabel": "Activa/desactiva la informació"
 });

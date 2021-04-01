@@ -1,33 +1,9 @@
-// Copyright 2019 Esri
-
-// Licensed under the Apache License, Version 2.0 (the "License");
-
-// you may not use this file except in compliance with the License.
-
-// You may obtain a copy of the License at
-
-//     http://www.apache.org/licenses/LICENSE-2.0
-
-// Unless required by applicable law or agreed to in writing, software
-
-// distributed under the License is distributed on an "AS IS" BASIS,
-
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-
-// See the License for the specific language governing permissions and
-
-// limitations under the License.​
-
-/// <amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" />
-/// <amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" />
-
 // dojo
 import i18n = require("dojo/i18n!./Info/nls/resources");
 
 // esri.core.accessorSupport
 import {
   subclass,
-  declared,
   property,
   aliasOf
 } from "esri/core/accessorSupport/decorators";
@@ -38,11 +14,10 @@ import Widget = require("esri/widgets/Widget");
 // esri.widgets.Expand
 import Expand = require("esri/widgets/Expand");
 
-//esri.widgets.support
+// esri.widgets.support
 import {
   accessibleHandler,
-  tsx,
-  renderable
+  tsx
 } from "esri/widgets/support/widget";
 
 // esri.views.MapView
@@ -60,11 +35,11 @@ import InfoItem = require("./Info/InfoItem");
 // InfoViewModel
 import InfoViewModel = require("./Info/InfoViewModel");
 
-//----------------------------------
+// ----------------------------------
 //
 //  CSS Classes
 //
-//----------------------------------
+// ----------------------------------
 
 const CSS = {
   base: "esri-info",
@@ -94,26 +69,26 @@ const CSS = {
     btnClear: "btn-clear"
   },
   icons: {
-    widgetIcon: "icon-ui-question"
+    widgetIcon: "icon-ui-question icon-ui-flush"
   }
 };
 
 @subclass("Info")
-class Info extends declared(Widget) {
+class Info extends Widget {
   constructor(value: any) {
-    super();
+    super(value);
   }
-  //----------------------------------
+  // ----------------------------------
   //
   //  Private Variables
   //
-  //----------------------------------
+  // ----------------------------------
   private _paginationNodes: any[] = [];
-  //----------------------------------
+  // ----------------------------------
   //
   //  Properties
   //
-  //----------------------------------
+  // ----------------------------------
 
   // view
   @aliasOf("viewModel.view")
@@ -123,47 +98,46 @@ class Info extends declared(Widget) {
   // infoContent
   @aliasOf("viewModel.infoContent")
   @property()
-  @renderable()
   infoContent: Collection<InfoItem> = null;
 
   // expandWidget
   @aliasOf("viewModel.expandWidget")
   @property()
-  @renderable()
   expandWidget: Expand = null;
 
   // selectedItemIndex
   @aliasOf("viewModel.selectedItemIndex")
   @property()
-  @renderable()
   selectedItemIndex: number = null;
 
-  //----------------------------------------------
+  @property()
+  theme = "light";
+
+  // ----------------------------------------------
   //
   //  iconClass and label - Expand Widget Support
   //
-  //----------------------------------------------
+  // ----------------------------------------------
 
   // iconClass
   @property()
-  iconClass = CSS.icons.widgetIcon;
+  iconClass = "esri-icon-question";
 
   // label
   @property()
   label = i18n.widgetLabel;
 
   // viewModel
-  @renderable()
   @property({
     type: InfoViewModel
   })
   viewModel: InfoViewModel = new InfoViewModel();
 
-  //----------------------------------
+  // ----------------------------------
   //
   //  Lifecycle
   //
-  //----------------------------------
+  // ----------------------------------
 
   render() {
     const paginationNodes =
@@ -176,15 +150,19 @@ class Info extends declared(Widget) {
     return (
       <div class={this.classes(CSS.widget, CSS.base)}>
         {paginationNodes ? (
-          <div class={CSS.paginationContainer}>{paginationNodes}</div>
+          <ul class={CSS.paginationContainer}>{paginationNodes}</ul>
         ) : null}
-        <div class={CSS.contentContainer}>
-          <div class={CSS.titleContainer}>
-            <h1>{infoContentItem.title}</h1>
+        <div key="content-container" class={CSS.contentContainer}>
+          <div key="title-container" class={CSS.titleContainer}>
+            <h1>{infoContentItem?.title}</h1>
           </div>
-          <div class={CSS.infoContent}>{content}</div>
+          <div key="info-content" class={CSS.infoContent}>
+            {content}
+          </div>
         </div>
-        <div class={CSS.buttonContainer}>{pageNavButtons}</div>
+        <div key="button-container" class={CSS.buttonContainer}>
+          {pageNavButtons}
+        </div>
       </div>
     );
   }
@@ -197,10 +175,9 @@ class Info extends declared(Widget) {
   // _generateContentNodes
   private _generateContentNodes(selectedItemIndex: number): any[] {
     const contentItem = this.infoContent.getItemAt(selectedItemIndex);
-    const { type } = contentItem;
-    if (type === "explanation") {
+    if (contentItem?.type === "explanation") {
       return this._generateExplanationNode(contentItem);
-    } else if (type === "list") {
+    } else if (contentItem?.type === "list") {
       return this._generateListNode(contentItem);
     }
   }
@@ -265,12 +242,16 @@ class Info extends declared(Widget) {
           ? this.classes(CSS.paginationItem, CSS.paginationItemSelected)
           : CSS.paginationItem;
       const paginationNode = (
-        <div
+        <li
           bind={this}
           onclick={this._goToPage}
           onkeydown={this._goToPage}
           class={paginationClass}
           data-pagination-index={`${contentItemIndex}`}
+          aria-selected={
+            this.selectedItemIndex === contentItemIndex ? "true" : "false"
+          }
+          aria-label={`${contentItemIndex + 1} of ${this.infoContent.length}`}
           tabIndex={0}
         />
       );
@@ -298,16 +279,15 @@ class Info extends declared(Widget) {
   // _renderNextButton
   private _renderNextButton(): any {
     return (
-      <button
+      <calcite-button
         bind={this}
         onclick={this._nextPage}
-        onkeydown={this._nextPage}
-        tabIndex={0}
-        class={this.classes(CSS.nextButton, CSS.calciteStyles.btn)}
+        class={CSS.nextButton}
         title={i18n.next}
+        theme={this.theme}
       >
         {i18n.next}
-      </button>
+      </calcite-button>
     );
   }
 
@@ -315,16 +295,15 @@ class Info extends declared(Widget) {
   private _renderCloseButton(): any {
     return (
       <div class={CSS.lastPageButtons}>
-        <button
+        <calcite-button
           bind={this}
           onclick={this._closeInfoPanel}
-          onkeydown={this._closeInfoPanel}
-          tabIndex={0}
-          class={this.classes(CSS.calciteStyles.btn, CSS.singlePageButton)}
+          class={CSS.singlePageButton}
           title={i18n.close}
+          theme={this.theme}
         >
           {i18n.close}
-        </button>
+        </calcite-button>
       </div>
     );
   }
@@ -335,34 +314,29 @@ class Info extends declared(Widget) {
 
     return (
       <div class={CSS.lastPageButtons}>
-        {" "}
-        <div class={CSS.backButtonContainer}>
-          <button
+        <div key="info-back-button-container" class={CSS.backButtonContainer}>
+          <calcite-button
             bind={this}
             onclick={this._previousPage}
-            onkeydown={this._previousPage}
-            tabIndex={0}
-            class={this.classes(
-              CSS.calciteStyles.btn,
-              CSS.calciteStyles.btnClear
-            )}
             title={i18n.back}
+            theme={this.theme}
+            width="half"
           >
             {back.charAt(0).toUpperCase()}
             {back.substring(1, i18n.back.length)}
-          </button>
+          </calcite-button>
         </div>
         <div class={CSS.closeButtonContainer}>
-          <button
+          <calcite-button
             bind={this}
             onclick={this._closeInfoPanel}
-            onkeydown={this._closeInfoPanel}
-            tabIndex={0}
-            class={CSS.calciteStyles.btn}
             title={i18n.close}
+            theme={this.theme}
+            appearance="outline"
+            width="half"
           >
             {i18n.close}
-          </button>
+          </calcite-button>
         </div>
       </div>
     );

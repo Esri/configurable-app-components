@@ -1,5 +1,5 @@
 define({
-  "takeAScreenshot": "Posnemi posnetek zaslona",
+  "takeAScreenshot": "Zajemi posnetek zaslona",
   "downloadImage": "Prenesi sliko",
   "backButton": "Vrni na karto",
   "widgetLabel": "Posnetek zaslona",

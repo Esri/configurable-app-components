@@ -2,5 +2,5 @@ define({
   "next": "التالي",
   "back": "السابق",
   "close": "إغلاق",
-  "widgetLabel": "معلومات"
+  "widgetLabel": "تبديل المعلومات"
 });

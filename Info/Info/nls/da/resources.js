@@ -2,5 +2,5 @@ define({
   "next": "Næste",
   "back": "tilbage",
   "close": "Luk",
-  "widgetLabel": "Info"
+  "widgetLabel": "Slå Info til og fra"
 });

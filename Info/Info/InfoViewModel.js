@@ -1,8 +1,10 @@
-// Copyright 2019 Esri
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -15,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/core/tsSupport/decorateHelper", "esri/core/Accessor", "esri/core/accessorSupport/decorators", "esri/core/Collection", "./InfoItem"], function (require, exports, __extends, __decorate, Accessor, decorators_1, Collection, InfoItem) {
+define(["require", "exports", "esri/core/Accessor", "esri/core/accessorSupport/decorators", "esri/core/Collection", "./InfoItem"], function (require, exports, Accessor, decorators_1, Collection, InfoItem) {
     "use strict";
     //----------------------------------
     //
@@ -43,7 +45,7 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
                 var ready = this.get("view.ready");
                 return ready ? "ready" : this.view ? "loading" : "disabled";
             },
-            enumerable: true,
+            enumerable: false,
             configurable: true
         });
         // goToPage
@@ -71,6 +73,13 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
         InfoViewModel.prototype.closeInfoPanel = function () {
             this.selectedItemIndex = 0;
             this.expandWidget.expanded = false;
+            var infoExpandBtn = document.querySelector("div[aria-controls='infoExpand_controls_content']");
+            var focusInt = setInterval(function () {
+                infoExpandBtn.focus();
+                if (document.activeElement === infoExpandBtn) {
+                    clearInterval(focusInt);
+                }
+            }, 0);
         };
         __decorate([
             decorators_1.property({
@@ -96,7 +105,7 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
             decorators_1.subclass("InfoViewModel")
         ], InfoViewModel);
         return InfoViewModel;
-    }(decorators_1.declared(Accessor)));
+    }(Accessor));
     return InfoViewModel;
 });
 //# sourceMappingURL=InfoViewModel.js.map

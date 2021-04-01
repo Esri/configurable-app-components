@@ -438,12 +438,10 @@ define(["require", "exports", "dojo/i18n!./Screenshot/nls/resources", "esri/widg
             decorators_1.aliasOf("viewModel.custom")
         ], Screenshot.prototype, "custom", void 0);
         __decorate([
-            decorators_1.aliasOf("viewModel.enableLegendOption"),
-            widget_1.renderable()
+            decorators_1.aliasOf("viewModel.enableLegendOption")
         ], Screenshot.prototype, "enableLegendOption", void 0);
         __decorate([
-            decorators_1.aliasOf("viewModel.enablePopupOption"),
-            widget_1.renderable()
+            decorators_1.aliasOf("viewModel.enablePopupOption")
         ], Screenshot.prototype, "enablePopupOption", void 0);
         __decorate([
             decorators_1.aliasOf("viewModel.featureWidget"),
@@ -500,18 +498,6 @@ define(["require", "exports", "dojo/i18n!./Screenshot/nls/resources", "esri/widg
         __decorate([
             decorators_1.property()
         ], Screenshot.prototype, "previewContainer", void 0);
-        __decorate([
-            decorators_1.property(),
-            widget_1.renderable([
-                "viewModel.state",
-                "viewModel.includeLegendInScreenshot",
-                "viewModel.includePopupInScreenshot",
-                "viewModel.enableLegendOption",
-                "viewModel.enablePopupOption",
-                "viewModel.featureWidget",
-                "viewModel.legendWidget"
-            ])
-        ], Screenshot.prototype, "viewModel", void 0);
         __decorate([
             widget_1.accessibleHandler()
         ], Screenshot.prototype, "activateScreenshot", null);
