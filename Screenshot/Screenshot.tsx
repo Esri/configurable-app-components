@@ -148,6 +148,7 @@ class Screenshot extends Widget {
   @property()
   previewContainer: HTMLDivElement = null;
   
+  @property()
   viewModel: ScreenshotViewModel = new ScreenshotViewModel();
 
   postInitialize() {

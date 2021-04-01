@@ -499,6 +499,9 @@ define(["require", "exports", "dojo/i18n!./Screenshot/nls/resources", "esri/widg
             decorators_1.property()
         ], Screenshot.prototype, "previewContainer", void 0);
         __decorate([
+            decorators_1.property()
+        ], Screenshot.prototype, "viewModel", void 0);
+        __decorate([
             widget_1.accessibleHandler()
         ], Screenshot.prototype, "activateScreenshot", null);
         __decorate([
