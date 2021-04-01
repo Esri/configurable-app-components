@@ -11,7 +11,7 @@
 
 // esri.core.accessorSupport
 import { aliasOf, property, subclass } from "esri/core/accessorSupport/decorators";
-import { whenTrue } from "esri/core/watchUtils";
+import { init, whenTrue } from "esri/core/watchUtils";
 
 // esri.widgets.support.widget
 import { tsx } from "esri/widgets/support/widget";
@@ -94,17 +94,19 @@ class FilterList extends Widget {
   }
 
   postInitialize() {
-    this.viewModel.initExpressions();
-    this._reset = {
-      disabled: this.layerExpressions && this.layerExpressions.length ? false : true,
-      color: this.layerExpressions && this.layerExpressions.length ? "blue" : "dark"
-    };
-    this.own(
+    this.own([
       whenTrue(this, "updatingExpression", () => {
         this.scheduleRender();
         this.updatingExpression = false;
+      }),
+      init(this, "layerExpressions", () => {
+        this.viewModel.initExpressions();
+        this._reset = {
+          disabled: this.layerExpressions && this.layerExpressions.length ? false : true,
+          color: this.layerExpressions && this.layerExpressions.length ? "blue" : "dark"
+        };
       })
-    );
+    ]);
   }
 
   render() {
@@ -227,7 +229,7 @@ class FilterList extends Widget {
   }
 
   private _initFilterList(): any {
-    if (this.layerExpressions) {
+    if (this.layerExpressions && this.layerExpressions.length) {
       if (this.layerExpressions.length === 1) {
         this._isSingleFilterList = true;
         return this._renderFilter(this.layerExpressions[0]);

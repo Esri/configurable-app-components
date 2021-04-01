@@ -60,15 +60,19 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         }
         FilterList.prototype.postInitialize = function () {
             var _this = this;
-            this.viewModel.initExpressions();
-            this._reset = {
-                disabled: this.layerExpressions && this.layerExpressions.length ? false : true,
-                color: this.layerExpressions && this.layerExpressions.length ? "blue" : "dark"
-            };
-            this.own(watchUtils_1.whenTrue(this, "updatingExpression", function () {
-                _this.scheduleRender();
-                _this.updatingExpression = false;
-            }));
+            this.own([
+                watchUtils_1.whenTrue(this, "updatingExpression", function () {
+                    _this.scheduleRender();
+                    _this.updatingExpression = false;
+                }),
+                watchUtils_1.init(this, "layerExpressions", function () {
+                    _this.viewModel.initExpressions();
+                    _this._reset = {
+                        disabled: _this.layerExpressions && _this.layerExpressions.length ? false : true,
+                        color: _this.layerExpressions && _this.layerExpressions.length ? "blue" : "dark"
+                    };
+                })
+            ]);
         };
         FilterList.prototype.render = function () {
             var filterList = this._initFilterList();
@@ -117,11 +121,11 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         FilterList.prototype._renderOptionalButton = function () {
             return (widget_1.tsx("div", { class: CSS.resetContainer },
                 widget_1.tsx("div", { class: CSS.optionalBtn },
-                    widget_1.tsx("calcite-button", { bind: this, appearance: "outline", width: "half", color: this._reset.color, theme: this.theme, disabled: this._reset.disabled, onclick: this._handleResetFilter }, i18n.resetFilter),
-                    widget_1.tsx("calcite-button", { bind: this, appearance: "solid", width: "half", color: "blue", theme: this.theme, onclick: this.optionalBtnOnClick }, this.optionalBtnText))));
+                    widget_1.tsx("calcite-button", { bind: this, appearance: "outline", color: this._reset.color, theme: this.theme, disabled: this._reset.disabled, onclick: this._handleResetFilter }, i18n.resetFilter),
+                    widget_1.tsx("calcite-button", { bind: this, appearance: "solid", color: "blue", theme: this.theme, onclick: this.optionalBtnOnClick }, this.optionalBtnText))));
         };
         FilterList.prototype._initFilterList = function () {
-            if (this.layerExpressions) {
+            if (this.layerExpressions && this.layerExpressions.length) {
                 if (this.layerExpressions.length === 1) {
                     this._isSingleFilterList = true;
                     return this._renderFilter(this.layerExpressions[0]);

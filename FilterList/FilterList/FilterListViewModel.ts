@@ -67,7 +67,7 @@ class FilterListViewModel extends Accessor {
   // ----------------------------------
 
   initExpressions(): void {
-    this.layerExpressions.map((layerExpression) => {
+    this.layerExpressions?.map((layerExpression) => {
       const tmpExp = [];
       const { id } = layerExpression;
       layerExpression.expressions.map((expression) => {
