@@ -22,7 +22,6 @@ import watchUtils = require("esri/core/watchUtils");
 import Handles = require("esri/core/Handles");
 import {
   accessibleHandler,
-  renderable,
   tsx,
   storeNode
 } from "esri/widgets/support/widget";
@@ -68,7 +67,7 @@ const CSS = {
 
 @subclass("Screenshot")
 class Screenshot extends Widget {
-  constructor(value?: any) {
+  constructor(value?: unknown) {
     super(value);
   }
 
@@ -89,11 +88,9 @@ class Screenshot extends Widget {
   custom: { label: string; element: HTMLElement } = null;
 
   @aliasOf("viewModel.enableLegendOption")
-  @renderable()
   enableLegendOption: boolean = null;
 
   @aliasOf("viewModel.enablePopupOption")
-  @renderable()
   enablePopupOption: boolean = null;
 
   @aliasOf("viewModel.featureWidget")
@@ -150,17 +147,8 @@ class Screenshot extends Widget {
 
   @property()
   previewContainer: HTMLDivElement = null;
-
+  
   @property()
-  @renderable([
-    "viewModel.state",
-    "viewModel.includeLegendInScreenshot",
-    "viewModel.includePopupInScreenshot",
-    "viewModel.enableLegendOption",
-    "viewModel.enablePopupOption",
-    "viewModel.featureWidget",
-    "viewModel.legendWidget"
-  ])
   viewModel: ScreenshotViewModel = new ScreenshotViewModel();
 
   postInitialize() {
@@ -230,8 +218,8 @@ class Screenshot extends Widget {
             {optOutOfScreenshotButton}
           </div>
         ) : (
-          screenshotPanel
-        )}
+            screenshotPanel
+          )}
         {screenshotPreviewOverlay}
         {maskNode}
       </div>

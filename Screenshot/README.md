@@ -85,7 +85,7 @@ const screenshot = new Screenshot({
     label: "Include results",
     element: sidePanel
   },
-  outputLayout: "column",
+  outputLayout: "horizontal",
   includeLayoutOption: true
   });
 ```
@@ -96,9 +96,9 @@ Uses Esri Calcite Components: https://github.com/Esri/calcite-components
 
 Uses ArcGIS JS API:
 
-https://js.arcgis.com/4.16/
+https://js.arcgis.com/4.19/
 
-https://js.arcgis.com/4.16/esri/css/main.css
+https://js.arcgis.com/4.19/esri/css/main.css
 
 Insert Screenshot styles as last stylesheet
 

@@ -98,8 +98,8 @@ const CSS = {
 
 @subclass("Share")
 class Share extends Widget {
-  constructor(params?: any) {
-    super(params);
+  constructor(value?: unknown) {
+    super(value);
   }
 
   private _shareModal: HTMLCalciteModalElement = null;

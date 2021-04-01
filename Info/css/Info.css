@@ -8,10 +8,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0;
 }
 .esri-info .esri-info__pagination-container .esri-info__pagination-item {
   width: 10px;
   height: 10px;
+  padding: 0;
   border-radius: 50%;
   border: 1px solid #a9a9a9;
   display: inline-block;
@@ -50,7 +52,7 @@
   vertical-align: top;
 }
 .esri-info .esri-info__list .esri-info__list-item .esri-info__number-container .esri-info__number {
-  background-color: #959595;
+  background-color: #4a4a4a;
   color: #fff;
   height: 22px;
   width: 22px;
@@ -59,7 +61,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: 12px;
   padding-top: 2px;
 }
 .esri-info .esri-info__list .esri-info__list-item .esri-info__list-item-text-container {
@@ -106,21 +108,11 @@
   width: 48%;
   margin: 0 auto;
 }
-.esri-info__last-page-button-container .esri-info__back-button-container button,
-.esri-info__last-page-button-container .esri-info__close-button-container button {
-  display: inline-block;
+.esri-info__last-page-button-container .esri-info__back-button-container calcite-button,
+.esri-info__last-page-button-container .esri-info__close-button-container calcite-button {
   width: 100%;
-  margin: 0 auto;
 }
 
-.esri-collapse__icon.icon-ui-question {
-  position: relative;
-  left: 4px;
-}
-
-html[dir=rtl] .esri-collapse__icon.icon-ui-question {
-  left: -7px;
-}
 html[dir=rtl] .esri-info__number {
   position: relative;
   left: 20px;
@@ -133,4 +125,4 @@ html[dir=rtl] .esri-info__list {
   width: 100%;
 }
 
-/*# sourceMappingURL=Info/Info/css/Info.css.map */
+/*# sourceMappingURL=Info.css.map */

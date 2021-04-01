@@ -1,6 +1,6 @@
 define({
   "next": "Ďalšie",
-  "back": "späť",
+  "back": "Späť",
   "close": "Zatvoriť",
-  "widgetLabel": "Informácie"
+  "widgetLabel": "Prepnúť informácie"
 });

@@ -1,8 +1,10 @@
-// Copyright 2019 Esri
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -15,13 +17,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/core/tsSupport/decorateHelper", "dojo/i18n!./Info/nls/resources", "esri/core/accessorSupport/decorators", "esri/widgets/Widget", "esri/widgets/support/widget", "./Info/InfoViewModel"], function (require, exports, __extends, __decorate, i18n, decorators_1, Widget, widget_1, InfoViewModel) {
+define(["require", "exports", "dojo/i18n!./Info/nls/resources", "esri/core/accessorSupport/decorators", "esri/widgets/Widget", "esri/widgets/support/widget", "./Info/InfoViewModel"], function (require, exports, i18n, decorators_1, Widget, widget_1, InfoViewModel) {
     "use strict";
-    //----------------------------------
+    // ----------------------------------
     //
     //  CSS Classes
     //
-    //----------------------------------
+    // ----------------------------------
     var CSS = {
         base: "esri-info",
         widget: "esri-widget esri-widget--panel",
@@ -50,24 +52,24 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
             btnClear: "btn-clear"
         },
         icons: {
-            widgetIcon: "icon-ui-question"
+            widgetIcon: "icon-ui-question icon-ui-flush"
         }
     };
     var Info = /** @class */ (function (_super) {
         __extends(Info, _super);
         function Info(value) {
-            var _this = _super.call(this) || this;
-            //----------------------------------
+            var _this = _super.call(this, value) || this;
+            // ----------------------------------
             //
             //  Private Variables
             //
-            //----------------------------------
+            // ----------------------------------
             _this._paginationNodes = [];
-            //----------------------------------
+            // ----------------------------------
             //
             //  Properties
             //
-            //----------------------------------
+            // ----------------------------------
             // view
             _this.view = null;
             // infoContent
@@ -76,24 +78,25 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
             _this.expandWidget = null;
             // selectedItemIndex
             _this.selectedItemIndex = null;
-            //----------------------------------------------
+            _this.theme = "light";
+            // ----------------------------------------------
             //
             //  iconClass and label - Expand Widget Support
             //
-            //----------------------------------------------
+            // ----------------------------------------------
             // iconClass
-            _this.iconClass = CSS.icons.widgetIcon;
+            _this.iconClass = "esri-icon-question";
             // label
             _this.label = i18n.widgetLabel;
             // viewModel
             _this.viewModel = new InfoViewModel();
             return _this;
         }
-        //----------------------------------
+        // ----------------------------------
         //
         //  Lifecycle
         //
-        //----------------------------------
+        // ----------------------------------
         Info.prototype.render = function () {
             var paginationNodes = this.infoContent && this.infoContent.length > 1
                 ? this._generatePaginationNodes()
@@ -102,12 +105,12 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
             var content = this._renderContent(this.selectedItemIndex);
             var infoContentItem = this.infoContent.getItemAt(this.selectedItemIndex);
             return (widget_1.tsx("div", { class: this.classes(CSS.widget, CSS.base) },
-                paginationNodes ? (widget_1.tsx("div", { class: CSS.paginationContainer }, paginationNodes)) : null,
-                widget_1.tsx("div", { class: CSS.contentContainer },
-                    widget_1.tsx("div", { class: CSS.titleContainer },
-                        widget_1.tsx("h1", null, infoContentItem.title)),
-                    widget_1.tsx("div", { class: CSS.infoContent }, content)),
-                widget_1.tsx("div", { class: CSS.buttonContainer }, pageNavButtons)));
+                paginationNodes ? (widget_1.tsx("ul", { class: CSS.paginationContainer }, paginationNodes)) : null,
+                widget_1.tsx("div", { key: "content-container", class: CSS.contentContainer },
+                    widget_1.tsx("div", { key: "title-container", class: CSS.titleContainer },
+                        widget_1.tsx("h1", null, infoContentItem === null || infoContentItem === void 0 ? void 0 : infoContentItem.title)),
+                    widget_1.tsx("div", { key: "info-content", class: CSS.infoContent }, content)),
+                widget_1.tsx("div", { key: "button-container", class: CSS.buttonContainer }, pageNavButtons)));
         };
         //   _renderContent
         Info.prototype._renderContent = function (selectedItemIndex) {
@@ -116,11 +119,10 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
         // _generateContentNodes
         Info.prototype._generateContentNodes = function (selectedItemIndex) {
             var contentItem = this.infoContent.getItemAt(selectedItemIndex);
-            var type = contentItem.type;
-            if (type === "explanation") {
+            if ((contentItem === null || contentItem === void 0 ? void 0 : contentItem.type) === "explanation") {
                 return this._generateExplanationNode(contentItem);
             }
-            else if (type === "list") {
+            else if ((contentItem === null || contentItem === void 0 ? void 0 : contentItem.type) === "list") {
                 return this._generateListNode(contentItem);
             }
         };
@@ -160,7 +162,7 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
                 var paginationClass = _this.selectedItemIndex === contentItemIndex
                     ? _this.classes(CSS.paginationItem, CSS.paginationItemSelected)
                     : CSS.paginationItem;
-                var paginationNode = (widget_1.tsx("div", { bind: _this, onclick: _this._goToPage, onkeydown: _this._goToPage, class: paginationClass, "data-pagination-index": "" + contentItemIndex, tabIndex: 0 }));
+                var paginationNode = (widget_1.tsx("li", { bind: _this, onclick: _this._goToPage, onkeydown: _this._goToPage, class: paginationClass, "data-pagination-index": "" + contentItemIndex, "aria-selected": _this.selectedItemIndex === contentItemIndex ? "true" : "false", "aria-label": contentItemIndex + 1 + " of " + _this.infoContent.length, tabIndex: 0 }));
                 _this._paginationNodes.push(paginationNode);
                 return paginationNode;
             });
@@ -178,24 +180,23 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
         };
         // _renderNextButton
         Info.prototype._renderNextButton = function () {
-            return (widget_1.tsx("button", { bind: this, onclick: this._nextPage, onkeydown: this._nextPage, tabIndex: 0, class: this.classes(CSS.nextButton, CSS.calciteStyles.btn), title: i18n.next }, i18n.next));
+            return (widget_1.tsx("calcite-button", { bind: this, onclick: this._nextPage, class: CSS.nextButton, title: i18n.next, theme: this.theme }, i18n.next));
         };
         // _closeButton
         Info.prototype._renderCloseButton = function () {
             return (widget_1.tsx("div", { class: CSS.lastPageButtons },
-                widget_1.tsx("button", { bind: this, onclick: this._closeInfoPanel, onkeydown: this._closeInfoPanel, tabIndex: 0, class: this.classes(CSS.calciteStyles.btn, CSS.singlePageButton), title: i18n.close }, i18n.close)));
+                widget_1.tsx("calcite-button", { bind: this, onclick: this._closeInfoPanel, class: CSS.singlePageButton, title: i18n.close, theme: this.theme }, i18n.close)));
         };
         // _renderNextBackButtons
         Info.prototype._renderLastPageButtons = function () {
             var back = i18n.back;
             return (widget_1.tsx("div", { class: CSS.lastPageButtons },
-                " ",
-                widget_1.tsx("div", { class: CSS.backButtonContainer },
-                    widget_1.tsx("button", { bind: this, onclick: this._previousPage, onkeydown: this._previousPage, tabIndex: 0, class: this.classes(CSS.calciteStyles.btn, CSS.calciteStyles.btnClear), title: i18n.back },
+                widget_1.tsx("div", { key: "info-back-button-container", class: CSS.backButtonContainer },
+                    widget_1.tsx("calcite-button", { bind: this, onclick: this._previousPage, title: i18n.back, theme: this.theme, width: "half" },
                         back.charAt(0).toUpperCase(),
                         back.substring(1, i18n.back.length))),
                 widget_1.tsx("div", { class: CSS.closeButtonContainer },
-                    widget_1.tsx("button", { bind: this, onclick: this._closeInfoPanel, onkeydown: this._closeInfoPanel, tabIndex: 0, class: CSS.calciteStyles.btn, title: i18n.close }, i18n.close))));
+                    widget_1.tsx("calcite-button", { bind: this, onclick: this._closeInfoPanel, title: i18n.close, theme: this.theme, appearance: "outline", width: "half" }, i18n.close))));
         };
         // _goToPage
         Info.prototype._goToPage = function (event) {
@@ -223,19 +224,19 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
         ], Info.prototype, "view", void 0);
         __decorate([
             decorators_1.aliasOf("viewModel.infoContent"),
-            decorators_1.property(),
-            widget_1.renderable()
+            decorators_1.property()
         ], Info.prototype, "infoContent", void 0);
         __decorate([
             decorators_1.aliasOf("viewModel.expandWidget"),
-            decorators_1.property(),
-            widget_1.renderable()
+            decorators_1.property()
         ], Info.prototype, "expandWidget", void 0);
         __decorate([
             decorators_1.aliasOf("viewModel.selectedItemIndex"),
-            decorators_1.property(),
-            widget_1.renderable()
+            decorators_1.property()
         ], Info.prototype, "selectedItemIndex", void 0);
+        __decorate([
+            decorators_1.property()
+        ], Info.prototype, "theme", void 0);
         __decorate([
             decorators_1.property()
         ], Info.prototype, "iconClass", void 0);
@@ -243,7 +244,6 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
             decorators_1.property()
         ], Info.prototype, "label", void 0);
         __decorate([
-            widget_1.renderable(),
             decorators_1.property({
                 type: InfoViewModel
             })
@@ -264,7 +264,7 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
             decorators_1.subclass("Info")
         ], Info);
         return Info;
-    }(decorators_1.declared(Widget)));
+    }(Widget));
     return Info;
 });
 //# sourceMappingURL=Info.js.map

@@ -1,6 +1,6 @@
 define({
-  "next": "須_Next_________鷗",
-  "back": "須_back_________鷗",
-  "close": "須_Close___________鷗",
-  "widgetLabel": "須_Info_________鷗"
+  "next": "次へ",
+  "back": "戻る",
+  "close": "閉じる",
+  "widgetLabel": "情報の切り替え"
 });

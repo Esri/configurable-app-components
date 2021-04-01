@@ -2,5 +2,5 @@ define({
   "next": "Sljedeće",
   "back": "natrag",
   "close": "Zatvori",
-  "widgetLabel": "Informacije"
+  "widgetLabel": "Uključi / isključi informacije"
 });

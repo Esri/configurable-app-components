@@ -1,6 +1,6 @@
 define({
   "next": "Seuraava",
-  "back": "takaisin",
+  "back": "takaosa",
   "close": "Sulje",
-  "widgetLabel": "Tiedot"
+  "widgetLabel": "Vaihda tietoja"
 });

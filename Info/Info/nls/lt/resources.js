@@ -1,6 +1,6 @@
 define({
-  "next": "Kitas",
+  "next": "Pirmyn",
   "back": "atgal",
   "close": "Uždaryti",
-  "widgetLabel": "Informacija"
+  "widgetLabel": "Perjungti informaciją"
 });

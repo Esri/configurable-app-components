@@ -1,6 +1,6 @@
 define({
-  "next": "Tiếp",
+  "next": "Tiếp theo",
   "back": "quay lại",
   "close": "Đóng",
-  "widgetLabel": "Thông tin"
+  "widgetLabel": "Bật/tắt phần Thông tin"
 });
