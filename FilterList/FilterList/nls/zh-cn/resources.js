@@ -1,4 +1,4 @@
 define({
-  "resetFilter": "试_Reset Filter_____________验",
-  "selectFilter": "试_Select filter______________验"
+  "resetFilter": "重置过滤器",
+  "selectFilter": "选择过滤器"
 });

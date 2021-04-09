@@ -1,4 +1,4 @@
 define({
-  "resetFilter": "ґ_Reset Filter_____________Ї",
-  "selectFilter": "ґ_Select filter______________Ї"
+  "resetFilter": "Скинути фільтр",
+  "selectFilter": "Вибрати фільтр"
 });

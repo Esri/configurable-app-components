@@ -1,4 +1,4 @@
 define({
-  "resetFilter": "Réinitialiser les filtres",
+  "resetFilter": "Réinitialiser le filtre",
   "selectFilter": "Sélectionner un filtre"
 });
