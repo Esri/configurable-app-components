@@ -1,4 +1,4 @@
 define({
-  "resetFilter": "한_Reset Filter_____________빠",
-  "selectFilter": "한_Select filter______________빠"
+  "resetFilter": "필터 재설정",
+  "selectFilter": "필터 선택"
 });

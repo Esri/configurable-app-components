@@ -1,4 +1,4 @@
 define({
-  "resetFilter": "بيت_Reset Filter_____________لاحقة",
-  "selectFilter": "بيت_Select filter______________لاحقة"
+  "resetFilter": "إعادة تعيين عامل التصفية",
+  "selectFilter": "تحديد عامل تصفية"
 });

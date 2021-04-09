@@ -1,4 +1,4 @@
 define({
-  "resetFilter": "Đ_Reset Filter_____________ớ",
-  "selectFilter": "Đ_Select filter______________ớ"
+  "resetFilter": "Thiết lập lại Bộ lọc",
+  "selectFilter": "Chọn bộ lọc"
 });
