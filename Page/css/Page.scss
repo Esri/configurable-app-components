@@ -1,0 +1,84 @@
+.esri-page {
+  width: 100vw;
+  height: 100vh;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: auto;
+  color: #fff;
+  box-sizing: border-box;
+  padding: 2.5%;
+
+  .esri-page__text-container {
+    position: relative;
+    top: 37.5%;
+  }
+
+  .esri-page__title-text,
+  .esri-page__subtitle-text {
+    display: flex;
+    text-shadow: 0px 4px 3px rgba(0, 0, 0, 0.4), 0px 8px 13px rgba(0, 0, 0, 0.1),
+      0px 18px 23px rgba(0, 0, 0, 0.1);
+  }
+
+  .esri-page__title-text {
+    margin: 0;
+    font-size: 75px;
+    font-weight: 400;
+    margin-bottom: 0.25%;
+  }
+
+  .esri-page__subtitle-text {
+    font-size: 40px;
+  }
+
+  .esri-page__scroll-container {
+    position: absolute;
+    bottom: 2%;
+    width: 95%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .esri-page__scroll-text {
+      font-size: 28px;
+      margin-bottom: 5px;
+    }
+
+    button {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      width: fit-content;
+      color: #fff;
+      calcite-icon {
+        color: #fff;
+      }
+    }
+  }
+}
+
+.esri-page__back-to-cover-page {
+  position: absolute;
+  right: 1%;
+  bottom: -97%;
+  z-index: 999999999;
+  cursor: pointer;
+}
+
+.esri-page__scroll-container {
+  button:hover {
+    calcite-icon {
+      transition: ease-in-out 0.25s;
+      transform: translateY(3px);
+    }
+  }
+  button:not(:hover) {
+    calcite-icon {
+      transition: ease-in-out 0.25s;
+      transform: translateY(-3px);
+    }
+  }
+}
