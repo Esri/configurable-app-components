@@ -28,6 +28,7 @@ define(["require", "exports", "tslib", "esri/widgets/support/widget", "esri/core
             var _this = this;
             this._handleDefaultMessages();
             this._handleDocBodyStyles();
+            this._addPageToBody();
             this.own([
                 watchUtils_1.whenTrueOnce(this, "showScrollTop", function () {
                     _this._handleShowScrollTop();
@@ -41,14 +42,13 @@ define(["require", "exports", "tslib", "esri/widgets/support/widget", "esri/core
             document.body.style.transition = "";
         };
         Page.prototype.render = function () {
-            var _a;
+            var _a, _b, _c;
             var textContainer = this._renderTextContainer();
             var scrollContainer = this._renderScrollContainer();
-            console.log(this.messages);
             return (widget_1.tsx("div", { class: CSS.base, styles: ((_a = this.background) === null || _a === void 0 ? void 0 : _a.backgroundType) === "image"
                     ? this._getBackgroundStyles()
                     : {
-                        backgroundColor: this.background.backgroundColor
+                        backgroundColor: ((_b = this.background) === null || _b === void 0 ? void 0 : _b.backgroundColor) ? (_c = this.background) === null || _c === void 0 ? void 0 : _c.backgroundColor : "#0079c1"
                     } },
                 textContainer,
                 scrollContainer));
@@ -56,7 +56,7 @@ define(["require", "exports", "tslib", "esri/widgets/support/widget", "esri/core
         Page.prototype._getBackgroundStyles = function () {
             var backgroundImage = this.background.backgroundImage;
             var backgroundImageVal = (backgroundImage === null || backgroundImage === void 0 ? void 0 : backgroundImage.url) ? "url('" + (backgroundImage === null || backgroundImage === void 0 ? void 0 : backgroundImage.url) + "')"
-                : "url('https://www.esri.com/content/dam/esrisites/en-us/about/about/images/overview-banner.jpg')";
+                : "none";
             return {
                 backgroundImage: backgroundImageVal,
                 backgroundSize: "cover"
@@ -70,12 +70,12 @@ define(["require", "exports", "tslib", "esri/widgets/support/widget", "esri/core
         };
         Page.prototype._renderScrollContainer = function () {
             return (widget_1.tsx("div", { class: CSS.scrollContainer },
-                widget_1.tsx("button", { onclick: this._handleScroll.bind(this) },
+                widget_1.tsx("button", { onclick: this._handleScroll.bind(this), "aria-label": this.buttonText, title: this.buttonText },
                     widget_1.tsx("span", { class: CSS.scrollText }, this.buttonText),
                     widget_1.tsx("calcite-icon", { icon: "chevron-down", scale: "l" }))));
         };
-        Page.prototype._handleScroll = function () {
-            document.body.style.top = "-100%";
+        Page.prototype._addPageToBody = function () {
+            document.body.insertBefore(this.container, document.body.childNodes[0]);
         };
         Page.prototype._handleDefaultMessages = function () {
             var _a = this.messages, title = _a.title, subtitle = _a.subtitle, buttonText = _a.buttonText;
@@ -99,9 +99,11 @@ define(["require", "exports", "tslib", "esri/widgets/support/widget", "esri/core
             var _this = this;
             var fabElement = document.createElement("calcite-fab");
             fabElement.classList.add(CSS.backToCoverPage);
-            fabElement.textEnabled = true;
             fabElement.icon = "chevron-up";
-            fabElement.label = this.messages.backToCoverPage;
+            fabElement.textEnabled = true;
+            var backToCoverPage = this.messages.backToCoverPage;
+            fabElement.label = backToCoverPage;
+            fabElement.title = backToCoverPage;
             fabElement.onclick = function () {
                 _this._scrollBackToCoverPage();
             };
@@ -109,6 +111,9 @@ define(["require", "exports", "tslib", "esri/widgets/support/widget", "esri/core
         };
         Page.prototype._scrollBackToCoverPage = function () {
             document.body.style.top = "0";
+        };
+        Page.prototype._handleScroll = function () {
+            document.body.style.top = "-100%";
         };
         tslib_1.__decorate([
             decorators_1.property()
