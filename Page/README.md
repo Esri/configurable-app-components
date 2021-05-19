@@ -60,7 +60,7 @@ registerMessageBundleLoader(
     pattern: "node_modules/@esri/configurable-app-components/",
     base: "node_modules/@esri/configurable-app-components",
     location: new URL(
-      "../node_modules/@esri/configurable-app-components/Page",
+      "../../node_modules/@esri/configurable-app-components/Page",
       window.location.href
     )
   })
