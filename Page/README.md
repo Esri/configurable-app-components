@@ -42,7 +42,6 @@ const page = new Page({
     titleColor: "#ffffff",
     subtitle: "Subtitle",
     subtitleColor: "#ffffff",
-    textPosition: "center-leading",
     buttonText: "Explore",
     background: {
       backgroundType: "color",
