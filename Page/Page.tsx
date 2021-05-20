@@ -154,6 +154,9 @@ class Page extends Widget {
   }
 
   private _handleDocBodyStyles(): void {
+    document.documentElement.style.overflowX = "unset";
+    document.documentElement.style.overflowY = "unset";
+    document.documentElement.style.overflow = "unset";
     document.body.style.overflowX = "unset";
     document.body.style.overflowY = "unset";
     document.body.style.overflow = "hidden";

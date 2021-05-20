@@ -90,6 +90,9 @@ define(["require", "exports", "tslib", "esri/widgets/support/widget", "esri/core
             }
         };
         Page.prototype._handleDocBodyStyles = function () {
+            document.documentElement.style.overflowX = "unset";
+            document.documentElement.style.overflowY = "unset";
+            document.documentElement.style.overflow = "unset";
             document.body.style.overflowX = "unset";
             document.body.style.overflowY = "unset";
             document.body.style.overflow = "hidden";
