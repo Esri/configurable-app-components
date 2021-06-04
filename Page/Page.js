@@ -21,6 +21,7 @@ define(["require", "exports", "tslib", "esri/widgets/support/widget", "esri/core
             _this.subtitleColor = null;
             _this.background = null;
             _this.buttonText = null;
+            _this.isVisible = true;
             _this.messages = null;
             return _this;
         }
@@ -117,9 +118,11 @@ define(["require", "exports", "tslib", "esri/widgets/support/widget", "esri/core
         };
         Page.prototype._scrollBackToCoverPage = function () {
             document.body.style.top = "0";
+            this.set("isVisible", true);
         };
         Page.prototype._handleScroll = function () {
             document.body.style.top = "-100%";
+            this.set("isVisible", false);
         };
         tslib_1.__decorate([
             decorators_1.property()
@@ -142,6 +145,9 @@ define(["require", "exports", "tslib", "esri/widgets/support/widget", "esri/core
         tslib_1.__decorate([
             decorators_1.property()
         ], Page.prototype, "buttonText", void 0);
+        tslib_1.__decorate([
+            decorators_1.property()
+        ], Page.prototype, "isVisible", void 0);
         tslib_1.__decorate([
             decorators_1.property(),
             widget_1.messageBundle("node_modules/@esri/configurable-app-components/Page/t9n/resources")

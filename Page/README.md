@@ -15,6 +15,7 @@
 | background    | Background | Background color or image.                   |
 | buttonText    | String     | Button text.                                 |
 | showScrollTop | Boolean    | Display button to scroll back to cover page. |
+| isVisible     | Boolean    | Property to detect if page is visible.       |
 
 #### Interfaces:
 
@@ -37,7 +38,7 @@ interface ImageFile {
 
 ```
 const page = new Page({
-    container: document.createElement("esri-page"),
+    container: document.createElement("div"),
     title: "Title",
     titleColor: "#ffffff",
     subtitle: "Subtitle",
