@@ -37,7 +37,7 @@ interface ImageFile {
 
 ```
 const page = new Page({
-    container: document.createElement("esri-page"),
+    container: document.createElement("div"),
     title: "Title",
     titleColor: "#ffffff",
     subtitle: "Subtitle",
