@@ -48,6 +48,9 @@ class Page extends Widget {
   buttonText = null;
 
   @property()
+  isVisible = true;
+
+  @property()
   @messageBundle(
     "node_modules/@esri/configurable-app-components/Page/t9n/resources"
   )
@@ -182,10 +185,12 @@ class Page extends Widget {
 
   private _scrollBackToCoverPage(): void {
     document.body.style.top = "0";
+    this.set("isVisible", true);
   }
 
   private _handleScroll(): void {
     document.body.style.top = "-100%";
+    this.set("isVisible", false);
   }
 }
 

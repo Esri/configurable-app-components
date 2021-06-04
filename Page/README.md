@@ -15,6 +15,7 @@
 | background    | Background | Background color or image.                   |
 | buttonText    | String     | Button text.                                 |
 | showScrollTop | Boolean    | Display button to scroll back to cover page. |
+| isVisible     | Boolean    | Property to detect if page is visible.       |
 
 #### Interfaces:
 
