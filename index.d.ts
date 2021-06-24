@@ -173,6 +173,7 @@ declare namespace __esriConfigApps {
     id: string;
     title: string;
     expressions: Expression[];
+    operator: string;
   }
 
   interface FilterOutput {
