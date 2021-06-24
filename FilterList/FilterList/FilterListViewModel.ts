@@ -77,7 +77,10 @@ class FilterListViewModel extends Accessor {
           tmpExp.push(expression.definitionExpression);
         }
       });
-      this._layers[id] = { expressions: tmpExp };
+      this._layers[id] = {
+        expressions: tmpExp,
+        operator: layerExpression?.operator ?? " AND "
+      };
       if (tmpExp.length > 0) {
         this._generateOutput(id);
       }
@@ -135,7 +138,7 @@ class FilterListViewModel extends Accessor {
   private _generateOutput(id: string): void {
     const newOutput = {
       id,
-      definitionExpression: this._layers[id].expressions.join(" AND ")
+      definitionExpression: this._layers[id].expressions.join(this._layers[id].operator)
     };
     this.updatingExpression = true;
     this.set("output", newOutput);

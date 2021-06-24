@@ -64,6 +64,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             var _this = this;
             var _a;
             (_a = this.layerExpressions) === null || _a === void 0 ? void 0 : _a.map(function (layerExpression) {
+                var _a;
                 var tmpExp = [];
                 var id = layerExpression.id;
                 layerExpression.expressions.map(function (expression) {
@@ -74,7 +75,10 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                         tmpExp.push(expression.definitionExpression);
                     }
                 });
-                _this._layers[id] = { expressions: tmpExp };
+                _this._layers[id] = {
+                    expressions: tmpExp,
+                    operator: (_a = layerExpression === null || layerExpression === void 0 ? void 0 : layerExpression.operator) !== null && _a !== void 0 ? _a : " AND "
+                };
                 if (tmpExp.length > 0) {
                     _this._generateOutput(id);
                 }
@@ -124,7 +128,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         FilterListViewModel.prototype._generateOutput = function (id) {
             var newOutput = {
                 id: id,
-                definitionExpression: this._layers[id].expressions.join(" AND ")
+                definitionExpression: this._layers[id].expressions.join(this._layers[id].operator)
             };
             this.updatingExpression = true;
             this.set("output", newOutput);

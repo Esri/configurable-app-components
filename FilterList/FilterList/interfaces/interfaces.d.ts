@@ -20,6 +20,7 @@ export interface LayerExpression {
   id: string;
   title: string;
   expressions: Expression[];
+  operator: string;
 }
 
 export interface ResetFilter {
@@ -34,6 +35,7 @@ export interface FilterOutput {
 
 interface Expressions {
   expressions: string[];
+  operator: string;
 }
 
 export interface FilterLayers {
