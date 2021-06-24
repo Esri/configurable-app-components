@@ -1,5 +1,5 @@
 .esri-page {
-  width: 100vw;
+  width: 100%;
   height: 100%;
   background-repeat: no-repeat;
   background-position: center;
@@ -9,38 +9,38 @@
   padding: 2.5%;
 
   .esri-page__text-container {
-    position: relative;
-    top: 37.5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 90%;
   }
 
   .esri-page__title-text,
   .esri-page__subtitle-text {
-    display: flex;
-    text-shadow: 0px 4px 3px rgba(0, 0, 0, 0.4), 0px 8px 13px rgba(0, 0, 0, 0.1),
-      0px 18px 23px rgba(0, 0, 0, 0.1);
+    line-height: normal;
+    word-break: break-word;
   }
 
   .esri-page__title-text {
     margin: 0;
-    font-size: 75px;
     font-weight: 400;
     margin-bottom: 0.25%;
   }
 
+  .esri-page__title-text,
   .esri-page__subtitle-text {
-    font-size: 40px;
+    text-shadow: 0px 4px 3px rgba(0, 0, 0, 0.4), 0px 8px 13px rgba(0, 0, 0, 0.1),
+      0px 18px 23px rgba(0, 0, 0, 0.1);
   }
 
   .esri-page__scroll-container {
-    position: absolute;
-    bottom: 2%;
-    width: 95%;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
+    height: 10%;
 
     .esri-page__scroll-text {
-      font-size: 28px;
       margin-bottom: 5px;
     }
 
@@ -62,8 +62,8 @@
 
 .esri-page__back-to-cover-page {
   position: absolute;
-  right: 1%;
-  bottom: -97%;
+  right: 2%;
+  bottom: -98%;
   z-index: 999999999;
   cursor: pointer;
 }
@@ -79,6 +79,48 @@
     calcite-icon {
       transition: ease-in-out 0.25s;
       transform: translateY(-3px);
+    }
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .esri-page {
+    &__title-text {
+      font-size: 45px;
+    }
+    &__subtitle-text {
+      font-size: 25px;
+    }
+    &__scroll-text {
+      font-size: 20px;
+    }
+  }
+}
+
+@media screen and (min-width: 481px) and (max-width: 768px) {
+  .esri-page {
+    &__title-text {
+      font-size: 65px;
+    }
+    &__subtitle-text {
+      font-size: 30px;
+    }
+    &__scroll-text {
+      font-size: 25px;
+    }
+  }
+}
+
+@media screen and (min-width: 769px) {
+  .esri-page {
+    &__title-text {
+      font-size: 75px;
+    }
+    &__subtitle-text {
+      font-size: 45px;
+    }
+    &__scroll-text {
+      font-size: 30px;
     }
   }
 }
