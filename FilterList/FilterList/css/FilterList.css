@@ -49,6 +49,42 @@
 .esri-filter-list__filter-item-container--single {
   padding: 20px;
 }
+.esri-filter-list__filter-item-container--user-input {
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.esri-filter-list__filter-item-container--user-input > span {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: normal;
+}
+.esri-filter-list__filter-item-container--user-input calcite-combobox {
+  width: 100%;
+}
+.esri-filter-list__number-input-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+.esri-filter-list__number-input-container calcite-icon {
+  margin: 0 8px;
+}
+.esri-filter-list__number-input {
+  width: 50%;
+}
+.esri-filter-list__date-picker-input-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.esri-filter-list__date-picker-input-container calcite-action {
+  height: 64px;
+  border: 1px solid var(--calcite-ui-border-1);
+}
 .esri-filter-list__filter-title {
   margin-right: 20px;
 }
@@ -60,6 +96,17 @@
 .esri-filter-list__checkbox-container {
   display: flex;
 }
+.esri-filter-list__checkbox-container calcite-checkbox {
+  height: 18px;
+}
+.esri-filter-list select {
+  width: 100%;
+}
+.esri-filter-list select[data-select=dark] {
+  background-color: #2b2b2b;
+  border: 1px solid #4a4a4a;
+  color: #fff;
+}
 .esri-filter-list.esri-filter-list--light .esri-filter-list__header-container {
   background: #fff;
 }
@@ -68,6 +115,11 @@
 }
 .esri-filter-list.esri-filter-list--light .esri-filter-list__filter-item-container {
   background: #fff;
+}
+.esri-filter-list.esri-filter-list--light .esri-filter-list__select {
+  background-color: #fff !important;
+  border: 1px solid #a9a9a9 !important;
+  color: #4c4c4c !important;
 }
 .esri-filter-list.esri-filter-list--dark .esri-filter-list__header-container {
   background: #2b2b2b;
@@ -78,6 +130,11 @@
 }
 .esri-filter-list.esri-filter-list--dark .esri-filter-list__filter-item-container {
   background: #353535;
+}
+.esri-filter-list.esri-filter-list--dark .esri-filter-list__select {
+  background-color: #2b2b2b;
+  border: 1px solid #4a4a4a;
+  color: #fff;
 }
 
 /*# sourceMappingURL=FilterList.css.map */

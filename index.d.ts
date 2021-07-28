@@ -164,9 +164,18 @@ declare namespace __esriConfigApps {
 
   interface Expression {
     id: number;
-    definitionExpression: string;
     name: string;
+    definitionExpression?: string;
+    type?: string;
+    field?: "string" | "number" | "date";
     checked?: boolean;
+    selectFields?: string[];
+    placeholder?: string;
+    min?: number | string;
+    max?: number | string;
+    start?: number | string;
+    end?: number | string;
+    useCombobox?: boolean;
   }
 
   interface LayerExpression {
@@ -176,27 +185,55 @@ declare namespace __esriConfigApps {
     operator: string;
   }
 
+  interface ResetFilter {
+    disabled: boolean;
+    color: string;
+  }
+
   interface FilterOutput {
     id: string;
     definitionExpression: string;
   }
 
+  interface Expressions {
+    expressions: {
+      [key: string]: { definitionExpression: string; type?: "string" | "number" | "date"; min?: number; max?: number };
+    };
+    operator: string;
+  }
+
+  interface FilterLayers {
+    [key: string]: Expressions;
+  }
+
+  interface ExtentSelector {
+    constraints: __esri.MapViewConstraints;
+    mapRotation: number;
+  }
+
   export class FilterList extends __esri.Widget {
     constructor(value?: any);
     new(widgetProperties: any);
+    map: __esri.WebMap;
     layerExpressions: LayerExpression[];
     viewModel: FilterListViewModel;
     theme: "dark" | "light";
+    updatingExpression: boolean;
     headerTag: string;
     optionalBtnText: string;
     optionalBtnOnClick: Function;
+    extentSelector: boolean;
+    extentSelectorConfig: ExtentSelector;
     output: FilterOutput;
   }
 
   export class FilterListViewModel extends __esri.Accessor {
+    map: __esri.WebMap;
     layerExpressions: LayerExpression[];
     theme: "dark" | "light";
-    definitionExpression: string;
+    updatingExpression: boolean;
+    extentSelector: boolean;
+    extentSelectorConfig: ExtentSelector;
     output: FilterOutput;
   }
 }

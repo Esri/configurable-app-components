@@ -1,7 +1,11 @@
 define({
   root: {
     resetFilter: "Reset Filter",
-    selectFilter: "Select filter"
+    selectFilter: "Select filter",
+    maxMinError: "Maximum value must be greater than minimum value",
+    nextMonth: "Next month",
+    prevMonth: "Previous month",
+    resetDatepicker: "Reset date picker"
   },
   "ar": 1,
   "bs": 1,

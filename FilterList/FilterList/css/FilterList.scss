@@ -71,6 +71,50 @@
     &--single {
       padding: 20px;
     }
+
+    &--user-input {
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+
+      > span {
+        margin: 0 0 8px;
+        font-size: 14px;
+        font-weight: normal;
+      }
+
+      calcite-combobox {
+        width: 100%;
+      }
+    }
+  }
+
+  &__number-input-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+
+    calcite-icon {
+      margin: 0 8px;
+    }
+  }
+
+  &__number-input {
+    width: 50%;
+  }
+
+  &__date-picker-input-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+
+    calcite-action {
+      height: 64px;
+      border: 1px solid var(--calcite-ui-border-1);
+    }
   }
 
   &__filter-title {
@@ -85,7 +129,21 @@
 
   &__checkbox-container {
     display: flex;
+
+    calcite-checkbox {
+      height: 18px;
+    }
   }
+
+  select {
+    width: 100%;
+    &[data-select="dark"] {
+      background-color: #2b2b2b;
+      border: 1px solid #4a4a4a;
+      color: #fff;
+    }
+  }
+
   &.esri-filter-list--light .esri-filter-list {
     &__header-container {
       background: #fff;
@@ -95,6 +153,11 @@
     }
     &__filter-item-container {
       background: #fff;
+    }
+    &__select {
+      background-color: #fff!important;
+      border: 1px solid #a9a9a9!important;
+      color: #4c4c4c!important;
     }
   }
 
@@ -108,6 +171,11 @@
     }
     &__filter-item-container {
       background: #353535;
+    }
+    &__select {
+      background-color: #2b2b2b;
+      border: 1px solid #4a4a4a;
+      color: #fff;
     }
   }
 }
