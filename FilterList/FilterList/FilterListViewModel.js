@@ -191,59 +191,8 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             input.addEventListener("calciteInputInput", this.handleNumberInput.bind(this, expression, layerId, type));
         };
         FilterListViewModel.prototype.handleNumberInput = function (expression, layerId, type, event) {
-            var _this = this;
-            var expressions = this._layers[layerId].expressions;
-            var field = expression.field, id = expression.id;
             var value = event.detail.value;
-            var displayName = document.getElementById(expression.id + "-name");
-            var inputMessage = document.getElementById(expression.id + "-error");
-            if (this._timeout) {
-                clearTimeout(this._timeout);
-            }
-            this._timeout = setTimeout(function () {
-                var _a, _b;
-                var _c, _d, _e, _f;
-                if (expressions[id]) {
-                    expressions[id] = __assign(__assign({}, expressions[id]), (_a = { type: "number" }, _a[type] = value, _a));
-                    if (!((_c = expressions[id]) === null || _c === void 0 ? void 0 : _c.min) && !((_d = expressions[id]) === null || _d === void 0 ? void 0 : _d.max)) {
-                        delete expressions[id];
-                        _this._generateOutput(layerId);
-                        return;
-                    }
-                }
-                else {
-                    expressions[id] = (_b = {
-                            definitionExpression: null,
-                            type: "number"
-                        },
-                        _b[type] = value,
-                        _b);
-                }
-                var min = (_e = expressions[id]) === null || _e === void 0 ? void 0 : _e.min;
-                var max = (_f = expressions[id]) === null || _f === void 0 ? void 0 : _f.max;
-                var chevron = max && !min ? "<" : !max && min ? ">" : null;
-                if (chevron) {
-                    var exprValue = value ? value : max ? max : min ? min : null;
-                    if (exprValue) {
-                        displayName.style.color = "inherit";
-                        inputMessage.active = false;
-                        expressions[id].definitionExpression = field + " " + chevron + " " + exprValue;
-                    }
-                    else {
-                        delete expressions[id];
-                    }
-                }
-                else if (Number(max) < Number(min)) {
-                    displayName.style.color = "red";
-                    inputMessage.active = true;
-                }
-                else {
-                    displayName.style.color = "inherit";
-                    inputMessage.active = false;
-                    expressions[id].definitionExpression = field + " BETWEEN " + min + " AND " + max;
-                }
-                _this._generateOutput(layerId);
-            }, 800);
+            this._debounceNumberInput(expression, layerId, value, type);
         };
         FilterListViewModel.prototype.handleDatePickerCreate = function (expression, layerId, datePicker) {
             datePicker.start = this._convertToDate(expression === null || expression === void 0 ? void 0 : expression.start);
@@ -409,6 +358,68 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                 }
             }
             return null;
+        };
+        FilterListViewModel.prototype._debounceNumberInput = function (expression, layerId, value, type) {
+            var _this = this;
+            if (this._timeout) {
+                clearTimeout(this._timeout);
+            }
+            this._timeout = setTimeout(function () {
+                _this._updateExpressions(layerId, expression.id, value, type);
+                _this._setNumberRangeExpression(expression, layerId, value);
+                _this._generateOutput(layerId);
+            }, 800);
+        };
+        FilterListViewModel.prototype._updateExpressions = function (layerId, id, value, type) {
+            var _a, _b;
+            var _c, _d;
+            var expressions = this._layers[layerId].expressions;
+            if (expressions[id]) {
+                expressions[id] = __assign(__assign({}, expressions[id]), (_a = { type: "number" }, _a[type] = value, _a));
+                if (!((_c = expressions[id]) === null || _c === void 0 ? void 0 : _c.min) && !((_d = expressions[id]) === null || _d === void 0 ? void 0 : _d.max)) {
+                    delete expressions[id];
+                    this._generateOutput(layerId);
+                    return;
+                }
+            }
+            else {
+                expressions[id] = (_b = {
+                        definitionExpression: null,
+                        type: "number"
+                    },
+                    _b[type] = value,
+                    _b);
+            }
+        };
+        FilterListViewModel.prototype._setNumberRangeExpression = function (expression, layerId, value) {
+            var _a, _b;
+            var expressions = this._layers[layerId].expressions;
+            var field = expression.field, id = expression.id;
+            var displayName = document.getElementById(id + "-name");
+            var inputMessage = document.getElementById(id + "-error");
+            var min = (_a = expressions[id]) === null || _a === void 0 ? void 0 : _a.min;
+            var max = (_b = expressions[id]) === null || _b === void 0 ? void 0 : _b.max;
+            var chevron = max && !min ? "<" : !max && min ? ">" : null;
+            if (chevron) {
+                var exprValue = value ? value : max ? max : min ? min : null;
+                if (exprValue) {
+                    displayName.style.color = "inherit";
+                    inputMessage.active = false;
+                    expressions[id].definitionExpression = field + " " + chevron + " " + exprValue;
+                }
+                else {
+                    delete expressions[id];
+                }
+            }
+            else if (Number(max) < Number(min)) {
+                displayName.style.color = "red";
+                inputMessage.active = true;
+            }
+            else {
+                displayName.style.color = "inherit";
+                inputMessage.active = false;
+                expressions[id].definitionExpression = field + " BETWEEN " + min + " AND " + max;
+            }
         };
         __decorate([
             decorators_1.property()
