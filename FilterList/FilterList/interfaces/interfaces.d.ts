@@ -11,9 +11,18 @@
 
 export interface Expression {
   id: number;
-  definitionExpression: string;
   name: string;
+  definitionExpression?: string;
+  type?: string;
+  field?: "string" | "number" | "date";
   checked?: boolean;
+  selectFields?: string[];
+  placeholder?: string;
+  min?: number | string;
+  max?: number | string;
+  start?: number | string;
+  end?: number | string;
+  useCombobox?: boolean;
 }
 
 export interface LayerExpression {
@@ -34,10 +43,17 @@ export interface FilterOutput {
 }
 
 interface Expressions {
-  expressions: string[];
+  expressions: {
+    [key: string]: { definitionExpression: string; type?: "string" | "number" | "date"; min?: number; max?: number };
+  };
   operator: string;
 }
 
 export interface FilterLayers {
   [key: string]: Expressions;
+}
+
+export interface ExtentSelector {
+  constraints: __esri.MapViewConstraints;
+  mapRotation: number;
 }
