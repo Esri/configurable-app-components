@@ -343,14 +343,14 @@ class FilterListViewModel extends Accessor {
       clearTimeout(this._timeout);
     }
     this._timeout = setTimeout(() => {
-      this._updateExpressions(layerId, expression.id, value, type);
-      this._setNumberRangeExpression(expression, layerId, value);
+      this._updateExpressions(expression, layerId, value, type);
       this._generateOutput(layerId);
     }, 800);
   }
 
-  private _updateExpressions(layerId: string, id: number, value: string, type: "min" | "max"): void {
+  private _updateExpressions(expression: Expression, layerId: string, value: string, type: "min" | "max"): void {
     const { expressions } = this._layers[layerId];
+    const { id } = expression;
     if (expressions[id]) {
       expressions[id] = {
         ...expressions[id],
@@ -369,6 +369,7 @@ class FilterListViewModel extends Accessor {
         [type]: value
       };
     }
+    this._setNumberRangeExpression(expression, layerId, value);
   }
 
   private _setNumberRangeExpression(expression: Expression, layerId: string, value: string): void {

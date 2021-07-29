@@ -365,15 +365,15 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                 clearTimeout(this._timeout);
             }
             this._timeout = setTimeout(function () {
-                _this._updateExpressions(layerId, expression.id, value, type);
-                _this._setNumberRangeExpression(expression, layerId, value);
+                _this._updateExpressions(expression, layerId, value, type);
                 _this._generateOutput(layerId);
             }, 800);
         };
-        FilterListViewModel.prototype._updateExpressions = function (layerId, id, value, type) {
+        FilterListViewModel.prototype._updateExpressions = function (expression, layerId, value, type) {
             var _a, _b;
             var _c, _d;
             var expressions = this._layers[layerId].expressions;
+            var id = expression.id;
             if (expressions[id]) {
                 expressions[id] = __assign(__assign({}, expressions[id]), (_a = { type: "number" }, _a[type] = value, _a));
                 if (!((_c = expressions[id]) === null || _c === void 0 ? void 0 : _c.min) && !((_d = expressions[id]) === null || _d === void 0 ? void 0 : _d.max)) {
@@ -390,6 +390,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                     _b[type] = value,
                     _b);
             }
+            this._setNumberRangeExpression(expression, layerId, value);
         };
         FilterListViewModel.prototype._setNumberRangeExpression = function (expression, layerId, value) {
             var _a, _b;
