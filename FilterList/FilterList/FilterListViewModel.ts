@@ -25,7 +25,7 @@ let accordionStyle = `
 
 @subclass("FilterListViewModel")
 class FilterListViewModel extends Accessor {
-   // ----------------------------------
+  // ----------------------------------
   //
   //  Public Variables
   //
@@ -174,55 +174,8 @@ class FilterListViewModel extends Accessor {
   }
 
   handleNumberInput(expression: Expression, layerId: string, type: "min" | "max", event: CustomEvent): void {
-    const { expressions } = this._layers[layerId];
-    const { field, id } = expression;
     const { value } = event.detail;
-    const displayName = document.getElementById(`${expression.id}-name`);
-    const inputMessage = document.getElementById(`${expression.id}-error`) as HTMLCalciteInputMessageElement;
-    if (this._timeout) {
-      clearTimeout(this._timeout);
-    }
-    this._timeout = setTimeout(() => {
-      if (expressions[id]) {
-        expressions[id] = {
-          ...expressions[id],
-          type: "number",
-          [type]: value
-        };
-        if (!expressions[id]?.min && !expressions[id]?.max) {
-          delete expressions[id];
-          this._generateOutput(layerId);
-          return;
-        }
-      } else {
-        expressions[id] = {
-          definitionExpression: null,
-          type: "number",
-          [type]: value
-        };
-      }
-      const min = expressions[id]?.min;
-      const max = expressions[id]?.max;
-      const chevron = max && !min ? "<" : !max && min ? ">" : null;
-      if (chevron) {
-        const exprValue = value ? value : max ? max : min ? min : null;
-        if (exprValue) {
-          displayName.style.color = "inherit";
-          inputMessage.active = false;
-          expressions[id].definitionExpression = `${field} ${chevron} ${exprValue}`;
-        } else {
-          delete expressions[id];
-        }
-      } else if (Number(max) < Number(min)) {
-        displayName.style.color = "red";
-        inputMessage.active = true;
-      } else {
-        displayName.style.color = "inherit";
-        inputMessage.active = false;
-        expressions[id].definitionExpression = `${field} BETWEEN ${min} AND ${max}`;
-      }
-      this._generateOutput(layerId);
-    }, 800);
+    this._debounceNumberInput(expression, layerId, value, type);
   }
 
   handleDatePickerCreate(expression: Expression, layerId: string, datePicker: HTMLCalciteInputDatePickerElement): void {
@@ -383,6 +336,66 @@ class FilterListViewModel extends Accessor {
       }
     }
     return null;
+  }
+
+  private _debounceNumberInput(expression: Expression, layerId: string, value: string, type: "min" | "max"): void {
+    if (this._timeout) {
+      clearTimeout(this._timeout);
+    }
+    this._timeout = setTimeout(() => {
+      this._updateExpressions(layerId, expression.id, value, type);
+      this._setNumberRangeExpression(expression, layerId, value);
+      this._generateOutput(layerId);
+    }, 800);
+  }
+
+  private _updateExpressions(layerId: string, id: number, value: string, type: "min" | "max"): void {
+    const { expressions } = this._layers[layerId];
+    if (expressions[id]) {
+      expressions[id] = {
+        ...expressions[id],
+        type: "number",
+        [type]: value
+      };
+      if (!expressions[id]?.min && !expressions[id]?.max) {
+        delete expressions[id];
+        this._generateOutput(layerId);
+        return;
+      }
+    } else {
+      expressions[id] = {
+        definitionExpression: null,
+        type: "number",
+        [type]: value
+      };
+    }
+  }
+
+  private _setNumberRangeExpression(expression: Expression, layerId: string, value: string): void {
+    const { expressions } = this._layers[layerId];
+    const { field, id } = expression;
+    const displayName = document.getElementById(`${id}-name`);
+    const inputMessage = document.getElementById(`${id}-error`) as HTMLCalciteInputMessageElement;
+    const min = expressions[id]?.min;
+    const max = expressions[id]?.max;
+    const chevron = max && !min ? "<" : !max && min ? ">" : null;
+    if (chevron) {
+      const exprValue = value ? value : max ? max : min ? min : null;
+      if (exprValue) {
+        displayName.style.color = "inherit";
+        inputMessage.active = false;
+        expressions[id].definitionExpression = `${field} ${chevron} ${exprValue}`;
+      } else {
+        delete expressions[id];
+      }
+    } else if (Number(max) < Number(min)) {
+      displayName.style.color = "red";
+      inputMessage.active = true;
+    } else {
+      displayName.style.color = "inherit";
+      inputMessage.active = false;
+      expressions[id].definitionExpression = `${field} BETWEEN ${min} AND ${max}`;
+    }
   }
 }
 
