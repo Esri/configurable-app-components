@@ -239,7 +239,6 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                         if (type === "string") {
                             var combobox = document.getElementById(definitionExpressionId);
                             var wrapper = combobox.shadowRoot.querySelector(".wrapper");
-                            console.log("wrapper ", wrapper);
                             for (var i = 0; i < wrapper.children.length; i++) {
                                 var child = wrapper.children[i];
                                 if (child.nodeName === "CALCITE-CHIP") {
@@ -342,7 +341,6 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                             return [4 /*yield*/, layer.queryFeatures(query)];
                         case 1:
                             results = _c.sent();
-                            console.log("results: ", results);
                             return [2 /*return*/, results === null || results === void 0 ? void 0 : results.features];
                         case 2: return [2 /*return*/, []];
                     }
@@ -366,9 +364,6 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             };
             this.updatingExpression = true;
             this.set("output", newOutput);
-            console.log("defExpressions ", defExpressions);
-            console.log("newOutput ", newOutput);
-            console.log("this._layers[id] ", this._layers[id]);
         };
         FilterListViewModel.prototype._convertToDate = function (date, includeTime) {
             if (includeTime === void 0) { includeTime = false; }

@@ -221,7 +221,6 @@ class FilterListViewModel extends Accessor {
           if (type === "string") {
             const combobox = document.getElementById(definitionExpressionId) as HTMLCalciteComboboxElement;
             const wrapper = combobox.shadowRoot.querySelector(".wrapper");
-            console.log("wrapper ", wrapper);
             for (let i = 0; i < wrapper.children.length; i++) {
               const child = wrapper.children[i];
               if (child.nodeName === "CALCITE-CHIP") {
@@ -301,7 +300,6 @@ class FilterListViewModel extends Accessor {
           query.spatialRelationship = "intersects";
         }
         const results = await layer.queryFeatures(query);
-        console.log("results: ", results);
 
         return results?.features;
       }
@@ -326,9 +324,6 @@ class FilterListViewModel extends Accessor {
     };
     this.updatingExpression = true;
     this.set("output", newOutput);
-    console.log("defExpressions ", defExpressions);
-    console.log("newOutput ", newOutput);
-    console.log("this._layers[id] ", this._layers[id]);
   }
 
   private _convertToDate(date: string | number, includeTime: boolean = false): string {
