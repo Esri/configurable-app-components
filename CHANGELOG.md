@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.4.7
+
+- Update FilterList:
+  1. Remove select/useCombobox; strings only use combobox
+  2. Updated styling
+  3. Add AND/OR description text
+  4. Change number filter to slider
+
 ## 1.4.6
 
 - Added interactive filters to FilterList

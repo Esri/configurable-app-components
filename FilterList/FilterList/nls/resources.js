@@ -2,10 +2,10 @@ define({
   root: {
     resetFilter: "Reset Filter",
     selectFilter: "Select filter",
-    maxMinError: "Maximum value must be greater than minimum value",
-    nextMonth: "Next month",
-    prevMonth: "Previous month",
-    resetDatepicker: "Reset date picker"
+    andOperator: "Results will show ALL matching filters",
+    orOperator: "Results will show ANY matching filters",
+    andOperator2: "AND: Results will show ALL matching filters",
+    orOperator2: "OR: Results will show ANY matching filters"
   },
   "ar": 1,
   "bs": 1,

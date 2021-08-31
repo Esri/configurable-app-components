@@ -1,5 +1,5 @@
 .esri-filter-list calcite-accordion {
-  border: unset;
+  border: 1px solid #d9dada;
 }
 .esri-filter-list__reset-btn {
   width: 162px;
@@ -44,7 +44,7 @@
   align-items: center;
 }
 .esri-filter-list__filter-item-container--accordion {
-  padding: 20px 20px 20px 48px;
+  padding: 20px;
 }
 .esri-filter-list__filter-item-container--single {
   padding: 20px;
@@ -64,6 +64,9 @@
 .esri-filter-list__filter-item-container--user-input calcite-combobox {
   width: 100%;
 }
+.esri-filter-list__filter-item-container--user-input calcite-slider {
+  width: 100%;
+}
 .esri-filter-list__number-input-container {
   width: 100%;
   display: flex;
@@ -78,7 +81,7 @@
 .esri-filter-list__date-picker-input-container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: unset;
   width: 100%;
 }
 .esri-filter-list__date-picker-input-container calcite-action {
@@ -99,13 +102,12 @@
 .esri-filter-list__checkbox-container calcite-checkbox {
   height: 18px;
 }
-.esri-filter-list select {
-  width: 100%;
-}
-.esri-filter-list select[data-select=dark] {
-  background-color: #2b2b2b;
-  border: 1px solid #4a4a4a;
-  color: #fff;
+.esri-filter-list__operator-description {
+  background: white;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 12px 20px 0 20px;
 }
 .esri-filter-list.esri-filter-list--light .esri-filter-list__header-container {
   background: #fff;
@@ -136,5 +138,3 @@
   border: 1px solid #4a4a4a;
   color: #fff;
 }
-
-/*# sourceMappingURL=FilterList.css.map */
