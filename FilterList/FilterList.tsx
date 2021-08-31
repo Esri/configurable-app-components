@@ -23,7 +23,13 @@ import { getLocale } from "esri/intl";
 // dojo
 import i18n = require("dojo/i18n!./FilterList/nls/resources");
 
-import { Expression, ExtentSelector, FilterOutput, LayerExpression, ResetFilter } from "./FilterList/interfaces/interfaces";
+import {
+  Expression,
+  ExtentSelector,
+  FilterOutput,
+  LayerExpression,
+  ResetFilter
+} from "./FilterList/interfaces/interfaces";
 import FilterListViewModel = require("./FilterList/FilterListViewModel");
 
 const CSS = {
@@ -44,7 +50,7 @@ const CSS = {
   numberInputContainer: "esri-filter-list__number-input-container",
   numberInput: "esri-filter-list__number-input",
   dateInputContainer: "esri-filter-list__date-picker-input-container",
-  select: "esri-filter-list__select"
+  operatorDesc: "esri-filter-list__operator-description"
 };
 
 @subclass("FilterList")
@@ -95,7 +101,7 @@ class FilterList extends Widget {
   // ----------------------------------
 
   private _reset: ResetFilter;
-  private _isSingleFilterTestConfig: boolean;
+  private _isSingleFilterConfig: boolean;
   private _headerTitle: HTMLElement;
   private _locale: string;
 
@@ -115,14 +121,20 @@ class FilterList extends Widget {
       when(this, "map.loaded", async () => {
         this.layerExpressions?.forEach(async (layerExpression) => {
           const { id } = layerExpression;
-          layerExpression.expressions?.forEach(async (expression) => {
+          layerExpression.expressions?.forEach(async (expression, index) => {
             if (expression.field && expression.type) {
               const { field, type } = expression;
+              expression.definitionExpressionId = `${id}-${index}`;
               if (type === "string") {
                 const graphics = await this.viewModel.calculateStatistics(id, field);
                 const tmp = [];
                 graphics.forEach((graphic) => tmp.push(graphic?.attributes?.[field]));
                 expression.selectFields = tmp;
+                this.scheduleRender();
+              } else if (type === "number") {
+                const graphic = await this.viewModel.calculateMinMaxStatistics(id, field);
+                expression.min = expression.min ? expression.min : graphic?.[0]?.attributes[`min${field}`]?.toFixed(2);
+                expression.max = expression.max ? expression.max : graphic?.[0]?.attributes[`max${field}`]?.toFixed(2);
                 this.scheduleRender();
               }
             }
@@ -144,14 +156,14 @@ class FilterList extends Widget {
   }
 
   render() {
-    const filterTestConfig = this._initFilterTestConfig();
+    const filterConfig = this._initFilterConfig();
     const header = this._renderFilterHeader();
     const reset = this.optionalBtnOnClick ? this._renderOptionalButton() : this._renderReset();
     return (
       <div class={this.theme === "light" ? CSS.baseLight : CSS.baseDark}>
-        <div class={CSS.filterContainer}>
+        <div class={CSS.filterContainer} style={!this._isSingleFilterConfig ? "border:unset" : null}>
           {header}
-          {filterTestConfig}
+          {filterConfig}
           {reset}
         </div>
       </div>
@@ -180,11 +192,14 @@ class FilterList extends Widget {
 
   private _renderFilterAccordionItem(layerExpression: LayerExpression): any {
     const filter = this._renderFilter(layerExpression);
+    const { operator } = layerExpression;
+    const operatorTranslation = operator === "OR" ? "orOperator" : "andOperator";
     return (
       <calcite-accordion-item
         key={layerExpression.id}
         bind={this}
         item-title={layerExpression.title}
+        item-subtitle={i18n?.[operatorTranslation]}
         icon-position="start"
         afterCreate={this.viewModel.initLayerHeader}
       >
@@ -199,7 +214,7 @@ class FilterList extends Widget {
       return expression.definitionExpression ? (
         <div
           key={`${id}-${index}`}
-          class={this._isSingleFilterTestConfig ? CSS.filterItem.single : CSS.filterItem.accordion}
+          class={this._isSingleFilterConfig ? CSS.filterItem.single : CSS.filterItem.accordion}
         >
           <div class={CSS.filterItemTitle}>
             <p>{expression.name}</p>
@@ -251,7 +266,7 @@ class FilterList extends Widget {
             disabled={this._reset.disabled}
             onclick={this._handleResetFilter}
           >
-            {i18n.resetFilter}
+            reset
           </calcite-button>
           <calcite-button
             bind={this}
@@ -267,103 +282,63 @@ class FilterList extends Widget {
     );
   }
 
-  private _renderBetween(layerId: string, expression: Expression) {
+  // HARDCODED IN EN
+  private _renderDatePicker(layerId: string, expression: Expression) {
     return (
-      <div
-        class={CSS.filterItem.userInput}
-        afterCreate={(labelEl: HTMLDivElement) => {
-          const datePicker = labelEl.querySelector("calcite-input-date-picker");
-          if (datePicker) {
-            const style = document.createElement("style");
-            style.innerHTML = `.input-container { width: ${labelEl.clientWidth - 75}px }`;
-            datePicker.shadowRoot.prepend(style);
-          }
-        }}
-      >
-        <span id={`${expression.id}-name`}>{expression?.name}</span>
-        {expression?.type === "number" ? (
-          <div>
-            <div id={expression.id} class={CSS.numberInputContainer}>
-              {this._renderNumberInput(layerId, expression, "min")}
-              <calcite-icon icon="minus" />
-              {this._renderNumberInput(layerId, expression, "max")}
-            </div>
-            <calcite-input-message
-              id={`${expression.id}-error`}
-              icon="exclamation-mark-triangle-f"
-              status="invalid"
-            >
-              {i18n.maxMinError}
-            </calcite-input-message>
-          </div>
-        ) : expression?.type === "date" ? (
-          <div class={CSS.dateInputContainer}>
-            <calcite-input-date-picker
-              id={expression.id}
-              afterCreate={this.viewModel.handleDatePickerCreate.bind(this.viewModel, expression, layerId)}
-              scale="s"
-              start={expression?.start}
-              end={expression?.end}
-              min={expression?.min}
-              max={expression?.max}
-              locale={this._locale ?? "en"}
-              next-month-label={i18n.nextMonth}
-              prev-month-label={i18n.prevMonth}
-              range
-              layout="vertical"
-              theme={this.theme}
-            ></calcite-input-date-picker>
-            <calcite-action
-              onclick={this.viewModel.handleResetDatePicker.bind(this.viewModel, expression, layerId)}
-              icon="reset"
-              label={i18n.resetDatepicker}
-              scale="s"
-              theme={this.theme}
-            ></calcite-action>
-          </div>
-        ) : null}
-      </div>
-    );
-  }
-
-  private _renderNumberInput(layerId: string, expression: Expression, type: "min" | "max") {
-    return (
-      <div class={CSS.numberInput}>
-        <calcite-input
-          afterCreate={this.viewModel.handleNumberInputCreate.bind(this.viewModel, expression, layerId, type)}
-          type="number"
-          number-button-type="vertical"
-          min={expression?.min}
-          max={expression?.max}
-          scale="s"
-          theme={this.theme}
-        />
-      </div>
-    );
-  }
-
-  private _renderSelect(layerId: string, expression: Expression) {
-    return (
-      <label key="select" class={CSS.filterItem.userInput} onclick={(e: Event) => e.stopPropagation()}>
+      <label class={CSS.filterItem.userInput}>
         <span>{expression?.name}</span>
-        <select
-          id={expression.id}
-          class={CSS.select}
-          onchange={this.viewModel.handleSelect.bind(this.viewModel, expression, layerId)}
-          data-theme={this.theme}
+        <div class={CSS.dateInputContainer}>
+          <calcite-input-date-picker
+            id={expression?.definitionExpressionId}
+            afterCreate={this.viewModel.handleDatePickerCreate.bind(this.viewModel, expression, layerId)}
+            scale="s"
+            start={expression?.start}
+            end={expression?.end}
+            min={expression?.min}
+            max={expression?.max}
+            locale={this._locale ?? "en"}
+            next-month-label="Next month"
+            prev-month-label="Previous month"
+            range
+            layout="vertical"
+            theme={this.theme}
+          ></calcite-input-date-picker>
+          <calcite-action
+            onclick={this.viewModel.handleResetDatePicker.bind(this.viewModel, expression, layerId)}
+            icon="reset"
+            label="Reset date picker"
+            scale="s"
+            theme={this.theme}
+          ></calcite-action>
+        </div>
+      </label>
+    );
+  }
 
-        >
-          <option key="default-select" value="default">
-            {expression?.placeholder}
-          </option>
-          {expression?.selectFields?.map((field, index) => {
-            return (
-              <option key={`${field}-${index}`} value={field}>
-                {field}
-              </option>
-            );
-          })}
-        </select>
+  // HARDCODED IN EN
+  private _renderNumberSlider(layerId: string, expression: Expression) {
+    const max = expression?.max as number;
+    const min = expression?.min as number;
+    const ticks = (max - min) / 4;
+    return (
+      <label class={CSS.filterItem.userInput}>
+        <span>{expression?.name}</span>
+        <calcite-slider
+          id={expression?.definitionExpressionId}
+          afterCreate={this.viewModel.handleNumberInputCreate.bind(this.viewModel, expression, layerId)}
+          min={min}
+          minValue={min}
+          min-label={`${expression.field}, lower bound`}
+          max={max}
+          maxValue={max}
+          max-label={`${expression.field}, upper bound`}
+          step={expression?.step ? expression.step : 1}
+          label-handles=""
+          ticks={ticks}
+          snap=""
+          is-range
+          theme={this.theme}
+        ></calcite-slider>
       </label>
     );
   }
@@ -376,7 +351,7 @@ class FilterList extends Widget {
       <label key="combo-select" class={CSS.filterItem.userInput}>
         <span>{expression?.name}</span>
         <calcite-combobox
-          id={expression.id}
+          id={expression?.definitionExpressionId}
           afterCreate={this.viewModel.handleComboSelectCreate.bind(this.viewModel, expression, layerId)}
           label={expression?.name}
           placeholder={expression?.placeholder}
@@ -391,13 +366,18 @@ class FilterList extends Widget {
     );
   }
 
-  private _initFilterTestConfig(): any {
+  private _initFilterConfig(): any {
     if (this.layerExpressions && this.layerExpressions.length) {
       if (this.layerExpressions.length === 1) {
-        this._isSingleFilterTestConfig = true;
-        return this._renderFilter(this.layerExpressions[0]);
+        this._isSingleFilterConfig = true;
+        return (
+          <div>
+            <p class={CSS.operatorDesc}>Results will show ALL matching filters</p>
+            {this._renderFilter(this.layerExpressions[0])}
+          </div>
+        );
       } else if (this.layerExpressions.length > 1) {
-        this._isSingleFilterTestConfig = false;
+        this._isSingleFilterConfig = false;
         return this._renderLayerAccordion();
       }
     }
@@ -405,11 +385,13 @@ class FilterList extends Widget {
   }
 
   private _initInput(layerId: string, expression: Expression) {
-    const { type, useCombobox } = expression;
+    const { type } = expression;
     if (type === "string") {
-      return useCombobox ? this._renderCombobox(layerId, expression) : this._renderSelect(layerId, expression);
-    } else if (type === "number" || type === "date") {
-      return this._renderBetween(layerId, expression);
+      return this._renderCombobox(layerId, expression);
+    } else if (type === "number") {
+      return this._renderNumberSlider(layerId, expression);
+    } else if (type === "date") {
+      return this._renderDatePicker(layerId, expression);
     }
   }
 
@@ -431,6 +413,5 @@ class FilterList extends Widget {
     header.prepend(this._headerTitle);
   }
 }
-
 
 export = FilterList;

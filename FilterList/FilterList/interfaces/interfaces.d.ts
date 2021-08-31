@@ -11,6 +11,7 @@
 
 export interface Expression {
   id: number;
+  definitionExpressionId?: string;
   name: string;
   definitionExpression?: string;
   type?: string;
@@ -22,7 +23,7 @@ export interface Expression {
   max?: number | string;
   start?: number | string;
   end?: number | string;
-  useCombobox?: boolean;
+  step?: number;
 }
 
 export interface LayerExpression {

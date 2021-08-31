@@ -76,7 +76,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core/Accessor", "esri/geometry/support/jsonUtils"], function (require, exports, decorators_1, Accessor, jsonUtils_1) {
     "use strict";
-    var accordionStyle = "\n  .accordion-item-content { padding: 0!important; }\n  .accordion-item-header-text { flex-direction: unset!important }";
+    var accordionStyle = ".accordion-item-content { padding: 0!important; }";
     var FilterListViewModel = /** @class */ (function (_super) {
         __extends(FilterListViewModel, _super);
         // ----------------------------------
@@ -117,7 +117,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                     }
                     else {
                         tmpExp = (_a = {},
-                            _a[expression.id] = expression.definitionExpression,
+                            _a[expression.definitionExpressionId] = expression.definitionExpression,
                             _a);
                     }
                 });
@@ -147,28 +147,15 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                 var node = event.target;
                 expression.checked = node.checked;
                 if (node.checked) {
-                    _this._layers[id].expressions[expression.id] = {
+                    _this._layers[id].expressions[expression.definitionExpressionId] = {
                         definitionExpression: expression.definitionExpression
                     };
                 }
                 else {
-                    delete _this._layers[id].expressions[expression.id];
+                    delete _this._layers[id].expressions[expression.definitionExpressionId];
                 }
                 _this._generateOutput(id);
             });
-        };
-        FilterListViewModel.prototype.handleSelect = function (expression, layerId, event) {
-            var node = event.target;
-            if (node.value !== "default") {
-                var definitionExpression = expression.field + " = '" + node.value + "'";
-                this._layers[layerId].expressions[expression.id] = {
-                    definitionExpression: definitionExpression
-                };
-            }
-            else {
-                delete this._layers[layerId].expressions[expression.id];
-            }
-            this._generateOutput(layerId);
         };
         FilterListViewModel.prototype.handleComboSelectCreate = function (expression, layerId, comboBox) {
             comboBox.addEventListener("calciteLookupChange", this.handleComboSelect.bind(this, expression, layerId));
@@ -178,25 +165,26 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             if (items && items.length) {
                 var values = items.map(function (item) { return "'" + item.value + "'"; });
                 var definitionExpression = expression.field + " IN (" + values.join(",") + ")";
-                this._layers[layerId].expressions[expression.id] = {
+                this._layers[layerId].expressions[expression.definitionExpressionId] = {
                     definitionExpression: definitionExpression
                 };
             }
             else {
-                delete this._layers[layerId].expressions[expression.id];
+                delete this._layers[layerId].expressions[expression.definitionExpressionId];
             }
             this._generateOutput(layerId);
         };
-        FilterListViewModel.prototype.handleNumberInputCreate = function (expression, layerId, type, input) {
-            input.addEventListener("calciteInputInput", this.handleNumberInput.bind(this, expression, layerId, type));
+        FilterListViewModel.prototype.handleNumberInputCreate = function (expression, layerId, slider) {
+            var style = document.createElement("style");
+            style.innerHTML = ".thumb .handle__label--minValue.hyphen::after {content: unset!important}";
+            slider.shadowRoot.prepend(style);
+            slider.addEventListener("calciteSliderChange", this.handleNumberInput.bind(this, expression, layerId));
         };
-        FilterListViewModel.prototype.handleNumberInput = function (expression, layerId, type, event) {
-            var value = event.detail.value;
-            this._debounceNumberInput(expression, layerId, value, type);
+        FilterListViewModel.prototype.handleNumberInput = function (expression, layerId, event) {
+            var _a = event.target, maxValue = _a.maxValue, minValue = _a.minValue;
+            this._debounceNumberInput(expression, layerId, maxValue, minValue);
         };
         FilterListViewModel.prototype.handleDatePickerCreate = function (expression, layerId, datePicker) {
-            datePicker.start = this._convertToDate(expression === null || expression === void 0 ? void 0 : expression.start);
-            datePicker.end = this._convertToDate(expression === null || expression === void 0 ? void 0 : expression.end);
             datePicker.min = this._convertToDate(expression === null || expression === void 0 ? void 0 : expression.min);
             datePicker.max = this._convertToDate(expression === null || expression === void 0 ? void 0 : expression.max);
             datePicker.addEventListener("calciteDatePickerRangeChange", this.handleDatePickerRangeChange.bind(this, expression, layerId));
@@ -214,12 +202,12 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             }, 1000);
         };
         FilterListViewModel.prototype.handleResetDatePicker = function (expression, layerId, event) {
-            var datePicker = document.getElementById(expression.id.toString());
+            var datePicker = document.getElementById(expression.definitionExpressionId);
             datePicker.start = null;
             datePicker.startAsDate = null;
             datePicker.end = null;
             datePicker.endAsDate = null;
-            delete this._layers[layerId].expressions[expression.id];
+            delete this._layers[layerId].expressions[expression.definitionExpressionId];
             this._generateOutput(layerId);
         };
         FilterListViewModel.prototype.setExpressionDates = function (startDate, endDate, expression, layerId) {
@@ -228,13 +216,13 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             var end = endDate ? this._convertToDate(Math.floor(endDate.getTime()), true) : null;
             var chevron = end && !start ? "<" : !end && start ? ">" : null;
             if (chevron) {
-                expressions[expression.id] = {
+                expressions[expression.definitionExpressionId] = {
                     definitionExpression: expression.field + " " + chevron + " '" + (start !== null && start !== void 0 ? start : end) + "'",
                     type: "date"
                 };
             }
             else {
-                expressions[expression.id] = {
+                expressions[expression.definitionExpressionId] = {
                     definitionExpression: expression.field + " BETWEEN '" + start + "' AND '" + end + "'",
                     type: "date"
                 };
@@ -246,14 +234,10 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             this.layerExpressions.map(function (layerExpression) {
                 var id = layerExpression.id;
                 layerExpression.expressions.map(function (expression) {
-                    var id = expression.id, type = expression.type, useCombobox = expression.useCombobox;
+                    var definitionExpressionId = expression.definitionExpressionId, max = expression.max, min = expression.min, type = expression.type;
                     if (type) {
-                        if (type === "string" && !useCombobox) {
-                            var select = document.getElementById(id.toString());
-                            select.value = "default";
-                        }
-                        else if (type === "string" && useCombobox) {
-                            var combobox = document.getElementById(id.toString());
+                        if (type === "string") {
+                            var combobox = document.getElementById(definitionExpressionId);
                             var wrapper = combobox.shadowRoot.querySelector(".wrapper");
                             for (var i = 0; i < wrapper.children.length; i++) {
                                 var child = wrapper.children[i];
@@ -268,9 +252,14 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                             }
                         }
                         else if (type === "date") {
-                            var datePicker = document.getElementById(id.toString());
-                            datePicker.startAsDate = new Date(expression === null || expression === void 0 ? void 0 : expression.start);
-                            datePicker.endAsDate = new Date(expression === null || expression === void 0 ? void 0 : expression.end);
+                            var datePicker = document.getElementById(definitionExpressionId);
+                            datePicker.startAsDate = null;
+                            datePicker.endAsDate = null;
+                        }
+                        else if (type === "number") {
+                            var slider = document.getElementById(definitionExpressionId);
+                            slider.minValue = min;
+                            slider.maxValue = max;
                         }
                     }
                     expression.checked = false;
@@ -291,13 +280,59 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                             });
                             if (!(layer && layer.type === "feature")) return [3 /*break*/, 2];
                             query = layer.createQuery();
-                            query.where = layer.definitionExpression ? layer.definitionExpression : "1=1";
+                            query.where = "1=1";
                             if ((_b = (_a = layer === null || layer === void 0 ? void 0 : layer.capabilities) === null || _a === void 0 ? void 0 : _a.query) === null || _b === void 0 ? void 0 : _b.supportsCacheHint) {
                                 query.cacheHint = true;
                             }
                             if (!field) return [3 /*break*/, 2];
                             query.outFields = [field];
+                            query.orderByFields = [field + " ASC"];
                             query.returnDistinctValues = true;
+                            query.returnGeometry = false;
+                            if (this.extentSelector && this.extentSelectorConfig) {
+                                query.geometry = this._getExtent(this.extentSelector, this.extentSelectorConfig);
+                                query.spatialRelationship = "intersects";
+                            }
+                            return [4 /*yield*/, layer.queryFeatures(query)];
+                        case 1:
+                            results = _c.sent();
+                            return [2 /*return*/, results === null || results === void 0 ? void 0 : results.features];
+                        case 2: return [2 /*return*/, []];
+                    }
+                });
+            });
+        };
+        FilterListViewModel.prototype.calculateMinMaxStatistics = function (layerId, field) {
+            var _a, _b;
+            return __awaiter(this, void 0, void 0, function () {
+                var layer, query, tmp, results;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            layer = this.map.layers.find(function (_a) {
+                                var id = _a.id;
+                                return id === layerId;
+                            });
+                            if (!(layer && layer.type === "feature")) return [3 /*break*/, 2];
+                            query = layer.createQuery();
+                            query.where = "1=1";
+                            if ((_b = (_a = layer === null || layer === void 0 ? void 0 : layer.capabilities) === null || _a === void 0 ? void 0 : _a.query) === null || _b === void 0 ? void 0 : _b.supportsCacheHint) {
+                                query.cacheHint = true;
+                            }
+                            if (!field) return [3 /*break*/, 2];
+                            tmp = [
+                                {
+                                    onStatisticField: field,
+                                    outStatisticFieldName: "max" + field,
+                                    statisticType: "max"
+                                },
+                                {
+                                    onStatisticField: field,
+                                    outStatisticFieldName: "min" + field,
+                                    statisticType: "min"
+                                }
+                            ];
+                            query.outStatistics = tmp;
                             query.returnGeometry = false;
                             if (this.extentSelector && this.extentSelectorConfig) {
                                 query.geometry = this._getExtent(this.extentSelector, this.extentSelectorConfig);
@@ -359,68 +394,37 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             }
             return null;
         };
-        FilterListViewModel.prototype._debounceNumberInput = function (expression, layerId, value, type) {
+        FilterListViewModel.prototype._debounceNumberInput = function (expression, layerId, max, min) {
             var _this = this;
             if (this._timeout) {
                 clearTimeout(this._timeout);
             }
             this._timeout = setTimeout(function () {
-                _this._updateExpressions(expression, layerId, value, type);
+                _this._updateExpressions(expression, layerId, max, min);
                 _this._generateOutput(layerId);
             }, 800);
         };
-        FilterListViewModel.prototype._updateExpressions = function (expression, layerId, value, type) {
-            var _a, _b;
-            var _c, _d;
+        FilterListViewModel.prototype._updateExpressions = function (expression, layerId, max, min) {
             var expressions = this._layers[layerId].expressions;
-            var id = expression.id;
-            if (expressions[id]) {
-                expressions[id] = __assign(__assign({}, expressions[id]), (_a = { type: "number" }, _a[type] = value, _a));
-                if (!((_c = expressions[id]) === null || _c === void 0 ? void 0 : _c.min) && !((_d = expressions[id]) === null || _d === void 0 ? void 0 : _d.max)) {
-                    delete expressions[id];
-                    this._generateOutput(layerId);
-                    return;
+            var definitionExpressionId = expression.definitionExpressionId;
+            if (expressions[definitionExpressionId]) {
+                expressions[definitionExpressionId] = __assign(__assign({}, expressions[definitionExpressionId]), { definitionExpression: (expression === null || expression === void 0 ? void 0 : expression.field) + " BETWEEN " + min + " AND " + max, type: "number", min: min,
+                    max: max });
+                if (min === (expression === null || expression === void 0 ? void 0 : expression.min) && max === (expression === null || expression === void 0 ? void 0 : expression.max)) {
+                    delete expressions[definitionExpressionId];
                 }
             }
             else {
-                expressions[id] = (_b = {
-                        definitionExpression: null,
-                        type: "number"
-                    },
-                    _b[type] = value,
-                    _b);
-            }
-            this._setNumberRangeExpression(expression, layerId, value);
-        };
-        FilterListViewModel.prototype._setNumberRangeExpression = function (expression, layerId, value) {
-            var _a, _b;
-            var expressions = this._layers[layerId].expressions;
-            var field = expression.field, id = expression.id;
-            var displayName = document.getElementById(id + "-name");
-            var inputMessage = document.getElementById(id + "-error");
-            var min = (_a = expressions[id]) === null || _a === void 0 ? void 0 : _a.min;
-            var max = (_b = expressions[id]) === null || _b === void 0 ? void 0 : _b.max;
-            var chevron = max && !min ? "<" : !max && min ? ">" : null;
-            if (chevron) {
-                var exprValue = value ? value : max ? max : min ? min : null;
-                if (exprValue) {
-                    displayName.style.color = "inherit";
-                    inputMessage.active = false;
-                    expressions[id].definitionExpression = field + " " + chevron + " " + exprValue;
-                }
-                else {
-                    delete expressions[id];
+                if (min !== (expression === null || expression === void 0 ? void 0 : expression.min) || max !== (expression === null || expression === void 0 ? void 0 : expression.max)) {
+                    expressions[definitionExpressionId] = {
+                        definitionExpression: (expression === null || expression === void 0 ? void 0 : expression.field) + " BETWEEN " + min + " AND " + max,
+                        type: "number",
+                        min: min,
+                        max: max
+                    };
                 }
             }
-            else if (Number(max) < Number(min)) {
-                displayName.style.color = "red";
-                inputMessage.active = true;
-            }
-            else {
-                displayName.style.color = "inherit";
-                inputMessage.active = false;
-                expressions[id].definitionExpression = field + " BETWEEN " + min + " AND " + max;
-            }
+            this._generateOutput(layerId);
         };
         __decorate([
             decorators_1.property()
