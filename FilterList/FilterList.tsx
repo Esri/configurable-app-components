@@ -336,7 +336,6 @@ class FilterList extends Widget {
           label-handles=""
           ticks={ticks}
           snap=""
-          is-range
           theme={this.theme}
         ></calcite-slider>
       </label>
