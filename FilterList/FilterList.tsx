@@ -327,10 +327,10 @@ class FilterList extends Widget {
           id={expression?.definitionExpressionId}
           afterCreate={this.viewModel.handleNumberInputCreate.bind(this.viewModel, expression, layerId)}
           min={min}
-          minValue={min}
+          min-value={min}
           min-label={`${expression.field}, lower bound`}
           max={max}
-          maxValue={max}
+          max-value={max}
           max-label={`${expression.field}, upper bound`}
           step={expression?.step ? expression.step : 1}
           label-handles=""

@@ -231,7 +231,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             var ticks = (max - min) / 4;
             return (widget_1.tsx("label", { class: CSS.filterItem.userInput },
                 widget_1.tsx("span", null, expression === null || expression === void 0 ? void 0 : expression.name),
-                widget_1.tsx("calcite-slider", { id: expression === null || expression === void 0 ? void 0 : expression.definitionExpressionId, afterCreate: this.viewModel.handleNumberInputCreate.bind(this.viewModel, expression, layerId), min: min, minValue: min, "min-label": expression.field + ", lower bound", max: max, maxValue: max, "max-label": expression.field + ", upper bound", step: (expression === null || expression === void 0 ? void 0 : expression.step) ? expression.step : 1, "label-handles": "", ticks: ticks, snap: "", "is-range": true, theme: this.theme })));
+                widget_1.tsx("calcite-slider", { id: expression === null || expression === void 0 ? void 0 : expression.definitionExpressionId, afterCreate: this.viewModel.handleNumberInputCreate.bind(this.viewModel, expression, layerId), min: min, "min-value": min, "min-label": expression.field + ", lower bound", max: max, "max-value": max, "max-label": expression.field + ", upper bound", step: (expression === null || expression === void 0 ? void 0 : expression.step) ? expression.step : 1, "label-handles": "", ticks: ticks, snap: "", "is-range": true, theme: this.theme })));
         };
         FilterList.prototype._renderCombobox = function (layerId, expression) {
             var _a;
