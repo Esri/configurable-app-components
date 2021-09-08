@@ -64,19 +64,13 @@
 .esri-filter-list__filter-item-container--user-input calcite-combobox {
   width: 100%;
 }
-.esri-filter-list__filter-item-container--user-input calcite-slider {
-  width: 100%;
-}
 .esri-filter-list__number-input-container {
   width: 100%;
   display: flex;
-  align-items: center;
+  justify-content: center;
 }
-.esri-filter-list__number-input-container calcite-icon {
-  margin: 0 8px;
-}
-.esri-filter-list__number-input {
-  width: 50%;
+.esri-filter-list__number-input-container calcite-slider {
+  width: 90%;
 }
 .esri-filter-list__date-picker-input-container {
   display: flex;

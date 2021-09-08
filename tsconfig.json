@@ -7,12 +7,9 @@
         "target": "es5",
         "lib": [
             "dom",
-            "es2015.promise",
             "es5",
-            "es6",
-            "es7",
+            "ESNext",
             "scripthost",
-            "es2015"
           ],
         "moduleResolution": "node",
         "experimentalDecorators": true,
