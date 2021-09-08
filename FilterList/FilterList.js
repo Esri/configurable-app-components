@@ -81,7 +81,6 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         filterItemTitle: "esri-filter-list__filter-title",
         checkboxContainer: "esri-filter-list__checkbox-container",
         numberInputContainer: "esri-filter-list__number-input-container",
-        numberInput: "esri-filter-list__number-input",
         dateInputContainer: "esri-filter-list__date-picker-input-container",
         operatorDesc: "esri-filter-list__operator-description"
     };
@@ -103,59 +102,16 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             var _this = this;
             this._locale = intl_1.getLocale();
             this.own([
-                watchUtils_1.when(this, "map.loaded", function () { return __awaiter(_this, void 0, void 0, function () {
-                    var _this = this;
-                    var _a;
-                    return __generator(this, function (_b) {
-                        (_a = this.layerExpressions) === null || _a === void 0 ? void 0 : _a.forEach(function (layerExpression) { return __awaiter(_this, void 0, void 0, function () {
-                            var id;
-                            var _this = this;
-                            var _a;
-                            return __generator(this, function (_b) {
-                                id = layerExpression.id;
-                                (_a = layerExpression.expressions) === null || _a === void 0 ? void 0 : _a.forEach(function (expression, index) { return __awaiter(_this, void 0, void 0, function () {
-                                    var field_1, type, graphics, tmp_1, graphic;
-                                    var _a, _b, _c, _d;
-                                    return __generator(this, function (_e) {
-                                        switch (_e.label) {
-                                            case 0:
-                                                if (!(expression.field && expression.type)) return [3 /*break*/, 4];
-                                                field_1 = expression.field, type = expression.type;
-                                                expression.definitionExpressionId = id + "-" + index;
-                                                if (!(type === "string")) return [3 /*break*/, 2];
-                                                return [4 /*yield*/, this.viewModel.calculateStatistics(id, field_1)];
-                                            case 1:
-                                                graphics = _e.sent();
-                                                tmp_1 = [];
-                                                graphics.forEach(function (graphic) { var _a; return tmp_1.push((_a = graphic === null || graphic === void 0 ? void 0 : graphic.attributes) === null || _a === void 0 ? void 0 : _a[field_1]); });
-                                                expression.selectFields = tmp_1;
-                                                this.scheduleRender();
-                                                return [3 /*break*/, 4];
-                                            case 2:
-                                                if (!(type === "number")) return [3 /*break*/, 4];
-                                                return [4 /*yield*/, this.viewModel.calculateMinMaxStatistics(id, field_1)];
-                                            case 3:
-                                                graphic = _e.sent();
-                                                expression.min = expression.min ? expression.min : (_b = (_a = graphic === null || graphic === void 0 ? void 0 : graphic[0]) === null || _a === void 0 ? void 0 : _a.attributes["min" + field_1]) === null || _b === void 0 ? void 0 : _b.toFixed(2);
-                                                expression.max = expression.max ? expression.max : (_d = (_c = graphic === null || graphic === void 0 ? void 0 : graphic[0]) === null || _c === void 0 ? void 0 : _c.attributes["max" + field_1]) === null || _d === void 0 ? void 0 : _d.toFixed(2);
-                                                this.scheduleRender();
-                                                _e.label = 4;
-                                            case 4: return [2 /*return*/];
-                                        }
-                                    });
-                                }); });
-                                return [2 /*return*/];
-                            });
-                        }); });
-                        return [2 /*return*/];
-                    });
-                }); }),
-                watchUtils_1.whenTrue(this, "updatingExpression", function () {
-                    _this.scheduleRender();
-                    _this.updatingExpression = false;
-                }),
                 watchUtils_1.init(this, "layerExpressions", function () {
-                    _this.viewModel.initExpressions();
+                    var resetLayers = [];
+                    _this.layerExpressions.map(function (layerExpression) {
+                        resetLayers.push({
+                            id: layerExpression.id,
+                            definitionExpression: ""
+                        });
+                    });
+                    _this.emit("filterListReset", resetLayers);
+                    _this.initExpressions();
                     _this._reset = {
                         disabled: _this.layerExpressions && _this.layerExpressions.length ? false : true,
                         color: _this.layerExpressions && _this.layerExpressions.length ? "blue" : "dark"
@@ -190,7 +146,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         FilterList.prototype._renderFilterAccordionItem = function (layerExpression) {
             var filter = this._renderFilter(layerExpression);
             var operator = layerExpression.operator;
-            var operatorTranslation = operator === "OR" ? "orOperator" : "andOperator";
+            var operatorTranslation = operator.trim() === "OR" ? "orOperator" : "andOperator";
             return (widget_1.tsx("calcite-accordion-item", { key: layerExpression.id, bind: this, "item-title": layerExpression.title, "item-subtitle": i18n === null || i18n === void 0 ? void 0 : i18n[operatorTranslation], "icon-position": "start", afterCreate: this.viewModel.initLayerHeader }, filter));
         };
         FilterList.prototype._renderFilter = function (layerExpression) {
@@ -201,7 +157,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                     widget_1.tsx("div", { class: CSS.filterItemTitle },
                         widget_1.tsx("p", null, expression.name)),
                     widget_1.tsx("div", { class: CSS.checkboxContainer },
-                        widget_1.tsx("calcite-checkbox", { scale: "l", checked: expression.checked, theme: _this.theme, afterCreate: _this.viewModel.initCheckbox.bind(_this.viewModel, id, expression) })))) : (_this._initInput(id, expression));
+                        widget_1.tsx("calcite-checkbox", { id: expression.definitionExpressionId, scale: "l", checked: expression.checked, theme: _this.theme, afterCreate: _this.viewModel.initCheckbox.bind(_this.viewModel, id, expression) })))) : (_this._initInput(id, expression));
             });
         };
         FilterList.prototype._renderReset = function () {
@@ -212,7 +168,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         FilterList.prototype._renderOptionalButton = function () {
             return (widget_1.tsx("div", { class: CSS.resetContainer },
                 widget_1.tsx("div", { class: CSS.optionalBtn },
-                    widget_1.tsx("calcite-button", { bind: this, appearance: "outline", color: this._reset.color, theme: this.theme, disabled: this._reset.disabled, onclick: this._handleResetFilter }, "reset"),
+                    widget_1.tsx("calcite-button", { bind: this, appearance: "outline", color: this._reset.color, theme: this.theme, disabled: this._reset.disabled, onclick: this._handleResetFilter }, i18n.resetFilter),
                     widget_1.tsx("calcite-button", { bind: this, appearance: "solid", color: "blue", theme: this.theme, onclick: this.optionalBtnOnClick }, this.optionalBtnText))));
         };
         // HARDCODED IN EN
@@ -226,12 +182,10 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         };
         // HARDCODED IN EN
         FilterList.prototype._renderNumberSlider = function (layerId, expression) {
-            var max = expression === null || expression === void 0 ? void 0 : expression.max;
-            var min = expression === null || expression === void 0 ? void 0 : expression.min;
-            var ticks = (max - min) / 4;
-            return (widget_1.tsx("label", { class: CSS.filterItem.userInput },
+            return (expression === null || expression === void 0 ? void 0 : expression.min) && (expression === null || expression === void 0 ? void 0 : expression.max) ? (widget_1.tsx("label", { key: expression === null || expression === void 0 ? void 0 : expression.definitionExpressionId, class: CSS.filterItem.userInput },
                 widget_1.tsx("span", null, expression === null || expression === void 0 ? void 0 : expression.name),
-                widget_1.tsx("calcite-slider", { id: expression === null || expression === void 0 ? void 0 : expression.definitionExpressionId, afterCreate: this.viewModel.handleNumberInputCreate.bind(this.viewModel, expression, layerId), min: min, minValue: min, "min-label": expression.field + ", lower bound", max: max, maxValue: max, "max-label": expression.field + ", upper bound", step: (expression === null || expression === void 0 ? void 0 : expression.step) ? expression.step : 1, "label-handles": "", ticks: ticks, snap: "", "is-range": true, theme: this.theme })));
+                widget_1.tsx("div", { class: CSS.numberInputContainer },
+                    widget_1.tsx("calcite-slider", { id: expression === null || expression === void 0 ? void 0 : expression.definitionExpressionId, afterCreate: this.viewModel.handleSliderCreate.bind(this.viewModel, expression, layerId), "min-label": expression.field + ", lower bound", "max-label": expression.field + ", upper bound", step: (expression === null || expression === void 0 ? void 0 : expression.step) ? expression.step : 1, "label-handles": "", snap: "", theme: this.theme })))) : null;
         };
         FilterList.prototype._renderCombobox = function (layerId, expression) {
             var _a;
@@ -245,9 +199,11 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         FilterList.prototype._initFilterConfig = function () {
             if (this.layerExpressions && this.layerExpressions.length) {
                 if (this.layerExpressions.length === 1) {
+                    var operator = this.layerExpressions[0].operator;
+                    var operatorTranslation = operator.trim() === "OR" ? "orOperator" : "andOperator";
                     this._isSingleFilterConfig = true;
                     return (widget_1.tsx("div", null,
-                        widget_1.tsx("p", { class: CSS.operatorDesc }, "Results will show ALL matching filters"),
+                        widget_1.tsx("p", { class: CSS.operatorDesc }, i18n === null || i18n === void 0 ? void 0 : i18n[operatorTranslation]),
                         this._renderFilter(this.layerExpressions[0])));
                 }
                 else if (this.layerExpressions.length > 1) {
@@ -278,12 +234,98 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                 });
             });
             this.viewModel.handleResetFilter();
+            this.scheduleRender();
             this.emit("filterListReset", resetLayers);
         };
         FilterList.prototype._createHeaderTitle = function (header) {
             this._headerTitle = document.createElement(this.headerTag);
             this._headerTitle.innerHTML = i18n.selectFilter;
             header.prepend(this._headerTitle);
+        };
+        FilterList.prototype.initExpressions = function () {
+            var _this = this;
+            var _a;
+            (_a = this.layerExpressions) === null || _a === void 0 ? void 0 : _a.forEach(function (layerExpression) {
+                var _a, _b;
+                var id = layerExpression.id;
+                var tmpExp = {};
+                (_a = layerExpression.expressions) === null || _a === void 0 ? void 0 : _a.forEach(function (expression, index) {
+                    var _a;
+                    expression.definitionExpressionId = id + "-" + index;
+                    if (!expression.checked) {
+                        expression.checked = false;
+                    }
+                    else if (expression.definitionExpression) {
+                        tmpExp = (_a = {},
+                            _a[expression.definitionExpressionId] = expression.definitionExpression,
+                            _a);
+                    }
+                    _this.setInitExpression(id, expression);
+                });
+                _this.layers[id] = {
+                    expressions: tmpExp,
+                    operator: (_b = layerExpression === null || layerExpression === void 0 ? void 0 : layerExpression.operator) !== null && _b !== void 0 ? _b : " AND "
+                };
+                if (Object.values(tmpExp).length) {
+                    _this.viewModel.generateOutput(id);
+                }
+            });
+        };
+        FilterList.prototype.setInitExpression = function (id, expression) {
+            var _a, _b, _c, _d;
+            return __awaiter(this, void 0, void 0, function () {
+                var field, type, _e, graphic, _f, graphic, _g;
+                return __generator(this, function (_h) {
+                    switch (_h.label) {
+                        case 0:
+                            if (!(expression.field && expression.type)) return [3 /*break*/, 13];
+                            field = expression.field, type = expression.type;
+                            if (!(type === "string")) return [3 /*break*/, 2];
+                            _e = expression;
+                            return [4 /*yield*/, this.viewModel.getFeatureAttributes(id, field)];
+                        case 1:
+                            _e.selectFields = _h.sent();
+                            return [3 /*break*/, 13];
+                        case 2:
+                            if (!(type === "number")) return [3 /*break*/, 8];
+                            if (!((!(expression === null || expression === void 0 ? void 0 : expression.min) && (expression === null || expression === void 0 ? void 0 : expression.min) !== 0) || (!(expression === null || expression === void 0 ? void 0 : expression.max) && (expression === null || expression === void 0 ? void 0 : expression.max) !== 0))) return [3 /*break*/, 7];
+                            _h.label = 3;
+                        case 3:
+                            _h.trys.push([3, 5, 6, 7]);
+                            return [4 /*yield*/, this.viewModel.calculateMinMaxStatistics(id, field)];
+                        case 4:
+                            graphic = _h.sent();
+                            expression.min = (_a = graphic === null || graphic === void 0 ? void 0 : graphic[0]) === null || _a === void 0 ? void 0 : _a.attributes["min" + field];
+                            expression.max = (_b = graphic === null || graphic === void 0 ? void 0 : graphic[0]) === null || _b === void 0 ? void 0 : _b.attributes["max" + field];
+                            return [3 /*break*/, 7];
+                        case 5:
+                            _f = _h.sent();
+                            return [3 /*break*/, 7];
+                        case 6:
+                            this.scheduleRender();
+                            return [7 /*endfinally*/];
+                        case 7: return [3 /*break*/, 13];
+                        case 8:
+                            if (!(type === "date")) return [3 /*break*/, 13];
+                            _h.label = 9;
+                        case 9:
+                            _h.trys.push([9, 11, 12, 13]);
+                            return [4 /*yield*/, this.viewModel.calculateMinMaxStatistics(id, field)];
+                        case 10:
+                            graphic = _h.sent();
+                            expression.min = this.viewModel.convertToDate((_c = graphic === null || graphic === void 0 ? void 0 : graphic[0]) === null || _c === void 0 ? void 0 : _c.attributes["min" + field]);
+                            expression.max = this.viewModel.convertToDate((_d = graphic === null || graphic === void 0 ? void 0 : graphic[0]) === null || _d === void 0 ? void 0 : _d.attributes["max" + field]);
+                            return [3 /*break*/, 13];
+                        case 11:
+                            _g = _h.sent();
+                            return [3 /*break*/, 13];
+                        case 12:
+                            this.scheduleRender();
+                            return [7 /*endfinally*/];
+                        case 13: return [2 /*return*/];
+                    }
+                });
+            });
         };
         __decorate([
             decorators_1.aliasOf("viewModel.map")
@@ -298,13 +340,10 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             decorators_1.aliasOf("viewModel.theme")
         ], FilterList.prototype, "theme", void 0);
         __decorate([
-            decorators_1.aliasOf("viewModel.updatingExpression")
-        ], FilterList.prototype, "updatingExpression", void 0);
-        __decorate([
             decorators_1.aliasOf("viewModel.extentSelector")
         ], FilterList.prototype, "extentSelector", void 0);
         __decorate([
-            decorators_1.aliasOf("viewModel.updatingExpression")
+            decorators_1.aliasOf("viewModel.extentSelectorConfig")
         ], FilterList.prototype, "extentSelectorConfig", void 0);
         __decorate([
             decorators_1.property()
@@ -315,6 +354,9 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         __decorate([
             decorators_1.property()
         ], FilterList.prototype, "optionalBtnOnClick", void 0);
+        __decorate([
+            decorators_1.aliasOf("viewModel.layers")
+        ], FilterList.prototype, "layers", void 0);
         __decorate([
             decorators_1.aliasOf("viewModel.output")
         ], FilterList.prototype, "output", void 0);

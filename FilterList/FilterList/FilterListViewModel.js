@@ -88,14 +88,8 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             var _this = _super.call(this, params) || this;
             _this.layerExpressions = [];
             _this.theme = "light";
-            _this.updatingExpression = false;
             _this.extentSelector = false;
-            // ----------------------------------
-            //
-            //  Private Variables
-            //
-            // ----------------------------------
-            _this._layers = {};
+            _this.layers = {};
             return _this;
         }
         // ----------------------------------
@@ -103,33 +97,6 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         //  Public methods
         //
         // ----------------------------------
-        FilterListViewModel.prototype.initExpressions = function () {
-            var _this = this;
-            var _a;
-            (_a = this.layerExpressions) === null || _a === void 0 ? void 0 : _a.map(function (layerExpression) {
-                var _a;
-                var tmpExp = {};
-                var id = layerExpression.id;
-                layerExpression.expressions.map(function (expression) {
-                    var _a;
-                    if (!expression.checked) {
-                        expression.checked = false;
-                    }
-                    else {
-                        tmpExp = (_a = {},
-                            _a[expression.definitionExpressionId] = expression.definitionExpression,
-                            _a);
-                    }
-                });
-                _this._layers[id] = {
-                    expressions: tmpExp,
-                    operator: (_a = layerExpression === null || layerExpression === void 0 ? void 0 : layerExpression.operator) !== null && _a !== void 0 ? _a : " AND "
-                };
-                if (Object.keys(tmpExp).length > 0) {
-                    _this._generateOutput(id);
-                }
-            });
-        };
         FilterListViewModel.prototype.initLayerHeader = function (accordionItem) {
             var style = document.createElement("style");
             if (this.theme === "dark") {
@@ -147,14 +114,14 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                 var node = event.target;
                 expression.checked = node.checked;
                 if (node.checked) {
-                    _this._layers[id].expressions[expression.definitionExpressionId] = {
+                    _this.layers[id].expressions[expression.definitionExpressionId] = {
                         definitionExpression: expression.definitionExpression
                     };
                 }
                 else {
-                    delete _this._layers[id].expressions[expression.definitionExpressionId];
+                    delete _this.layers[id].expressions[expression.definitionExpressionId];
                 }
-                _this._generateOutput(id);
+                _this.generateOutput(id);
             });
         };
         FilterListViewModel.prototype.handleComboSelectCreate = function (expression, layerId, comboBox) {
@@ -165,28 +132,38 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             if (items && items.length) {
                 var values = items.map(function (item) { return "'" + item.value + "'"; });
                 var definitionExpression = expression.field + " IN (" + values.join(",") + ")";
-                this._layers[layerId].expressions[expression.definitionExpressionId] = {
+                this.layers[layerId].expressions[expression.definitionExpressionId] = {
                     definitionExpression: definitionExpression
                 };
+                expression.checked = true;
             }
             else {
-                delete this._layers[layerId].expressions[expression.definitionExpressionId];
+                delete this.layers[layerId].expressions[expression.definitionExpressionId];
+                expression.checked = false;
             }
-            this._generateOutput(layerId);
+            this.generateOutput(layerId);
         };
-        FilterListViewModel.prototype.handleNumberInputCreate = function (expression, layerId, slider) {
+        FilterListViewModel.prototype.handleSliderCreate = function (expression, layerId, slider) {
+            var max = expression.max, min = expression.min;
+            if ((max || max === 0) && (min || min === 0)) {
+                slider.setAttribute("min-value", min);
+                slider.setAttribute("max-value", max);
+                slider.min = min;
+                slider.max = max;
+                slider.ticks = (max - min) / 4;
+            }
             var style = document.createElement("style");
             style.innerHTML = ".thumb .handle__label--minValue.hyphen::after {content: unset!important}";
             slider.shadowRoot.prepend(style);
-            slider.addEventListener("calciteSliderChange", this.handleNumberInput.bind(this, expression, layerId));
+            slider.addEventListener("calciteSliderChange", this.handleSliderChange.bind(this, expression, layerId));
         };
-        FilterListViewModel.prototype.handleNumberInput = function (expression, layerId, event) {
+        FilterListViewModel.prototype.handleSliderChange = function (expression, layerId, event) {
             var _a = event.target, maxValue = _a.maxValue, minValue = _a.minValue;
-            this._debounceNumberInput(expression, layerId, maxValue, minValue);
+            this._debounceSliderChange(expression, layerId, maxValue, minValue);
         };
         FilterListViewModel.prototype.handleDatePickerCreate = function (expression, layerId, datePicker) {
-            datePicker.min = this._convertToDate(expression === null || expression === void 0 ? void 0 : expression.min);
-            datePicker.max = this._convertToDate(expression === null || expression === void 0 ? void 0 : expression.max);
+            datePicker.min = this.convertToDate(expression === null || expression === void 0 ? void 0 : expression.min);
+            datePicker.max = this.convertToDate(expression === null || expression === void 0 ? void 0 : expression.max);
             datePicker.addEventListener("calciteDatePickerRangeChange", this.handleDatePickerRangeChange.bind(this, expression, layerId));
             datePicker.addEventListener("input", this.handleDatePickerInputChange.bind(this, expression, layerId));
         };
@@ -207,27 +184,27 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             datePicker.startAsDate = null;
             datePicker.end = null;
             datePicker.endAsDate = null;
-            delete this._layers[layerId].expressions[expression.definitionExpressionId];
-            this._generateOutput(layerId);
+            expression.checked = false;
+            delete this.layers[layerId].expressions[expression.definitionExpressionId];
+            this.generateOutput(layerId);
         };
         FilterListViewModel.prototype.setExpressionDates = function (startDate, endDate, expression, layerId) {
-            var expressions = this._layers[layerId].expressions;
-            var start = startDate ? this._convertToDate(Math.floor(startDate.getTime()), true) : null;
-            var end = endDate ? this._convertToDate(Math.floor(endDate.getTime()), true) : null;
+            var expressions = this.layers[layerId].expressions;
+            var start = startDate ? this.convertToDate(Math.floor(startDate.getTime()), true) : null;
+            var end = endDate ? this.convertToDate(Math.floor(endDate.getTime()), true) : null;
             var chevron = end && !start ? "<" : !end && start ? ">" : null;
             if (chevron) {
                 expressions[expression.definitionExpressionId] = {
-                    definitionExpression: expression.field + " " + chevron + " '" + (start !== null && start !== void 0 ? start : end) + "'",
-                    type: "date"
+                    definitionExpression: expression.field + " " + chevron + " '" + (start !== null && start !== void 0 ? start : end) + "'"
                 };
             }
             else {
                 expressions[expression.definitionExpressionId] = {
-                    definitionExpression: expression.field + " BETWEEN '" + start + "' AND '" + end + "'",
-                    type: "date"
+                    definitionExpression: expression.field + " BETWEEN '" + start + "' AND '" + end + "'"
                 };
             }
-            this._generateOutput(layerId);
+            expression.checked = true;
+            this.generateOutput(layerId);
         };
         FilterListViewModel.prototype.handleResetFilter = function () {
             var _this = this;
@@ -235,42 +212,44 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                 var id = layerExpression.id;
                 layerExpression.expressions.map(function (expression) {
                     var definitionExpressionId = expression.definitionExpressionId, max = expression.max, min = expression.min, type = expression.type;
-                    if (type) {
-                        if (type === "string") {
-                            var combobox = document.getElementById(definitionExpressionId);
-                            var wrapper = combobox.shadowRoot.querySelector(".wrapper");
-                            for (var i = 0; i < wrapper.children.length; i++) {
-                                var child = wrapper.children[i];
-                                if (child.nodeName === "CALCITE-CHIP") {
-                                    var chip = child;
-                                    chip.style.display = "none";
-                                }
-                            }
-                            for (var i = 0; i < combobox.children.length; i++) {
-                                var comboboxItem = combobox.children[i];
-                                comboboxItem.selected = false;
+                    if (type === "string") {
+                        var combobox = document.getElementById(definitionExpressionId);
+                        var wrapper = combobox.shadowRoot.querySelector(".wrapper");
+                        for (var i = 0; i < wrapper.children.length; i++) {
+                            var child = wrapper.children[i];
+                            if (child.nodeName === "CALCITE-CHIP") {
+                                var chip = child;
+                                chip.style.display = "none";
                             }
                         }
-                        else if (type === "date") {
-                            var datePicker = document.getElementById(definitionExpressionId);
-                            datePicker.startAsDate = null;
-                            datePicker.endAsDate = null;
+                        for (var i = 0; i < combobox.children.length; i++) {
+                            var comboboxItem = combobox.children[i];
+                            comboboxItem.selected = false;
                         }
-                        else if (type === "number") {
-                            var slider = document.getElementById(definitionExpressionId);
-                            slider.minValue = min;
-                            slider.maxValue = max;
-                        }
+                    }
+                    else if (type === "date") {
+                        var datePicker = document.getElementById(definitionExpressionId);
+                        datePicker.startAsDate = null;
+                        datePicker.endAsDate = null;
+                    }
+                    else if (type === "number") {
+                        var slider = document.getElementById(definitionExpressionId);
+                        slider.minValue = min;
+                        slider.maxValue = max;
+                    }
+                    else {
+                        var checkbox = document.getElementById(definitionExpressionId);
+                        checkbox.removeAttribute("checked");
                     }
                     expression.checked = false;
                 });
-                _this._layers[id].expressions = {};
+                _this.layers[id].expressions = {};
             });
         };
-        FilterListViewModel.prototype.calculateStatistics = function (layerId, field) {
+        FilterListViewModel.prototype.getFeatureAttributes = function (layerId, field) {
             var _a, _b;
             return __awaiter(this, void 0, void 0, function () {
-                var layer, query, results;
+                var layer, query, results, features;
                 return __generator(this, function (_c) {
                     switch (_c.label) {
                         case 0:
@@ -280,13 +259,12 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                             });
                             if (!(layer && layer.type === "feature")) return [3 /*break*/, 2];
                             query = layer.createQuery();
-                            query.where = "1=1";
                             if ((_b = (_a = layer === null || layer === void 0 ? void 0 : layer.capabilities) === null || _a === void 0 ? void 0 : _a.query) === null || _b === void 0 ? void 0 : _b.supportsCacheHint) {
                                 query.cacheHint = true;
                             }
                             if (!field) return [3 /*break*/, 2];
                             query.outFields = [field];
-                            query.orderByFields = [field + " ASC"];
+                            query.orderByFields = [field + " DESC"];
                             query.returnDistinctValues = true;
                             query.returnGeometry = false;
                             if (this.extentSelector && this.extentSelectorConfig) {
@@ -296,7 +274,8 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                             return [4 /*yield*/, layer.queryFeatures(query)];
                         case 1:
                             results = _c.sent();
-                            return [2 /*return*/, results === null || results === void 0 ? void 0 : results.features];
+                            features = results === null || results === void 0 ? void 0 : results.features.filter(function (feature) { var _a; return (_a = feature.attributes) === null || _a === void 0 ? void 0 : _a[field]; });
+                            return [2 /*return*/, features === null || features === void 0 ? void 0 : features.map(function (feature) { var _a; return (_a = feature.attributes) === null || _a === void 0 ? void 0 : _a[field]; })];
                         case 2: return [2 /*return*/, []];
                     }
                 });
@@ -315,7 +294,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                             });
                             if (!(layer && layer.type === "feature")) return [3 /*break*/, 2];
                             query = layer.createQuery();
-                            query.where = "1=1";
+                            query.where = layer.definitionExpression;
                             if ((_b = (_a = layer === null || layer === void 0 ? void 0 : layer.capabilities) === null || _a === void 0 ? void 0 : _a.query) === null || _b === void 0 ? void 0 : _b.supportsCacheHint) {
                                 query.cacheHint = true;
                             }
@@ -333,7 +312,6 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                                 }
                             ];
                             query.outStatistics = tmp;
-                            query.returnGeometry = false;
                             if (this.extentSelector && this.extentSelectorConfig) {
                                 query.geometry = this._getExtent(this.extentSelector, this.extentSelectorConfig);
                                 query.spatialRelationship = "intersects";
@@ -347,25 +325,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                 });
             });
         };
-        // ----------------------------------
-        //
-        //  Private methods
-        //
-        // ----------------------------------
-        FilterListViewModel.prototype._generateOutput = function (id) {
-            var defExpressions = [];
-            Object.values(this._layers[id].expressions).forEach(function (_a) {
-                var definitionExpression = _a.definitionExpression;
-                return defExpressions.push(definitionExpression);
-            });
-            var newOutput = {
-                id: id,
-                definitionExpression: defExpressions.join(this._layers[id].operator)
-            };
-            this.updatingExpression = true;
-            this.set("output", newOutput);
-        };
-        FilterListViewModel.prototype._convertToDate = function (date, includeTime) {
+        FilterListViewModel.prototype.convertToDate = function (date, includeTime) {
             if (includeTime === void 0) { includeTime = false; }
             if (date) {
                 var tmpDate = new Date(date);
@@ -380,6 +340,29 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             }
             return null;
         };
+        FilterListViewModel.prototype.generateOutput = function (id) {
+            var _a, _b, _c;
+            var defExpressions = [];
+            if (!((_b = (_a = this.layers) === null || _a === void 0 ? void 0 : _a[id]) === null || _b === void 0 ? void 0 : _b.expressions)) {
+                return;
+            }
+            (_c = Object.values(this.layers[id].expressions)) === null || _c === void 0 ? void 0 : _c.forEach(function (_a) {
+                var definitionExpression = _a.definitionExpression;
+                if (definitionExpression) {
+                    defExpressions.push(definitionExpression);
+                }
+            });
+            var newOutput = {
+                id: id,
+                definitionExpression: defExpressions.join(this.layers[id].operator)
+            };
+            this.set("output", newOutput);
+        };
+        // ----------------------------------
+        //
+        //  Private methods
+        //
+        // ----------------------------------
         FilterListViewModel.prototype._getExtent = function (extentSelector, extentSelectorConfig) {
             if (extentSelector && extentSelectorConfig) {
                 var constraints = extentSelectorConfig.constraints;
@@ -394,37 +377,41 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             }
             return null;
         };
-        FilterListViewModel.prototype._debounceNumberInput = function (expression, layerId, max, min) {
+        FilterListViewModel.prototype._debounceSliderChange = function (expression, layerId, max, min) {
             var _this = this;
             if (this._timeout) {
                 clearTimeout(this._timeout);
             }
             this._timeout = setTimeout(function () {
                 _this._updateExpressions(expression, layerId, max, min);
-                _this._generateOutput(layerId);
+                _this.generateOutput(layerId);
             }, 800);
         };
         FilterListViewModel.prototype._updateExpressions = function (expression, layerId, max, min) {
-            var expressions = this._layers[layerId].expressions;
+            if (!this.layers[layerId]) {
+                return;
+            }
+            var expressions = this.layers[layerId].expressions;
             var definitionExpressionId = expression.definitionExpressionId;
-            if (expressions[definitionExpressionId]) {
-                expressions[definitionExpressionId] = __assign(__assign({}, expressions[definitionExpressionId]), { definitionExpression: (expression === null || expression === void 0 ? void 0 : expression.field) + " BETWEEN " + min + " AND " + max, type: "number", min: min,
-                    max: max });
-                if (min === (expression === null || expression === void 0 ? void 0 : expression.min) && max === (expression === null || expression === void 0 ? void 0 : expression.max)) {
-                    delete expressions[definitionExpressionId];
+            if ((min || min === 0) && (max || max === 0)) {
+                if (expressions[definitionExpressionId]) {
+                    expressions[definitionExpressionId] = __assign(__assign({}, expressions[definitionExpressionId]), { definitionExpression: (expression === null || expression === void 0 ? void 0 : expression.field) + " BETWEEN " + min + " AND " + max });
+                    expression.checked = true;
+                    if (min === (expression === null || expression === void 0 ? void 0 : expression.min) && max === (expression === null || expression === void 0 ? void 0 : expression.max)) {
+                        delete expressions[definitionExpressionId];
+                        expression.checked = false;
+                    }
                 }
-            }
-            else {
-                if (min !== (expression === null || expression === void 0 ? void 0 : expression.min) || max !== (expression === null || expression === void 0 ? void 0 : expression.max)) {
-                    expressions[definitionExpressionId] = {
-                        definitionExpression: (expression === null || expression === void 0 ? void 0 : expression.field) + " BETWEEN " + min + " AND " + max,
-                        type: "number",
-                        min: min,
-                        max: max
-                    };
+                else {
+                    if (min !== (expression === null || expression === void 0 ? void 0 : expression.min) || max !== (expression === null || expression === void 0 ? void 0 : expression.max)) {
+                        expressions[definitionExpressionId] = {
+                            definitionExpression: (expression === null || expression === void 0 ? void 0 : expression.field) + " BETWEEN " + min + " AND " + max
+                        };
+                        expression.checked = true;
+                    }
                 }
+                this.generateOutput(layerId);
             }
-            this._generateOutput(layerId);
         };
         __decorate([
             decorators_1.property()
@@ -437,9 +424,6 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         ], FilterListViewModel.prototype, "theme", void 0);
         __decorate([
             decorators_1.property()
-        ], FilterListViewModel.prototype, "updatingExpression", void 0);
-        __decorate([
-            decorators_1.property()
         ], FilterListViewModel.prototype, "extentSelector", void 0);
         __decorate([
             decorators_1.property()
@@ -447,6 +431,9 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         __decorate([
             decorators_1.property()
         ], FilterListViewModel.prototype, "output", void 0);
+        __decorate([
+            decorators_1.property()
+        ], FilterListViewModel.prototype, "layers", void 0);
         FilterListViewModel = __decorate([
             decorators_1.subclass("FilterListViewModel")
         ], FilterListViewModel);

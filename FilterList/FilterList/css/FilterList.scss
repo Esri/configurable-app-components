@@ -77,25 +77,17 @@
       calcite-combobox {
         width: 100%;
       }
-
-      calcite-slider {
-        width: 100%;
-      }
     }
   }
 
   &__number-input-container {
     width: 100%;
     display: flex;
-    align-items: center;
+    justify-content: center;
 
-    calcite-icon {
-      margin: 0 8px;
+    calcite-slider {
+      width: 90%;
     }
-  }
-
-  &__number-input {
-    width: 50%;
   }
 
   &__date-picker-input-container {
@@ -147,7 +139,7 @@
       background: #fff;
     }
     &__select {
-      background-color: #fff!important;
+      background: #fff!important;
       border: 1px solid #a9a9a9!important;
       color: #4c4c4c!important;
     }
@@ -165,9 +157,12 @@
       background: #353535;
     }
     &__select {
-      background-color: #2b2b2b;
+      background: #2b2b2b;
       border: 1px solid #4a4a4a;
       color: #fff;
+    }
+    &__operator-description {
+      background: #353535;
     }
   }
 }

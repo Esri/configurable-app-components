@@ -11,7 +11,7 @@
 
 // esri.core.accessorSupport
 import { aliasOf, property, subclass } from "esri/core/accessorSupport/decorators";
-import { init, when, whenTrue } from "esri/core/watchUtils";
+import { init } from "esri/core/watchUtils";
 
 // esri.widgets.support.widget
 import { tsx } from "esri/widgets/support/widget";
@@ -26,6 +26,7 @@ import i18n = require("dojo/i18n!./FilterList/nls/resources");
 import {
   Expression,
   ExtentSelector,
+  FilterLayers,
   FilterOutput,
   LayerExpression,
   ResetFilter
@@ -48,7 +49,6 @@ const CSS = {
   filterItemTitle: "esri-filter-list__filter-title",
   checkboxContainer: "esri-filter-list__checkbox-container",
   numberInputContainer: "esri-filter-list__number-input-container",
-  numberInput: "esri-filter-list__number-input",
   dateInputContainer: "esri-filter-list__date-picker-input-container",
   operatorDesc: "esri-filter-list__operator-description"
 };
@@ -73,13 +73,10 @@ class FilterList extends Widget {
   @aliasOf("viewModel.theme")
   theme: "dark" | "light";
 
-  @aliasOf("viewModel.updatingExpression")
-  updatingExpression: boolean;
-
   @aliasOf("viewModel.extentSelector")
   extentSelector: boolean;
 
-  @aliasOf("viewModel.updatingExpression")
+  @aliasOf("viewModel.extentSelectorConfig")
   extentSelectorConfig: ExtentSelector;
 
   @property()
@@ -90,6 +87,9 @@ class FilterList extends Widget {
 
   @property()
   optionalBtnOnClick: Function;
+
+  @aliasOf("viewModel.layers")
+  layers: FilterLayers;
 
   @aliasOf("viewModel.output")
   output: FilterOutput;
@@ -118,35 +118,16 @@ class FilterList extends Widget {
   postInitialize() {
     this._locale = getLocale();
     this.own([
-      when(this, "map.loaded", async () => {
-        this.layerExpressions?.forEach(async (layerExpression) => {
-          const { id } = layerExpression;
-          layerExpression.expressions?.forEach(async (expression, index) => {
-            if (expression.field && expression.type) {
-              const { field, type } = expression;
-              expression.definitionExpressionId = `${id}-${index}`;
-              if (type === "string") {
-                const graphics = await this.viewModel.calculateStatistics(id, field);
-                const tmp = [];
-                graphics.forEach((graphic) => tmp.push(graphic?.attributes?.[field]));
-                expression.selectFields = tmp;
-                this.scheduleRender();
-              } else if (type === "number") {
-                const graphic = await this.viewModel.calculateMinMaxStatistics(id, field);
-                expression.min = expression.min ? expression.min : graphic?.[0]?.attributes[`min${field}`]?.toFixed(2);
-                expression.max = expression.max ? expression.max : graphic?.[0]?.attributes[`max${field}`]?.toFixed(2);
-                this.scheduleRender();
-              }
-            }
+      init(this, "layerExpressions", () => {
+        const resetLayers: FilterOutput[] = [];
+        this.layerExpressions.map((layerExpression) => {
+          resetLayers.push({
+            id: layerExpression.id,
+            definitionExpression: ""
           });
         });
-      }),
-      whenTrue(this, "updatingExpression", () => {
-        this.scheduleRender();
-        this.updatingExpression = false;
-      }),
-      init(this, "layerExpressions", () => {
-        this.viewModel.initExpressions();
+        this.emit("filterListReset", resetLayers);
+        this.initExpressions();
         this._reset = {
           disabled: this.layerExpressions && this.layerExpressions.length ? false : true,
           color: this.layerExpressions && this.layerExpressions.length ? "blue" : "dark"
@@ -193,7 +174,7 @@ class FilterList extends Widget {
   private _renderFilterAccordionItem(layerExpression: LayerExpression): any {
     const filter = this._renderFilter(layerExpression);
     const { operator } = layerExpression;
-    const operatorTranslation = operator === "OR" ? "orOperator" : "andOperator";
+    const operatorTranslation = operator.trim() === "OR" ? "orOperator" : "andOperator";
     return (
       <calcite-accordion-item
         key={layerExpression.id}
@@ -221,6 +202,7 @@ class FilterList extends Widget {
           </div>
           <div class={CSS.checkboxContainer}>
             <calcite-checkbox
+              id={expression.definitionExpressionId}
               scale="l"
               checked={expression.checked}
               theme={this.theme}
@@ -266,7 +248,7 @@ class FilterList extends Widget {
             disabled={this._reset.disabled}
             onclick={this._handleResetFilter}
           >
-            reset
+            {i18n.resetFilter}
           </calcite-button>
           <calcite-button
             bind={this}
@@ -317,30 +299,23 @@ class FilterList extends Widget {
 
   // HARDCODED IN EN
   private _renderNumberSlider(layerId: string, expression: Expression) {
-    const max = expression?.max as number;
-    const min = expression?.min as number;
-    const ticks = (max - min) / 4;
-    return (
-      <label class={CSS.filterItem.userInput}>
+    return expression?.min && expression?.max ? (
+      <label key={expression?.definitionExpressionId} class={CSS.filterItem.userInput}>
         <span>{expression?.name}</span>
-        <calcite-slider
-          id={expression?.definitionExpressionId}
-          afterCreate={this.viewModel.handleNumberInputCreate.bind(this.viewModel, expression, layerId)}
-          min={min}
-          minValue={min}
-          min-label={`${expression.field}, lower bound`}
-          max={max}
-          maxValue={max}
-          max-label={`${expression.field}, upper bound`}
-          step={expression?.step ? expression.step : 1}
-          label-handles=""
-          ticks={ticks}
-          snap=""
-          is-range
-          theme={this.theme}
-        ></calcite-slider>
+        <div class={CSS.numberInputContainer}>
+          <calcite-slider
+            id={expression?.definitionExpressionId}
+            afterCreate={this.viewModel.handleSliderCreate.bind(this.viewModel, expression, layerId)}
+            min-label={`${expression.field}, lower bound`}
+            max-label={`${expression.field}, upper bound`}
+            step={expression?.step ? expression.step : 1}
+            label-handles=""
+            snap=""
+            theme={this.theme}
+          ></calcite-slider>
+        </div>
       </label>
-    );
+    ) : null;
   }
 
   private _renderCombobox(layerId: string, expression: Expression) {
@@ -369,10 +344,12 @@ class FilterList extends Widget {
   private _initFilterConfig(): any {
     if (this.layerExpressions && this.layerExpressions.length) {
       if (this.layerExpressions.length === 1) {
+        const { operator } = this.layerExpressions[0];
+        const operatorTranslation = operator.trim() === "OR" ? "orOperator" : "andOperator";
         this._isSingleFilterConfig = true;
         return (
           <div>
-            <p class={CSS.operatorDesc}>Results will show ALL matching filters</p>
+            <p class={CSS.operatorDesc}>{i18n?.[operatorTranslation]}</p>
             {this._renderFilter(this.layerExpressions[0])}
           </div>
         );
@@ -404,6 +381,7 @@ class FilterList extends Widget {
       });
     });
     this.viewModel.handleResetFilter();
+    this.scheduleRender();
     this.emit("filterListReset", resetLayers);
   }
 
@@ -411,6 +389,60 @@ class FilterList extends Widget {
     this._headerTitle = document.createElement(this.headerTag);
     this._headerTitle.innerHTML = i18n.selectFilter;
     header.prepend(this._headerTitle);
+  }
+
+  initExpressions(): void {
+    this.layerExpressions?.forEach((layerExpression) => {
+      const { id } = layerExpression;
+      let tmpExp = {};
+      layerExpression.expressions?.forEach((expression, index) => {
+        expression.definitionExpressionId = `${id}-${index}`;
+        if (!expression.checked) {
+          expression.checked = false;
+        } else if (expression.definitionExpression) {
+          tmpExp = {
+            [expression.definitionExpressionId]: expression.definitionExpression
+          };
+        }
+        this.setInitExpression(id, expression);
+      });
+      this.layers[id] = {
+        expressions: tmpExp,
+        operator: layerExpression?.operator ?? " AND "
+      };
+      if (Object.values(tmpExp).length) {
+        this.viewModel.generateOutput(id);
+      }
+    });
+  }
+
+  async setInitExpression(id: string, expression: Expression): Promise<void> {
+    if (expression.field && expression.type) {
+      const { field, type } = expression;
+      if (type === "string") {
+        expression.selectFields = await this.viewModel.getFeatureAttributes(id, field);
+      } else if (type === "number") {
+        if ((!expression?.min && expression?.min !== 0) || (!expression?.max && expression?.max !== 0)) {
+          try {
+            const graphic = await this.viewModel.calculateMinMaxStatistics(id, field);
+            expression.min = graphic?.[0]?.attributes[`min${field}`];
+            expression.max = graphic?.[0]?.attributes[`max${field}`];
+          } catch {
+          } finally {
+            this.scheduleRender();
+          }
+        }
+      } else if (type === "date") {
+        try {
+          const graphic = await this.viewModel.calculateMinMaxStatistics(id, field);
+          expression.min = this.viewModel.convertToDate(graphic?.[0]?.attributes[`min${field}`]);
+          expression.max = this.viewModel.convertToDate(graphic?.[0]?.attributes[`max${field}`]);
+        } catch {
+        } finally {
+          this.scheduleRender();
+        }
+      }
+    }
   }
 }
 
