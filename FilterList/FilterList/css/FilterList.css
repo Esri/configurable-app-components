@@ -113,7 +113,7 @@
   background: #fff;
 }
 .esri-filter-list.esri-filter-list--light .esri-filter-list__select {
-  background-color: #fff !important;
+  background: #fff !important;
   border: 1px solid #a9a9a9 !important;
   color: #4c4c4c !important;
 }
@@ -128,7 +128,10 @@
   background: #353535;
 }
 .esri-filter-list.esri-filter-list--dark .esri-filter-list__select {
-  background-color: #2b2b2b;
+  background: #2b2b2b;
   border: 1px solid #4a4a4a;
   color: #fff;
+}
+.esri-filter-list.esri-filter-list--dark .esri-filter-list__operator-description {
+  background: #353535;
 }
