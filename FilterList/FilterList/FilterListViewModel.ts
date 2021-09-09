@@ -246,13 +246,15 @@ class FilterListViewModel extends Accessor {
         query.orderByFields = [`${field} DESC`];
         query.returnDistinctValues = true;
         query.returnGeometry = false;
+        query.maxRecordCountFactor = 3;
+        query.returnExceededLimitFeatures = true;
         if (this.extentSelector && this.extentSelectorConfig) {
           query.geometry = this._getExtent(this.extentSelector, this.extentSelectorConfig);
           query.spatialRelationship = "intersects";
         }
         const results = await layer.queryFeatures(query);
         const features = results?.features.filter((feature) => feature.attributes?.[field]);
-        return features?.map((feature) => feature.attributes?.[field]);
+        return features?.map((feature) => feature.attributes?.[field]).sort();
       }
     }
     return [];
