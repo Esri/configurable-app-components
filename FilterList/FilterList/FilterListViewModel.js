@@ -267,6 +267,8 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                             query.orderByFields = [field + " DESC"];
                             query.returnDistinctValues = true;
                             query.returnGeometry = false;
+                            query.maxRecordCountFactor = 3;
+                            query.returnExceededLimitFeatures = true;
                             if (this.extentSelector && this.extentSelectorConfig) {
                                 query.geometry = this._getExtent(this.extentSelector, this.extentSelectorConfig);
                                 query.spatialRelationship = "intersects";
@@ -275,7 +277,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                         case 1:
                             results = _c.sent();
                             features = results === null || results === void 0 ? void 0 : results.features.filter(function (feature) { var _a; return (_a = feature.attributes) === null || _a === void 0 ? void 0 : _a[field]; });
-                            return [2 /*return*/, features === null || features === void 0 ? void 0 : features.map(function (feature) { var _a; return (_a = feature.attributes) === null || _a === void 0 ? void 0 : _a[field]; })];
+                            return [2 /*return*/, features === null || features === void 0 ? void 0 : features.map(function (feature) { var _a; return (_a = feature.attributes) === null || _a === void 0 ? void 0 : _a[field]; }).sort()];
                         case 2: return [2 /*return*/, []];
                     }
                 });
