@@ -1,4 +1,4 @@
-// Copyright 2020 Esri
+// Copyright 2021 Esri
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -12,10 +12,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -76,6 +78,7 @@ define(["require", "exports", "dojo/i18n!./Screenshot/nls/resources", "esri/widg
             _this._handles = new Handles();
             _this._elementOptions = {};
             _this.custom = null;
+            _this.disableCustom = false;
             _this.enableLegendOption = null;
             _this.enablePopupOption = null;
             _this.featureWidget = null;
@@ -219,7 +222,7 @@ define(["require", "exports", "dojo/i18n!./Screenshot/nls/resources", "esri/widg
                     widget_1.tsx("input", { bind: this, onclick: this._togglePopup, onkeydown: this._togglePopup, type: "checkbox", checked: this.includePopupInScreenshot }),
                     popup)) : null,
                 this.custom ? (widget_1.tsx("label", { key: "esri-screenshot-custom-option", class: CSS.screenshotOption },
-                    widget_1.tsx("input", { bind: this, onclick: this._toggleCustom, onkeydown: this._toggleCustom, type: "checkbox", checked: this.includeCustomInScreenshot }),
+                    widget_1.tsx("input", { bind: this, onclick: this._toggleCustom, onkeydown: this._toggleCustom, type: "checkbox", checked: this.includeCustomInScreenshot, disabled: this.disableCustom }),
                     this.custom.label)) : null));
         };
         Screenshot.prototype._renderSetMapAreaButton = function () {
@@ -378,7 +381,9 @@ define(["require", "exports", "dojo/i18n!./Screenshot/nls/resources", "esri/widg
             return watchUtils.watch(this, "view.popup.selectedFeature", function () {
                 var _a, _b, _c, _d;
                 if (_this.featureWidget &&
-                    _this.view && ((_a = _this.view) === null || _a === void 0 ? void 0 : _a.popup) && ((_c = (_b = _this.view) === null || _b === void 0 ? void 0 : _b.popup) === null || _c === void 0 ? void 0 : _c.selectedFeature)) {
+                    _this.view &&
+                    ((_a = _this.view) === null || _a === void 0 ? void 0 : _a.popup) &&
+                    ((_c = (_b = _this.view) === null || _b === void 0 ? void 0 : _b.popup) === null || _c === void 0 ? void 0 : _c.selectedFeature)) {
                     while (_this._offscreenPopupContainer &&
                         _this._offscreenPopupContainer.firstChild) {
                         _this._offscreenPopupContainer.removeChild(_this._offscreenPopupContainer.firstChild);
@@ -437,6 +442,9 @@ define(["require", "exports", "dojo/i18n!./Screenshot/nls/resources", "esri/widg
         __decorate([
             decorators_1.aliasOf("viewModel.custom")
         ], Screenshot.prototype, "custom", void 0);
+        __decorate([
+            decorators_1.property()
+        ], Screenshot.prototype, "disableCustom", void 0);
         __decorate([
             decorators_1.aliasOf("viewModel.enableLegendOption")
         ], Screenshot.prototype, "enableLegendOption", void 0);

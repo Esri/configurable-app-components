@@ -28,6 +28,7 @@ More info on html2canvas can be found here: http://html2canvas.hertzen.com/
 | includeCustomInScreenshot \* | Boolean                                 | Boolean to include/exclude custom element in screenshot. This property requires a value for the `custom` property to be passed in.                                                                    |
 | includeCustomInScreenshot \* | Boolean                                 | Boolean to include/exclude custom element in screenshot. This property requires a value for the `custom` property to be passed in.                                                                    |
 | custom \*                    | { label: string; element: HTMLElement } | HTML Element to include in screenshot output. `custom.label` will be used for the checkbox input label. `custom.element` will be used to pass into html2canvas to include in final screenshot output. |
+| disableCustom                    | boolean | Boolean to enable/disble the custom checkbox. |
 | outputLayout \*              | "horizontal" \| "vertical"              | Option to set layout of screenshot output to a horizontal or vertical layout. `Default: "horizontal"`                                                                                                 |
 | includeLayoutOption          | Boolean                                 | Render option to allow end-user to select screenshot layout output.                                                                                                                                   |
 | featureWidget \* `read-only` | Feature                                 | Feature Widget containing pop-up node to include in screenshot.                                                                                                                                       |
@@ -151,7 +152,7 @@ Esri welcomes contributions from anyone and everyone. Please see our [guidelines
 
 ## Licensing
 
-Copyright 2020 Esri
+Copyright 2021 Esri
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

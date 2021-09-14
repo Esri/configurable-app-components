@@ -1,4 +1,4 @@
-// Copyright 2020 Esri
+// Copyright 2021 Esri
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -86,6 +86,9 @@ class Screenshot extends Widget {
 
   @aliasOf("viewModel.custom")
   custom: { label: string; element: HTMLElement } = null;
+
+  @property()
+  disableCustom = false;
 
   @aliasOf("viewModel.enableLegendOption")
   enableLegendOption: boolean = null;
@@ -378,6 +381,7 @@ class Screenshot extends Widget {
               onkeydown={this._toggleCustom}
               type="checkbox"
               checked={this.includeCustomInScreenshot}
+              disabled={this.disableCustom}
             />
             {this.custom.label}
           </label>
