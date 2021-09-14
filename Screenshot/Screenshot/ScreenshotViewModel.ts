@@ -1,4 +1,4 @@
-// Copyright 2020 Esri
+// Copyright 2021 Esri
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -758,7 +758,7 @@ class ScreenshotViewModel extends Accessor {
   }
 
   private _downloadImage(filename: any, dataUrl: string): void {
-    if (!window.navigator.msSaveOrOpenBlob) {
+    if (!(window.navigator as any).msSaveOrOpenBlob) {
       const imgURL = document.createElement("a") as HTMLAnchorElement;
       imgURL.setAttribute("href", dataUrl);
       imgURL.setAttribute("download", filename);
@@ -775,7 +775,7 @@ class ScreenshotViewModel extends Accessor {
         ia[i] = byteString.charCodeAt(i);
       }
       const blob = new Blob([ab], { type: mimeString });
-      window.navigator.msSaveOrOpenBlob(blob, filename);
+     (window.navigator as any).msSaveOrOpenBlob(blob, filename);
     }
   }
 

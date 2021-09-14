@@ -1,4 +1,4 @@
-// Copyright 2020 Esri
+// Copyright 2021 Esri
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -12,10 +12,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -626,7 +628,8 @@ define(["require", "exports", "esri/core/Accessor", "./html2canvas/html2canvas",
                 else if (!this.includePopupInScreenshot &&
                     !this.includeLegendInScreenshot &&
                     this.includeCustomInScreenshot) {
-                    if (((_b = (_a = this.custom) === null || _a === void 0 ? void 0 : _a.element) === null || _b === void 0 ? void 0 : _b.offsetWidth) && ((_d = (_c = this.custom) === null || _c === void 0 ? void 0 : _c.element) === null || _d === void 0 ? void 0 : _d.offsetHeight)) {
+                    if (((_b = (_a = this.custom) === null || _a === void 0 ? void 0 : _a.element) === null || _b === void 0 ? void 0 : _b.offsetWidth) &&
+                        ((_d = (_c = this.custom) === null || _c === void 0 ? void 0 : _c.element) === null || _d === void 0 ? void 0 : _d.offsetHeight)) {
                         this._includeOneMapComponent(viewScreenshot, viewCanvas, img, screenshotImageElement, maskDiv);
                     }
                     else {
@@ -729,7 +732,8 @@ define(["require", "exports", "esri/core/Accessor", "./html2canvas/html2canvas",
                 }
                 if (!((_b = (_a = _this.view) === null || _a === void 0 ? void 0 : _a.popup) === null || _b === void 0 ? void 0 : _b.visible) &&
                     _this.screenshotModeIsActive &&
-                    _this.enablePopupOption && ((_d = (_c = _this.view) === null || _c === void 0 ? void 0 : _c.popup) === null || _d === void 0 ? void 0 : _d.selectedFeature)) {
+                    _this.enablePopupOption &&
+                    ((_d = (_c = _this.view) === null || _c === void 0 ? void 0 : _c.popup) === null || _d === void 0 ? void 0 : _d.selectedFeature)) {
                     var layerView = _this.view.layerViews.find(function (layerView) { var _a, _b, _c, _d; return layerView.layer.id === ((_d = (_c = (_b = (_a = _this.view) === null || _a === void 0 ? void 0 : _a.popup) === null || _b === void 0 ? void 0 : _b.selectedFeature) === null || _c === void 0 ? void 0 : _c.layer) === null || _d === void 0 ? void 0 : _d.id); });
                     if (!layerView) {
                         return;
