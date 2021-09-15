@@ -1,8 +1,8 @@
 define({
   "resetFilter": "Atur Ulang Filter",
   "selectFilter": "Pilih Filter",
-  "andOperator": "ng_Results will show ALL matching filters____________________ny",
-  "orOperator": "ng_Results will show ANY matching filters____________________ny",
-  "andOperator2": "ng_AND: Results will show ALL matching filters_______________________ny",
-  "orOperator2": "ng_OR: Results will show ANY matching filters______________________ny"
+  "andOperator": "Hasil akan menampilkan SEMUA filter yang cocok",
+  "orOperator": "Hasil akan menampilkan SALAH SATU filter yang cocok",
+  "andOperator2": "DAN: Hasil akan menampilkan SEMUA filter yang cocok",
+  "orOperator2": "ATAU: Hasil akan menampilkan SALAH SATU filter yang cocok"
 });

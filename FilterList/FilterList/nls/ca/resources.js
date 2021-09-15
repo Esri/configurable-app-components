@@ -1,8 +1,8 @@
 define({
   "resetFilter": "Restableix el filtre",
   "selectFilter": "Selecciona el filtre",
-  "andOperator": "ó_Results will show ALL matching filters____________________à",
-  "orOperator": "ó_Results will show ANY matching filters____________________à",
-  "andOperator2": "ó_AND: Results will show ALL matching filters_______________________à",
-  "orOperator2": "ó_OR: Results will show ANY matching filters______________________à"
+  "andOperator": "Els resultats mostraran TOTS els filtres coincidents",
+  "orOperator": "Els resultats mostraran QUALSEVOL filtre coincident",
+  "andOperator2": "AND: els resultats mostraran TOTS els filtres coincidents",
+  "orOperator2": "OR: els resultats mostraran QUALSEVOL filtre coincident"
 });

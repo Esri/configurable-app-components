@@ -120,7 +120,7 @@ class FilterList extends Widget {
     this.own([
       init(this, "layerExpressions", () => {
         const resetLayers: FilterOutput[] = [];
-        this.layerExpressions.map((layerExpression) => {
+        this.layerExpressions?.map((layerExpression) => {
           resetLayers.push({
             id: layerExpression.id,
             definitionExpression: ""

@@ -1,8 +1,8 @@
 define({
   "resetFilter": "필터 재설정",
   "selectFilter": "필터 선택",
-  "andOperator": "한_Results will show ALL matching filters____________________빠",
-  "orOperator": "한_Results will show ANY matching filters____________________빠",
-  "andOperator2": "한_AND: Results will show ALL matching filters_______________________빠",
-  "orOperator2": "한_OR: Results will show ANY matching filters______________________빠"
+  "andOperator": "결과에는 매칭되는 모든 필터가 표시됩니다.",
+  "orOperator": "결과에는 매칭되는 임의 필터가 표시됩니다.",
+  "andOperator2": "AND: 결과에는 매칭되는 모든 필터가 표시됩니다.",
+  "orOperator2": "OR: 결과에는 매칭되는 임의 필터가 표시됩니다."
 });

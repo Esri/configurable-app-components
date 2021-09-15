@@ -1,8 +1,8 @@
 define({
   "resetFilter": "Ponastavi filter",
   "selectFilter": "Izberi filter",
-  "andOperator": "Š_Results will show ALL matching filters____________________č",
-  "orOperator": "Š_Results will show ANY matching filters____________________č",
-  "andOperator2": "Š_AND: Results will show ALL matching filters_______________________č",
-  "orOperator2": "Š_OR: Results will show ANY matching filters______________________č"
+  "andOperator": "Med rezultati bodo prikazani VSI filtri, ki se ujemajo",
+  "orOperator": "Med rezultati bodo prikazani KATERI KOLI filtri, ki se ujemajo",
+  "andOperator2": "IN: Med rezultati bodo prikazani VSI filtri, ki se ujemajo",
+  "orOperator2": "ALI: Med rezultati bodo prikazani KATERI KOLI filtri, ki se ujemajo"
 });

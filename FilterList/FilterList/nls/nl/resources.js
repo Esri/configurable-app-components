@@ -1,8 +1,8 @@
 define({
   "resetFilter": "Filter opnieuw instellen",
   "selectFilter": "Filter selecteren",
-  "andOperator": "Ĳ_Results will show ALL matching filters____________________ä",
-  "orOperator": "Ĳ_Results will show ANY matching filters____________________ä",
-  "andOperator2": "Ĳ_AND: Results will show ALL matching filters_______________________ä",
-  "orOperator2": "Ĳ_OR: Results will show ANY matching filters______________________ä"
+  "andOperator": "Alleen resultaten die voldoen aan ALLE (ALL) filters worden getoond",
+  "orOperator": "Resultaten die voldoen aan EEN (ANY) filter worden getoond",
+  "andOperator2": "AND: Resultaten die voldoen aan ALLE (ALL) filters",
+  "orOperator2": "OR: Resultaten die voldoen aan EEN (ANY) filter"
 });

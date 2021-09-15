@@ -1,8 +1,8 @@
 define({
   "resetFilter": "Resetuj filtr",
   "selectFilter": "Wybierz filtr",
-  "andOperator": "ł_Results will show ALL matching filters____________________ą",
-  "orOperator": "ł_Results will show ANY matching filters____________________ą",
-  "andOperator2": "ł_AND: Results will show ALL matching filters_______________________ą",
-  "orOperator2": "ł_OR: Results will show ANY matching filters______________________ą"
+  "andOperator": "Wyświetlane będą wyniki pasujące do WSZYSTKICH filtrów",
+  "orOperator": "Wyświetlane będą wyniki pasujące do DOWOLNYCH filtrów",
+  "andOperator2": "AND: Wyświetlane będą wyniki pasujące do WSZYSTKICH filtrów",
+  "orOperator2": "OR: Wyświetlane będą wyniki pasujące do DOWOLNYCH filtrów"
 });

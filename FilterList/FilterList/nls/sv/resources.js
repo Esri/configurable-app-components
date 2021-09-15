@@ -1,8 +1,8 @@
 define({
   "resetFilter": "Återställ filter",
   "selectFilter": "Välj filter",
-  "andOperator": "Å_Results will show ALL matching filters____________________ö",
-  "orOperator": "Å_Results will show ANY matching filters____________________ö",
-  "andOperator2": "Å_AND: Results will show ALL matching filters_______________________ö",
-  "orOperator2": "Å_OR: Results will show ANY matching filters______________________ö"
+  "andOperator": "Resultaten kommer att visa ALLA matchande filter",
+  "orOperator": "Resultaten kommer att visa EVENTUELLA matchande filter",
+  "andOperator2": "AND: Resultaten kommer att visa ALLA matchande filter",
+  "orOperator2": "OR: Resultaten kommer att visa EVENTUELLA matchande filter"
 });
