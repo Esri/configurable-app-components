@@ -1,8 +1,8 @@
 define({
   "resetFilter": "Επαναφορά φίλτρου",
   "selectFilter": "Επιλογή φίλτρου",
-  "andOperator": "Đ_Results will show ALL matching filters____________________ớ",
-  "orOperator": "Đ_Results will show ANY matching filters____________________ớ",
-  "andOperator2": "Đ_AND: Results will show ALL matching filters_______________________ớ",
-  "orOperator2": "Đ_OR: Results will show ANY matching filters______________________ớ"
+  "andOperator": "Τα αποτελέσματα θα εμφανίσουν ΟΛΑ τα αντίστοιχα φίλτρα",
+  "orOperator": "Τα αποτελέσματα θα εμφανίσουν ΚΑΘΕ αντίστοιχο φίλτρο",
+  "andOperator2": "ΚΑΙ: Τα αποτελέσματα θα εμφανίσουν ΟΛΑ τα αντίστοιχα φίλτρα",
+  "orOperator2": "OR: Τα αποτελέσματα θα εμφανίσουν ΚΑΘΕ αντίστοιχο φίλτρο"
 });

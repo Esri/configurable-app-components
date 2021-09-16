@@ -1,8 +1,8 @@
 define({
   "resetFilter": "Szűrő alaphelyzetbe állítása",
   "selectFilter": "Szűrő kiválasztása",
-  "andOperator": "í_Results will show ALL matching filters____________________ő",
-  "orOperator": "í_Results will show ANY matching filters____________________ő",
-  "andOperator2": "í_AND: Results will show ALL matching filters_______________________ő",
-  "orOperator2": "í_OR: Results will show ANY matching filters______________________ő"
+  "andOperator": "Az eredmények az ÖSSZES egyező szűrőt megjelenítik",
+  "orOperator": "Az eredmények a BÁRMELY egyező szűrőt megjelenítik",
+  "andOperator2": "ÉS: Az eredmények az ÖSSZES egyező szűrőt megjelenítik",
+  "orOperator2": "VAGY: Az eredmények a BÁRMELY egyező szűrőt megjelenítik"
 });

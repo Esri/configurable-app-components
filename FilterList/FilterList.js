@@ -103,8 +103,9 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             this._locale = intl_1.getLocale();
             this.own([
                 watchUtils_1.init(this, "layerExpressions", function () {
+                    var _a;
                     var resetLayers = [];
-                    _this.layerExpressions.map(function (layerExpression) {
+                    (_a = _this.layerExpressions) === null || _a === void 0 ? void 0 : _a.map(function (layerExpression) {
                         resetLayers.push({
                             id: layerExpression.id,
                             definitionExpression: ""

@@ -1,8 +1,8 @@
 define({
   "resetFilter": "Thiết lập lại Bộ lọc",
   "selectFilter": "Chọn bộ lọc",
-  "andOperator": "Đ_Results will show ALL matching filters____________________ớ",
-  "orOperator": "Đ_Results will show ANY matching filters____________________ớ",
-  "andOperator2": "Đ_AND: Results will show ALL matching filters_______________________ớ",
-  "orOperator2": "Đ_OR: Results will show ANY matching filters______________________ớ"
+  "andOperator": "Phần kết quả sẽ hiển thị các bộ lọc khớp TẤT CẢ tiêu chí",
+  "orOperator": "Phần kết quả sẽ hiển thị các bộ lọc khớp BẤT KỲ tiêu chí nào",
+  "andOperator2": "VÀ: Phần kết quả sẽ hiển thị các bộ lọc khớp TẤT CẢ tiêu chí",
+  "orOperator2": "HOẶC: Phần kết quả sẽ hiển thị các bộ lọc khớp BẤT KỲ tiêu chí nào"
 });

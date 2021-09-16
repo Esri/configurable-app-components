@@ -1,8 +1,8 @@
 define({
   "resetFilter": "フィルターのリセット",
   "selectFilter": "フィルターの選択",
-  "andOperator": "須_Results will show ALL matching filters____________________鷗",
-  "orOperator": "須_Results will show ANY matching filters____________________鷗",
-  "andOperator2": "須_AND: Results will show ALL matching filters_______________________鷗",
-  "orOperator2": "須_OR: Results will show ANY matching filters______________________鷗"
+  "andOperator": "結果は、すべてのフィルターに一致する内容を表示します",
+  "orOperator": "結果は、任意のフィルターに一致する内容を表示します",
+  "andOperator2": "AND: 結果は、すべてのフィルターに一致する内容を表示します",
+  "orOperator2": "OR: 結果は、任意のフィルターに一致する内容を表示します"
 });

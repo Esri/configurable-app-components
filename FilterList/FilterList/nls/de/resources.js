@@ -1,8 +1,8 @@
 define({
   "resetFilter": "Filter zurücksetzen",
   "selectFilter": "Filter auswählen",
-  "andOperator": "ä_Results will show ALL matching filters____________________Ü",
-  "orOperator": "ä_Results will show ANY matching filters____________________Ü",
-  "andOperator2": "ä_AND: Results will show ALL matching filters_______________________Ü",
-  "orOperator2": "ä_OR: Results will show ANY matching filters______________________Ü"
+  "andOperator": "In den Ergebnissen werden ALLE übereinstimmenden Filter angezeigt.",
+  "orOperator": "In den Ergebnissen werden BELIEBIGE übereinstimmende Filter angezeigt.",
+  "andOperator2": "AND: In den Ergebnissen werden ALLE übereinstimmenden Filter angezeigt.",
+  "orOperator2": "OR: In den Ergebnissen werden BELIEBIGE übereinstimmende Filter angezeigt."
 });
