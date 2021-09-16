@@ -63,6 +63,7 @@
 }
 .esri-filter-list__filter-item-container--user-input calcite-combobox {
   width: 100%;
+  font-size: 16px;
 }
 .esri-filter-list__number-input-container {
   width: 100%;
