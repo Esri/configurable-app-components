@@ -235,14 +235,6 @@ class ShareViewModel extends Accessor {
     if (isWGS84 || isWebMercator) {
       return point;
     }
-    // Check if client side projection is not supported
-    if (!projection.isSupported()) {
-      const point = new Point({
-        x: null,
-        y: null
-      });
-      return point;
-    }
     const outputSpatialReference = new SpatialReference({
       wkid: 4326
     });

@@ -2,10 +2,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -248,7 +250,7 @@ define(["require", "exports", "esri/core/Accessor", "esri/core/Collection", "esr
         };
         ShareViewModel.prototype._processPoint = function (point) {
             return __awaiter(this, void 0, void 0, function () {
-                var _a, isWGS84, isWebMercator, point_1, outputSpatialReference, projectedPoint;
+                var _a, isWGS84, isWebMercator, outputSpatialReference, projectedPoint;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
@@ -256,14 +258,6 @@ define(["require", "exports", "esri/core/Accessor", "esri/core/Collection", "esr
                             // If spatial reference is WGS84 or Web Mercator, use longitude/latitude values to generate the share URL parameters
                             if (isWGS84 || isWebMercator) {
                                 return [2 /*return*/, point];
-                            }
-                            // Check if client side projection is not supported
-                            if (!projection.isSupported()) {
-                                point_1 = new Point({
-                                    x: null,
-                                    y: null
-                                });
-                                return [2 /*return*/, point_1];
                             }
                             outputSpatialReference = new SpatialReference({
                                 wkid: 4326

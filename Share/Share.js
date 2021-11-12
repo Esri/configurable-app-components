@@ -12,10 +12,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -240,7 +242,7 @@ define(["require", "exports", "dojo/i18n!./Share/nls/resources", "esri/core/watc
                 widget_1.tsx("div", { class: CSS.shareModal.main.mainUrl.inputGroup },
                     widget_1.tsx("span", { class: CSS.shareModal.main.mainHeader }, i18n.clipboard),
                     widget_1.tsx("div", { class: CSS.shareModal.main.mainCopy.copyClipboardContainer },
-                        widget_1.tsx("calcite-button", { bind: this, onclick: this._copyUrlInput, onkeydown: this._copyUrlInput },
+                        widget_1.tsx("calcite-button", { bind: this, onclick: this._copyUrlInput, onkeydown: this._copyUrlInput, label: i18n.clipboard },
                             widget_1.tsx("calcite-icon", { icon: "copy" })),
                         widget_1.tsx("input", { type: "text", class: CSS.shareModal.main.mainUrl.urlInput, bind: this, value: this.shareUrl, afterCreate: widget_1.storeNode, "data-node-ref": "_urlInputNode", readOnly: true }))))) : null));
         };
@@ -257,7 +259,7 @@ define(["require", "exports", "dojo/i18n!./Share/nls/resources", "esri/core/watc
         Share.prototype._renderCopyIframe = function () {
             var _a = this.viewModel, embedCode = _a.embedCode, state = _a.state;
             return (widget_1.tsx("div", { class: CSS.shareModal.shareIframe.iframeInputContainer },
-                widget_1.tsx("calcite-button", { bind: this, onclick: this._copyIframeInput, onkeydown: this._copyIframeInput },
+                widget_1.tsx("calcite-button", { bind: this, onclick: this._copyIframeInput, onkeydown: this._copyIframeInput, label: i18n.clipboard },
                     widget_1.tsx("calcite-icon", { icon: "copy" })),
                 state === "ready" ? (widget_1.tsx("input", { class: CSS.shareModal.shareIframe.iframeInput, type: "text", tabindex: 0, value: embedCode, bind: this, afterCreate: widget_1.storeNode, "data-node-ref": "_iframeInputNode", readOnly: true })) : (widget_1.tsx("div", { class: CSS.shareModal.main.mainUrl.linkGenerating }, i18n.generateLink))));
         };
@@ -308,20 +310,16 @@ define(["require", "exports", "dojo/i18n!./Share/nls/resources", "esri/core/watc
             decorators_1.property()
         ], Share.prototype, "view", void 0);
         __decorate([
-            decorators_1.aliasOf("viewModel.shareModalOpened"),
-            widget_1.renderable()
+            decorators_1.aliasOf("viewModel.shareModalOpened")
         ], Share.prototype, "shareModalOpened", void 0);
         __decorate([
-            decorators_1.aliasOf("viewModel.shareItems"),
-            widget_1.renderable()
+            decorators_1.aliasOf("viewModel.shareItems")
         ], Share.prototype, "shareItems", void 0);
         __decorate([
-            decorators_1.aliasOf("viewModel.shareFeatures"),
-            widget_1.renderable()
+            decorators_1.aliasOf("viewModel.shareFeatures")
         ], Share.prototype, "shareFeatures", void 0);
         __decorate([
-            decorators_1.aliasOf("viewModel.shareUrl"),
-            widget_1.renderable()
+            decorators_1.aliasOf("viewModel.shareUrl")
         ], Share.prototype, "shareUrl", void 0);
         __decorate([
             decorators_1.property()
@@ -333,11 +331,6 @@ define(["require", "exports", "dojo/i18n!./Share/nls/resources", "esri/core/watc
             decorators_1.property()
         ], Share.prototype, "theme", void 0);
         __decorate([
-            widget_1.renderable([
-                "viewModel.state",
-                "viewModel.embedCode",
-                "viewModel.shareFeatures"
-            ]),
             decorators_1.property({
                 type: ShareViewModel
             })
