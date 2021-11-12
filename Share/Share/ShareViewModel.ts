@@ -224,38 +224,7 @@ class ShareViewModel extends Accessor {
       y,
       spatialReference
     });
-    // Use pointToConvert to project point. Once projected, pass point to generate the share URL parameters
-    const point = await this._processPoint(centerPoint);
-    return this._generateShareUrlParams(point);
-  }
-
-  private async _processPoint(point: Point): Promise<__esri.Point> {
-    const { isWGS84, isWebMercator } = point.spatialReference;
-    // If spatial reference is WGS84 or Web Mercator, use longitude/latitude values to generate the share URL parameters
-    if (isWGS84 || isWebMercator) {
-      return point;
-    }
-    // Check if client side projection is not supported
-    if (!projection.isSupported()) {
-      const point = new Point({
-        x: null,
-        y: null
-      });
-      return point;
-    }
-    const outputSpatialReference = new SpatialReference({
-      wkid: 4326
-    });
-    this._projecting = true;
-    this.notifyChange("state");
-    await projection.load();
-    const projectedPoint = projection.project(
-      point,
-      outputSpatialReference
-    ) as __esri.Point;
-    this._projecting = false;
-    this.notifyChange("state");
-    return projectedPoint;
+    return this._generateShareUrlParams(centerPoint);
   }
 
   private _generateShareUrlParams(point: Point): string {

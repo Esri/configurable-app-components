@@ -2,10 +2,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -53,7 +55,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define(["require", "exports", "esri/core/Accessor", "esri/core/Collection", "esri/core/accessorSupport/decorators", "esri/geometry/Point", "esri/request", "./ShareItem", "./ShareFeatures", "esri/geometry/projection", "esri/geometry/SpatialReference"], function (require, exports, Accessor, Collection, decorators_1, Point, esriRequest, ShareItem, ShareFeatures, projection, SpatialReference) {
+define(["require", "exports", "esri/core/Accessor", "esri/core/Collection", "esri/core/accessorSupport/decorators", "esri/geometry/Point", "esri/request", "./ShareItem", "./ShareFeatures"], function (require, exports, Accessor, Collection, decorators_1, Point, esriRequest, ShareItem, ShareFeatures) {
     "use strict";
     //----------------------------------
     //
@@ -222,62 +224,21 @@ define(["require", "exports", "esri/core/Accessor", "esri/core/Collection", "esr
         //----------------------------------
         ShareViewModel.prototype._generateShareUrl = function () {
             return __awaiter(this, void 0, void 0, function () {
-                var href, _a, x, y, spatialReference, centerPoint, point;
+                var href, _a, x, y, spatialReference, centerPoint;
                 return __generator(this, function (_b) {
-                    switch (_b.label) {
-                        case 0:
-                            href = window.location.href;
-                            // If view is not ready
-                            if (!this.get("view.ready")) {
-                                return [2 /*return*/, href];
-                            }
-                            _a = this.view.center, x = _a.x, y = _a.y;
-                            spatialReference = this.view.spatialReference;
-                            centerPoint = new Point({
-                                x: x,
-                                y: y,
-                                spatialReference: spatialReference
-                            });
-                            return [4 /*yield*/, this._processPoint(centerPoint)];
-                        case 1:
-                            point = _b.sent();
-                            return [2 /*return*/, this._generateShareUrlParams(point)];
+                    href = window.location.href;
+                    // If view is not ready
+                    if (!this.get("view.ready")) {
+                        return [2 /*return*/, href];
                     }
-                });
-            });
-        };
-        ShareViewModel.prototype._processPoint = function (point) {
-            return __awaiter(this, void 0, void 0, function () {
-                var _a, isWGS84, isWebMercator, point_1, outputSpatialReference, projectedPoint;
-                return __generator(this, function (_b) {
-                    switch (_b.label) {
-                        case 0:
-                            _a = point.spatialReference, isWGS84 = _a.isWGS84, isWebMercator = _a.isWebMercator;
-                            // If spatial reference is WGS84 or Web Mercator, use longitude/latitude values to generate the share URL parameters
-                            if (isWGS84 || isWebMercator) {
-                                return [2 /*return*/, point];
-                            }
-                            // Check if client side projection is not supported
-                            if (!projection.isSupported()) {
-                                point_1 = new Point({
-                                    x: null,
-                                    y: null
-                                });
-                                return [2 /*return*/, point_1];
-                            }
-                            outputSpatialReference = new SpatialReference({
-                                wkid: 4326
-                            });
-                            this._projecting = true;
-                            this.notifyChange("state");
-                            return [4 /*yield*/, projection.load()];
-                        case 1:
-                            _b.sent();
-                            projectedPoint = projection.project(point, outputSpatialReference);
-                            this._projecting = false;
-                            this.notifyChange("state");
-                            return [2 /*return*/, projectedPoint];
-                    }
+                    _a = this.view.center, x = _a.x, y = _a.y;
+                    spatialReference = this.view.spatialReference;
+                    centerPoint = new Point({
+                        x: x,
+                        y: y,
+                        spatialReference: spatialReference
+                    });
+                    return [2 /*return*/, this._generateShareUrlParams(centerPoint)];
                 });
             });
         };

@@ -33,7 +33,6 @@ import Widget = require("esri/widgets/Widget");
 //esri.widgets.support
 import {
   accessibleHandler,
-  renderable,
   tsx,
   storeNode
 } from "esri/widgets/support/widget";
@@ -113,19 +112,15 @@ class Share extends Widget {
   view: MapView | SceneView = null;
 
   @aliasOf("viewModel.shareModalOpened")
-  @renderable()
   shareModalOpened: boolean = null;
 
   @aliasOf("viewModel.shareItems")
-  @renderable()
   shareItems: Collection<ShareItem> = null;
 
   @aliasOf("viewModel.shareFeatures")
-  @renderable()
   shareFeatures: ShareFeatures = null;
 
   @aliasOf("viewModel.shareUrl")
-  @renderable()
   shareUrl: string = null;
 
   @property()
@@ -136,11 +131,6 @@ class Share extends Widget {
   @property()
   theme = "light";
 
-  @renderable([
-    "viewModel.state",
-    "viewModel.embedCode",
-    "viewModel.shareFeatures"
-  ])
   @property({
     type: ShareViewModel
   })
@@ -381,6 +371,7 @@ class Share extends Widget {
                   bind={this}
                   onclick={this._copyUrlInput}
                   onkeydown={this._copyUrlInput}
+                  label={i18n.clipboard}
                 >
                   <calcite-icon icon="copy" />
                 </calcite-button>
@@ -427,6 +418,7 @@ class Share extends Widget {
           bind={this}
           onclick={this._copyIframeInput}
           onkeydown={this._copyIframeInput}
+          label={i18n.clipboard}
         >
           <calcite-icon icon="copy" />
         </calcite-button>
