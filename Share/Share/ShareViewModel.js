@@ -55,7 +55,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define(["require", "exports", "esri/core/Accessor", "esri/core/Collection", "esri/core/accessorSupport/decorators", "esri/geometry/Point", "esri/request", "./ShareItem", "./ShareFeatures"], function (require, exports, Accessor, Collection, decorators_1, Point, esriRequest, ShareItem, ShareFeatures) {
+define(["require", "exports", "esri/core/Accessor", "esri/core/Collection", "esri/core/accessorSupport/decorators", "esri/geometry/Point", "esri/request", "./ShareItem", "./ShareFeatures", "esri/geometry/projection", "esri/geometry/SpatialReference"], function (require, exports, Accessor, Collection, decorators_1, Point, esriRequest, ShareItem, ShareFeatures, projection, SpatialReference) {
     "use strict";
     //----------------------------------
     //
@@ -224,21 +224,54 @@ define(["require", "exports", "esri/core/Accessor", "esri/core/Collection", "esr
         //----------------------------------
         ShareViewModel.prototype._generateShareUrl = function () {
             return __awaiter(this, void 0, void 0, function () {
-                var href, _a, x, y, spatialReference, centerPoint;
+                var href, _a, x, y, spatialReference, centerPoint, point;
                 return __generator(this, function (_b) {
-                    href = window.location.href;
-                    // If view is not ready
-                    if (!this.get("view.ready")) {
-                        return [2 /*return*/, href];
+                    switch (_b.label) {
+                        case 0:
+                            href = window.location.href;
+                            // If view is not ready
+                            if (!this.get("view.ready")) {
+                                return [2 /*return*/, href];
+                            }
+                            _a = this.view.center, x = _a.x, y = _a.y;
+                            spatialReference = this.view.spatialReference;
+                            centerPoint = new Point({
+                                x: x,
+                                y: y,
+                                spatialReference: spatialReference
+                            });
+                            return [4 /*yield*/, this._processPoint(centerPoint)];
+                        case 1:
+                            point = _b.sent();
+                            return [2 /*return*/, this._generateShareUrlParams(point)];
                     }
-                    _a = this.view.center, x = _a.x, y = _a.y;
-                    spatialReference = this.view.spatialReference;
-                    centerPoint = new Point({
-                        x: x,
-                        y: y,
-                        spatialReference: spatialReference
-                    });
-                    return [2 /*return*/, this._generateShareUrlParams(centerPoint)];
+                });
+            });
+        };
+        ShareViewModel.prototype._processPoint = function (point) {
+            return __awaiter(this, void 0, void 0, function () {
+                var _a, isWGS84, isWebMercator, outputSpatialReference, projectedPoint;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            _a = point.spatialReference, isWGS84 = _a.isWGS84, isWebMercator = _a.isWebMercator;
+                            // If spatial reference is WGS84 or Web Mercator, use longitude/latitude values to generate the share URL parameters
+                            if (isWGS84 || isWebMercator) {
+                                return [2 /*return*/, point];
+                            }
+                            outputSpatialReference = new SpatialReference({
+                                wkid: 4326
+                            });
+                            this._projecting = true;
+                            this.notifyChange("state");
+                            return [4 /*yield*/, projection.load()];
+                        case 1:
+                            _b.sent();
+                            projectedPoint = projection.project(point, outputSpatialReference);
+                            this._projecting = false;
+                            this.notifyChange("state");
+                            return [2 /*return*/, projectedPoint];
+                    }
                 });
             });
         };
