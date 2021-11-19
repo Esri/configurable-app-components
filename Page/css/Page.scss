@@ -124,3 +124,20 @@
     }
   }
 }
+
+@media (prefers-reduced-motion) {
+  .esri-page__scroll-container {
+    button:hover {
+      calcite-icon {
+        transition: none;
+        transform: none;
+      }
+    }
+    button:not(:hover) {
+      calcite-icon {
+        transition: none;
+        transform: none;
+      }
+    }
+  }
+}

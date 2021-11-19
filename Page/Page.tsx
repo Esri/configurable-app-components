@@ -71,7 +71,7 @@ class Page extends Widget {
     document.body.style.overflow = "";
     document.body.style.position = "";
     document.body.style.top = "0";
-    document.body.style.transition = "";
+    document.body.style.transition = "none";
   }
 
   render() {
@@ -166,7 +166,12 @@ class Page extends Widget {
     document.body.style.overflow = "hidden";
     document.body.style.position = "relative";
     document.body.style.top = "0";
-    document.body.style.transition = "top 0.5s ease 0s";
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (mediaQuery.matches) {
+      document.body.style.transition = "";
+    } else {
+      document.body.style.transition = "top 0.5s ease 0s";
+    }
   }
 
   private _handleShowScrollTop(): void {
