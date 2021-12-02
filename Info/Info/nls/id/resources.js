@@ -1,6 +1,6 @@
 define({
-  "next": "Berikutnya",
+  "next": "Selanjutnya",
   "back": "kembali",
   "close": "Tutup",
-  "widgetLabel": "Aktifkan/Nonaktifkan Info"
+  "widgetLabel": "Info"
 });

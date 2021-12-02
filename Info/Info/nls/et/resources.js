@@ -1,6 +1,6 @@
 define({
-  "next": "Järgmine",
+  "next": "Edasi",
   "back": "tagasi",
   "close": "Sule",
-  "widgetLabel": "Lülita teave sisse/välja"
+  "widgetLabel": "Teave"
 });
