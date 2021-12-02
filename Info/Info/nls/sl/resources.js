@@ -1,6 +1,6 @@
 define({
-  "next": "Naslednji",
+  "next": "Naprej",
   "back": "nazaj",
   "close": "Zapri",
-  "widgetLabel": "Preklopi informacije"
+  "widgetLabel": "Informacije"
 });

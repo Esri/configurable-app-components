@@ -1,6 +1,6 @@
 define({
-  "next": "Nākošais",
+  "next": "Tālāk",
   "back": "atpakaļ",
   "close": "Aizvērt",
-  "widgetLabel": "Pārslēgt informāciju"
+  "widgetLabel": "Informācija"
 });

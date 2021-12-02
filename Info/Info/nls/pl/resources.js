@@ -1,6 +1,6 @@
 define({
-  "next": "Następny",
+  "next": "Dalej",
   "back": "wstecz",
   "close": "Zamknij",
-  "widgetLabel": "Przełącz informacje"
+  "widgetLabel": "Informacje"
 });

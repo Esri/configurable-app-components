@@ -18,6 +18,7 @@ define({
     vertical: "Vertical"
   }),
   "ar": 1,
+  "bg": 1,
   "bs": 1,
   "ca": 1,
   "cs": 1,

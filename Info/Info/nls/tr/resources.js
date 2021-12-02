@@ -1,6 +1,6 @@
 define({
-  "next": "Sonraki",
+  "next": "İleri",
   "back": "geri",
   "close": "Kapat",
-  "widgetLabel": "Bilgiyi Aç/Kapat"
+  "widgetLabel": "Bilgi"
 });
