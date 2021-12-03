@@ -147,7 +147,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         FilterList.prototype._renderFilterAccordionItem = function (layerExpression) {
             var filter = this._renderFilter(layerExpression);
             var operator = layerExpression.operator;
-            var operatorTranslation = operator.trim() === "OR" ? "orOperator" : "andOperator";
+            var operatorTranslation = (operator === null || operator === void 0 ? void 0 : operator.trim()) === "OR" ? "orOperator" : "andOperator";
             return (widget_1.tsx("calcite-accordion-item", { key: layerExpression.id, bind: this, "item-title": layerExpression.title, "item-subtitle": i18n === null || i18n === void 0 ? void 0 : i18n[operatorTranslation], "icon-position": "start", afterCreate: this.viewModel.initLayerHeader }, filter));
         };
         FilterList.prototype._renderFilter = function (layerExpression) {
@@ -201,7 +201,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             if (this.layerExpressions && this.layerExpressions.length) {
                 if (this.layerExpressions.length === 1) {
                     var operator = this.layerExpressions[0].operator;
-                    var operatorTranslation = operator.trim() === "OR" ? "orOperator" : "andOperator";
+                    var operatorTranslation = (operator === null || operator === void 0 ? void 0 : operator.trim()) === "OR" ? "orOperator" : "andOperator";
                     this._isSingleFilterConfig = true;
                     return (widget_1.tsx("div", null,
                         widget_1.tsx("p", { class: CSS.operatorDesc }, i18n === null || i18n === void 0 ? void 0 : i18n[operatorTranslation]),

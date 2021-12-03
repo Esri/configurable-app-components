@@ -253,7 +253,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                 return __generator(this, function (_c) {
                     switch (_c.label) {
                         case 0:
-                            layer = this.map.layers.find(function (_a) {
+                            layer = this.map.allLayers.find(function (_a) {
                                 var id = _a.id;
                                 return id === layerId;
                             });
@@ -290,7 +290,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                 return __generator(this, function (_c) {
                     switch (_c.label) {
                         case 0:
-                            layer = this.map.layers.find(function (_a) {
+                            layer = this.map.allLayers.find(function (_a) {
                                 var id = _a.id;
                                 return id === layerId;
                             });

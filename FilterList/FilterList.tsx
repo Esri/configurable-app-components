@@ -174,7 +174,7 @@ class FilterList extends Widget {
   private _renderFilterAccordionItem(layerExpression: LayerExpression): any {
     const filter = this._renderFilter(layerExpression);
     const { operator } = layerExpression;
-    const operatorTranslation = operator.trim() === "OR" ? "orOperator" : "andOperator";
+    const operatorTranslation = operator?.trim() === "OR" ? "orOperator" : "andOperator";
     return (
       <calcite-accordion-item
         key={layerExpression.id}
@@ -345,7 +345,7 @@ class FilterList extends Widget {
     if (this.layerExpressions && this.layerExpressions.length) {
       if (this.layerExpressions.length === 1) {
         const { operator } = this.layerExpressions[0];
-        const operatorTranslation = operator.trim() === "OR" ? "orOperator" : "andOperator";
+        const operatorTranslation = operator?.trim() === "OR" ? "orOperator" : "andOperator";
         this._isSingleFilterConfig = true;
         return (
           <div>

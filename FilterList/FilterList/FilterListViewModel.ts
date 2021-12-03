@@ -235,7 +235,7 @@ class FilterListViewModel extends Accessor {
   }
 
   async getFeatureAttributes(layerId: string, field: string): Promise<string[]> {
-    const layer = this.map.layers.find(({ id }) => id === layerId) as __esri.FeatureLayer;
+    const layer = this.map.allLayers.find(({ id }) => id === layerId) as __esri.FeatureLayer;
     if (layer && layer.type === "feature") {
       const query = layer.createQuery();
       if (layer?.capabilities?.query?.supportsCacheHint) {
@@ -261,7 +261,7 @@ class FilterListViewModel extends Accessor {
   }
 
   async calculateMinMaxStatistics(layerId: string, field: string): Promise<__esri.Graphic[]> {
-    const layer = this.map.layers.find(({ id }) => id === layerId) as __esri.FeatureLayer;
+    const layer = this.map.allLayers.find(({ id }) => id === layerId) as __esri.FeatureLayer;
     if (layer && layer.type === "feature") {
       const query = layer.createQuery();
       query.where = layer.definitionExpression;

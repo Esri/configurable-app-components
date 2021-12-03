@@ -5,9 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.5.5
+- FilterList bug fixes
+  1. Optional chaining if operator doesn't exist (older apps)
+  2. Use allLayers instead of layers
+
 ## 1.5.3
 - Page
-  1. Prefers-reduced-motion: Remove animation from 'Explore' button 
+  1. Prefers-reduced-motion: Remove animation from 'Explore' button
   2. Add support for 'bg' locale
 
 ## 1.5.2
