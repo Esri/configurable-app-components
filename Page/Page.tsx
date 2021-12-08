@@ -1,8 +1,7 @@
 import { messageBundle, tsx } from "esri/widgets/support/widget";
 import { subclass, property } from "esri/core/accessorSupport/decorators";
 import Widget = require("esri/widgets/Widget");
-import { whenTrueOnce } from "esri/core/watchUtils";
-
+import { on, whenOnce, whenTrueOnce } from "esri/core/watchUtils";
 const base = "esri-page";
 
 const CSS = {
@@ -18,6 +17,7 @@ const CSS = {
 interface BackgroundImageStyles {
   backgroundImage: string;
   backgroundSize: string;
+  backgroundColor: string;
 }
 
 @subclass("Page")
@@ -25,6 +25,8 @@ class Page extends Widget {
   constructor(props: any) {
     super(props);
   }
+
+  private _token: string = null;
 
   @property()
   showScrollTop = true;
@@ -51,6 +53,12 @@ class Page extends Widget {
   isVisible = true;
 
   @property()
+  buttonTextColor = null;
+
+  @property()
+  portal: __esri.Portal = null;
+
+  @property()
   @messageBundle(
     "node_modules/@esri/configurable-app-components/Page/t9n/resources"
   )
@@ -63,6 +71,12 @@ class Page extends Widget {
     this.own([
       whenTrueOnce(this, "showScrollTop", () => {
         this._handleShowScrollTop();
+      }),
+      whenOnce(this, "portal.credential.token", () => {
+        this._handleBackgroundImgToken();
+        this.own([on(this.portal, "credential", "token-change", () => {
+          this._handleBackgroundImgToken();
+        })]);
       })
     ]);
   }
@@ -77,18 +91,18 @@ class Page extends Widget {
   render() {
     const textContainer = this._renderTextContainer();
     const scrollContainer = this._renderScrollContainer();
+    const styles = this.background?.backgroundType === "image"
+    ? this._getBackgroundStyles()
+    : {
+      backgroundColor: this.background?.backgroundColor
+        ? this.background?.backgroundColor
+        : "#0079c1",
+      backgroundImage: "unset"
+    };
     return (
       <div
         class={CSS.base}
-        styles={
-          this.background?.backgroundType === "image"
-            ? this._getBackgroundStyles()
-            : {
-                backgroundColor: this.background?.backgroundColor
-                  ? this.background?.backgroundColor
-                  : "#0079c1"
-              }
-        }
+        styles={styles}
       >
         {textContainer}
         {scrollContainer}
@@ -96,25 +110,14 @@ class Page extends Widget {
     );
   }
 
-  private _getBackgroundStyles(): BackgroundImageStyles {
-    const { backgroundImage } = this.background;
-    const backgroundImageVal = backgroundImage?.url
-      ? `url('${backgroundImage?.url}')`
-      : "none";
-    return {
-      backgroundImage: backgroundImageVal,
-      backgroundSize: "cover"
-    };
-  }
-
   private _renderTextContainer() {
     const { title, titleColor, subtitle, subtitleColor } = this;
     return (
       <div class={CSS.textContainer}>
-        <h1 class={CSS.title} style={{ color: titleColor }}>
+        <h1 class={CSS.title} style={`color:${titleColor}`}>
           {title}
         </h1>
-        <span class={CSS.subtitle} style={{ color: subtitleColor }}>
+        <span class={CSS.subtitle} style={`color:${subtitleColor}`}>
           {subtitle}
         </span>
       </div>
@@ -128,9 +131,10 @@ class Page extends Widget {
           onclick={this._handleScroll.bind(this)}
           aria-label={this.buttonText}
           title={this.buttonText}
+          style={`color:${this.buttonTextColor}`}
         >
           <span class={CSS.scrollText}>{this.buttonText}</span>
-          <calcite-icon icon="chevron-down" scale="l" />
+          <calcite-icon icon="chevron-down" style={`color:${this.buttonTextColor}`} scale="l" />
         </button>
       </div>
     );
@@ -196,6 +200,27 @@ class Page extends Widget {
   private _handleScroll(): void {
     document.body.style.top = "-100%";
     this.set("isVisible", false);
+  }
+
+  private _handleBackgroundImgToken(): void {
+    this._token = this.portal.get(
+      "credential.token"
+    ) as string;
+    this.scheduleRender();
+  }
+
+  private _getBackgroundStyles(): BackgroundImageStyles {
+    const { backgroundImage } = this.background;
+    const backgroundImageVal = backgroundImage?.url
+      ? this._token
+        ? `url('${backgroundImage?.url}?token=${this._token}')`
+        : `url('${backgroundImage?.url}')`
+      : "none";
+    return {
+      backgroundImage: backgroundImageVal,
+      backgroundSize: "cover",
+      backgroundColor: backgroundImage ? "unset" : this.background?.backgroundColor ? this.background.backgroundColor : "#0079c1"
+    };
   }
 }
 

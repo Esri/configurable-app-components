@@ -35,6 +35,7 @@ define(["require", "exports", "esri/widgets/support/widget", "esri/core/accessor
         __extends(Page, _super);
         function Page(props) {
             var _this = _super.call(this, props) || this;
+            _this._token = null;
             _this.showScrollTop = true;
             _this.title = null;
             _this.titleColor = null;
@@ -43,6 +44,8 @@ define(["require", "exports", "esri/widgets/support/widget", "esri/core/accessor
             _this.background = null;
             _this.buttonText = null;
             _this.isVisible = true;
+            _this.buttonTextColor = null;
+            _this.portal = null;
             _this.messages = null;
             return _this;
         }
@@ -54,6 +57,12 @@ define(["require", "exports", "esri/widgets/support/widget", "esri/core/accessor
             this.own([
                 watchUtils_1.whenTrueOnce(this, "showScrollTop", function () {
                     _this._handleShowScrollTop();
+                }),
+                watchUtils_1.whenOnce(this, "portal.credential.token", function () {
+                    _this._handleBackgroundImgToken();
+                    _this.own([watchUtils_1.on(_this.portal, "credential", "token-change", function () {
+                            _this._handleBackgroundImgToken();
+                        })]);
                 })
             ]);
         };
@@ -67,37 +76,29 @@ define(["require", "exports", "esri/widgets/support/widget", "esri/core/accessor
             var _a, _b, _c;
             var textContainer = this._renderTextContainer();
             var scrollContainer = this._renderScrollContainer();
-            return (widget_1.tsx("div", { class: CSS.base, styles: ((_a = this.background) === null || _a === void 0 ? void 0 : _a.backgroundType) === "image"
-                    ? this._getBackgroundStyles()
-                    : {
-                        backgroundColor: ((_b = this.background) === null || _b === void 0 ? void 0 : _b.backgroundColor)
-                            ? (_c = this.background) === null || _c === void 0 ? void 0 : _c.backgroundColor
-                            : "#0079c1"
-                    } },
+            var styles = ((_a = this.background) === null || _a === void 0 ? void 0 : _a.backgroundType) === "image"
+                ? this._getBackgroundStyles()
+                : {
+                    backgroundColor: ((_b = this.background) === null || _b === void 0 ? void 0 : _b.backgroundColor)
+                        ? (_c = this.background) === null || _c === void 0 ? void 0 : _c.backgroundColor
+                        : "#0079c1",
+                    backgroundImage: "unset"
+                };
+            return (widget_1.tsx("div", { class: CSS.base, styles: styles },
                 textContainer,
                 scrollContainer));
-        };
-        Page.prototype._getBackgroundStyles = function () {
-            var backgroundImage = this.background.backgroundImage;
-            var backgroundImageVal = (backgroundImage === null || backgroundImage === void 0 ? void 0 : backgroundImage.url)
-                ? "url('" + (backgroundImage === null || backgroundImage === void 0 ? void 0 : backgroundImage.url) + "')"
-                : "none";
-            return {
-                backgroundImage: backgroundImageVal,
-                backgroundSize: "cover"
-            };
         };
         Page.prototype._renderTextContainer = function () {
             var _a = this, title = _a.title, titleColor = _a.titleColor, subtitle = _a.subtitle, subtitleColor = _a.subtitleColor;
             return (widget_1.tsx("div", { class: CSS.textContainer },
-                widget_1.tsx("h1", { class: CSS.title, style: { color: titleColor } }, title),
-                widget_1.tsx("span", { class: CSS.subtitle, style: { color: subtitleColor } }, subtitle)));
+                widget_1.tsx("h1", { class: CSS.title, style: "color:" + titleColor }, title),
+                widget_1.tsx("span", { class: CSS.subtitle, style: "color:" + subtitleColor }, subtitle)));
         };
         Page.prototype._renderScrollContainer = function () {
             return (widget_1.tsx("div", { class: CSS.scrollContainer },
-                widget_1.tsx("button", { onclick: this._handleScroll.bind(this), "aria-label": this.buttonText, title: this.buttonText },
+                widget_1.tsx("button", { onclick: this._handleScroll.bind(this), "aria-label": this.buttonText, title: this.buttonText, style: "color:" + this.buttonTextColor },
                     widget_1.tsx("span", { class: CSS.scrollText }, this.buttonText),
-                    widget_1.tsx("calcite-icon", { icon: "chevron-down", scale: "l" }))));
+                    widget_1.tsx("calcite-icon", { icon: "chevron-down", style: "color:" + this.buttonTextColor, scale: "l" }))));
         };
         Page.prototype._addPageToBody = function () {
             document.body.insertBefore(this.container, document.body.childNodes[0]);
@@ -154,6 +155,24 @@ define(["require", "exports", "esri/widgets/support/widget", "esri/core/accessor
             document.body.style.top = "-100%";
             this.set("isVisible", false);
         };
+        Page.prototype._handleBackgroundImgToken = function () {
+            this._token = this.portal.get("credential.token");
+            this.scheduleRender();
+        };
+        Page.prototype._getBackgroundStyles = function () {
+            var _a;
+            var backgroundImage = this.background.backgroundImage;
+            var backgroundImageVal = (backgroundImage === null || backgroundImage === void 0 ? void 0 : backgroundImage.url)
+                ? this._token
+                    ? "url('" + (backgroundImage === null || backgroundImage === void 0 ? void 0 : backgroundImage.url) + "?token=" + this._token + "')"
+                    : "url('" + (backgroundImage === null || backgroundImage === void 0 ? void 0 : backgroundImage.url) + "')"
+                : "none";
+            return {
+                backgroundImage: backgroundImageVal,
+                backgroundSize: "cover",
+                backgroundColor: backgroundImage ? "unset" : ((_a = this.background) === null || _a === void 0 ? void 0 : _a.backgroundColor) ? this.background.backgroundColor : "#0079c1"
+            };
+        };
         __decorate([
             decorators_1.property()
         ], Page.prototype, "showScrollTop", void 0);
@@ -178,6 +197,12 @@ define(["require", "exports", "esri/widgets/support/widget", "esri/core/accessor
         __decorate([
             decorators_1.property()
         ], Page.prototype, "isVisible", void 0);
+        __decorate([
+            decorators_1.property()
+        ], Page.prototype, "buttonTextColor", void 0);
+        __decorate([
+            decorators_1.property()
+        ], Page.prototype, "portal", void 0);
         __decorate([
             decorators_1.property(),
             widget_1.messageBundle("node_modules/@esri/configurable-app-components/Page/t9n/resources")
