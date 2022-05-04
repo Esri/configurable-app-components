@@ -320,7 +320,8 @@ class FilterList extends Widget {
 
   private _renderCombobox(layerId: string, expression: Expression) {
     const comboItems = expression?.selectFields?.map((field, index) => {
-      return <calcite-combobox-item key={`${field}-${index}`} value={field} text-label={field}></calcite-combobox-item>;
+      const name = expression.type === "coded-value" ? expression.codedValues[field] : field;
+      return <calcite-combobox-item key={`${name}-${index}`} value={field} text-label={name}></calcite-combobox-item>;
     });
     return (
       <label key="combo-select" class={CSS.filterItem.userInput}>
@@ -363,9 +364,9 @@ class FilterList extends Widget {
 
   private _initInput(layerId: string, expression: Expression) {
     const { type } = expression;
-    if (type === "string") {
+    if (type === "string" || type == "coded-value") {
       return this._renderCombobox(layerId, expression);
-    } else if (type === "number") {
+    } else if (type === "number" || type == "range") {
       return this._renderNumberSlider(layerId, expression);
     } else if (type === "date") {
       return this._renderDatePicker(layerId, expression);
@@ -416,32 +417,51 @@ class FilterList extends Widget {
     });
   }
 
-  async setInitExpression(id: string, expression: Expression): Promise<void> {
+  setInitExpression(id: string, expression: Expression): void {
     if (expression.field && expression.type) {
-      const { field, type } = expression;
-      if (type === "string") {
-        expression.selectFields = await this.viewModel.getFeatureAttributes(id, field);
-      } else if (type === "number") {
-        if ((!expression?.min && expression?.min !== 0) || (!expression?.max && expression?.max !== 0)) {
+      const fl = this.map.findLayerById(id) as __esri.FeatureLayer;
+      fl?.load().then(async () => {
+        const layerField = fl.fields?.find(({ name }) => name === expression.field);
+        expression.type =
+          layerField.domain?.type === "coded-value" || layerField.domain?.type === "range"
+            ? layerField.domain?.type
+            : expression.type;
+        const { field, type } = expression;
+        if (type === "string") {
+          expression.selectFields = await this.viewModel.getFeatureAttributes(id, field);
+        } else if (type === "number") {
+          if ((!expression?.min && expression?.min !== 0) || (!expression?.max && expression?.max !== 0)) {
+            try {
+              const graphic = await this.viewModel.calculateMinMaxStatistics(id, field);
+              expression.min = graphic?.[0]?.attributes[`min${field}`];
+              expression.max = graphic?.[0]?.attributes[`max${field}`];
+            } catch {
+            } finally {
+              this.scheduleRender();
+            }
+          }
+        } else if (type === "date") {
           try {
             const graphic = await this.viewModel.calculateMinMaxStatistics(id, field);
-            expression.min = graphic?.[0]?.attributes[`min${field}`];
-            expression.max = graphic?.[0]?.attributes[`max${field}`];
+            expression.min = this.viewModel.convertToDate(graphic?.[0]?.attributes[`min${field}`]);
+            expression.max = this.viewModel.convertToDate(graphic?.[0]?.attributes[`max${field}`]);
           } catch {
           } finally {
             this.scheduleRender();
           }
+        } else if (type === "coded-value") {
+          const selectFields: any[] = [];
+          expression.codedValues = {};
+          (layerField.domain as __esri.CodedValueDomain)?.codedValues?.forEach((cv) => {
+            selectFields.push(cv.code);
+            expression.codedValues[cv.code] = cv.name;
+          });
+          expression.selectFields = selectFields;
+        } else if (type === "range") {
+          expression.min = (layerField.domain as __esri.RangeDomain)?.minValue;
+          expression.max = (layerField.domain as __esri.RangeDomain)?.maxValue;
         }
-      } else if (type === "date") {
-        try {
-          const graphic = await this.viewModel.calculateMinMaxStatistics(id, field);
-          expression.min = this.viewModel.convertToDate(graphic?.[0]?.attributes[`min${field}`]);
-          expression.max = this.viewModel.convertToDate(graphic?.[0]?.attributes[`max${field}`]);
-        } catch {
-        } finally {
-          this.scheduleRender();
-        }
-      }
+      });
     }
   }
 }
