@@ -73,6 +73,18 @@ class FilterListViewModel extends Accessor {
   //
   // ----------------------------------
 
+  setInitExpression(id: string, expression: Expression, scheduleRender: () => void): void {
+    if (expression.field && expression.type) {
+      const fl = this.map.findLayerById(id) as __esri.FeatureLayer;
+      fl?.load().then(() => {
+        const layerField = fl.fields?.find(({ name }) => name === expression.field);
+        const domainType = layerField.domain?.type;
+        expression.type = domainType === "coded-value" || domainType === "range" ? domainType : expression.type;
+        this._updateExpression(id, expression, layerField, scheduleRender)
+      });
+    }
+  }
+
   initLayerHeader(accordionItem: HTMLCalciteAccordionItemElement) {
     const style = document.createElement("style");
     if (this.theme === "dark") {
@@ -147,8 +159,8 @@ class FilterListViewModel extends Accessor {
   }
 
   handleDatePickerCreate(expression: Expression, layerId: string, datePicker: HTMLCalciteInputDatePickerElement): void {
-    datePicker.min = this.convertToDate(expression?.min);
-    datePicker.max = this.convertToDate(expression?.max);
+    datePicker.min = this._convertToDate(expression?.min);
+    datePicker.max = this._convertToDate(expression?.max);
     datePicker.addEventListener(
       "calciteDatePickerRangeChange",
       this.handleDatePickerRangeChange.bind(this, expression, layerId)
@@ -180,8 +192,8 @@ class FilterListViewModel extends Accessor {
 
   setExpressionDates(startDate: Date, endDate: Date, expression: Expression, layerId: string): void {
     const { expressions } = this.layers[layerId];
-    const start = startDate ? this.convertToDate(Math.floor(startDate.getTime()), true) : null;
-    const end = endDate ? this.convertToDate(Math.floor(endDate.getTime()), true) : null;
+    const start = startDate ? this._convertToDate(Math.floor(startDate.getTime()), true) : null;
+    const end = endDate ? this._convertToDate(Math.floor(endDate.getTime()), true) : null;
     const chevron = end && !start ? "<" : !end && start ? ">" : null;
 
     if (chevron) {
@@ -234,7 +246,31 @@ class FilterListViewModel extends Accessor {
     });
   }
 
-  async getFeatureAttributes(layerId: string, field: string): Promise<string[]> {
+  generateOutput(id: string): void {
+    const defExpressions = [];
+    if (!this.layers?.[id]?.expressions) {
+      return;
+    }
+    Object.values(this.layers[id].expressions)?.forEach(({ definitionExpression }) => {
+      if (definitionExpression) {
+        defExpressions.push(definitionExpression);
+      }
+    });
+    const newOutput = {
+      id,
+      definitionExpression: defExpressions.join(this.layers[id].operator)
+    };
+
+    this.set("output", newOutput);
+  }
+
+  // ----------------------------------
+  //
+  //  Private methods
+  //
+  // ----------------------------------
+
+  private async _getFeatureAttributes(layerId: string, field: string): Promise<string[]> {
     const layer = this.map.allLayers.find(({ id }) => id === layerId) as __esri.FeatureLayer;
     if (layer && layer.type === "feature") {
       const query = layer.createQuery();
@@ -260,7 +296,7 @@ class FilterListViewModel extends Accessor {
     return [];
   }
 
-  async calculateMinMaxStatistics(layerId: string, field: string): Promise<__esri.Graphic[]> {
+  private async _calculateMinMaxStatistics(layerId: string, field: string): Promise<__esri.Graphic[]> {
     const layer = this.map.allLayers.find(({ id }) => id === layerId) as __esri.FeatureLayer;
     if (layer && layer.type === "feature") {
       const query = layer.createQuery();
@@ -293,7 +329,7 @@ class FilterListViewModel extends Accessor {
     return [];
   }
 
-  convertToDate(date: string | number, includeTime: boolean = false): string {
+  private _convertToDate(date: string | number, includeTime: boolean = false): string {
     if (date) {
       const tmpDate = new Date(date);
       const formattedDate = `${tmpDate.getFullYear()}-${tmpDate.getMonth() + 1}-${tmpDate.getDate()}`;
@@ -306,30 +342,6 @@ class FilterListViewModel extends Accessor {
     }
     return null;
   }
-
-  generateOutput(id: string): void {
-    const defExpressions = [];
-    if (!this.layers?.[id]?.expressions) {
-      return;
-    }
-    Object.values(this.layers[id].expressions)?.forEach(({ definitionExpression }) => {
-      if (definitionExpression) {
-        defExpressions.push(definitionExpression);
-      }
-    });
-    const newOutput = {
-      id,
-      definitionExpression: defExpressions.join(this.layers[id].operator)
-    };
-
-    this.set("output", newOutput);
-  }
-
-  // ----------------------------------
-  //
-  //  Private methods
-  //
-  // ----------------------------------
 
   private _getExtent(extentSelector: boolean, extentSelectorConfig: ExtentSelector): __esri.Geometry {
     if (extentSelector && extentSelectorConfig) {
@@ -381,8 +393,51 @@ class FilterListViewModel extends Accessor {
           expression.checked = true;
         }
       }
-      this.generateOutput(layerId);
     }
+  }
+
+  private async _updateExpression(id: string, expression: Expression, layerField: __esri.Field, scheduleRender: () => void): Promise<void> {
+    const { field, type } = expression;
+    if (type === "string") {
+      expression.selectFields = await this._getFeatureAttributes(id, field);
+    } else if (type === "number") {
+      if ((!expression?.min && expression?.min !== 0) || (!expression?.max && expression?.max !== 0)) {
+        try {
+          const graphic = await this._calculateMinMaxStatistics(id, field);
+          const attributes = graphic?.[0]?.attributes;
+          expression.min = attributes[`min${field}`];
+          expression.max = attributes[`max${field}`];
+        } catch {
+        } finally {
+          scheduleRender();
+        }
+      }
+    } else if (type === "date") {
+      try {
+        const graphic = await this._calculateMinMaxStatistics(id, field);
+        const attributes = graphic?.[0]?.attributes;
+        expression.min = this._convertToDate(attributes[`min${field}`]);
+        expression.max = this._convertToDate(attributes[`max${field}`]);
+      } catch {
+      } finally {
+        scheduleRender();
+      }
+    } else if (type === "coded-value") {
+      const selectFields: any[] = [];
+      expression.codedValues = {};
+      const domain = layerField.domain as __esri.CodedValueDomain;
+      domain?.codedValues?.forEach((cv) => {
+        const { code, name } = cv;
+        selectFields.push(code);
+        expression.codedValues[code] = name;
+      });
+      expression.selectFields = selectFields;
+    } else if (type === "range") {
+      const domain = layerField.domain as __esri.RangeDomain;
+      expression.min = domain?.minValue;
+      expression.max = domain?.maxValue;
+    }
+    scheduleRender();
   }
 }
 

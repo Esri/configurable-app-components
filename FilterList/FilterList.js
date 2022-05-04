@@ -27,42 +27,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core/watchUtils", "esri/widgets/support/widget", "esri/widgets/Widget", "esri/intl", "dojo/i18n!./FilterList/nls/resources", "./FilterList/FilterListViewModel"], function (require, exports, decorators_1, watchUtils_1, widget_1, Widget, intl_1, i18n, FilterListViewModel) {
     "use strict";
     var CSS = {
@@ -112,7 +76,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                         });
                     });
                     _this.emit("filterListReset", resetLayers);
-                    _this.initExpressions();
+                    _this._initExpressions();
                     _this._reset = {
                         disabled: _this.layerExpressions && _this.layerExpressions.length ? false : true,
                         color: _this.layerExpressions && _this.layerExpressions.length ? "blue" : "dark"
@@ -244,7 +208,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             this._headerTitle.innerHTML = i18n.selectFilter;
             header.prepend(this._headerTitle);
         };
-        FilterList.prototype.initExpressions = function () {
+        FilterList.prototype._initExpressions = function () {
             var _this = this;
             var _a;
             (_a = this.layerExpressions) === null || _a === void 0 ? void 0 : _a.forEach(function (layerExpression) {
@@ -262,7 +226,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                             _a[expression.definitionExpressionId] = expression.definitionExpression,
                             _a);
                     }
-                    _this.setInitExpression(id, expression);
+                    _this.viewModel.setInitExpression(id, expression, function () { return _this.scheduleRender(); });
                 });
                 _this.layers[id] = {
                     expressions: tmpExp,
@@ -272,88 +236,6 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                     _this.viewModel.generateOutput(id);
                 }
             });
-        };
-        FilterList.prototype.setInitExpression = function (id, expression) {
-            var _this = this;
-            if (expression.field && expression.type) {
-                var fl_1 = this.map.findLayerById(id);
-                fl_1 === null || fl_1 === void 0 ? void 0 : fl_1.load().then(function () { return __awaiter(_this, void 0, void 0, function () {
-                    var layerField, field, type, _a, graphic, _b, graphic, _c, selectFields_1;
-                    var _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
-                    return __generator(this, function (_r) {
-                        switch (_r.label) {
-                            case 0:
-                                layerField = (_d = fl_1.fields) === null || _d === void 0 ? void 0 : _d.find(function (_a) {
-                                    var name = _a.name;
-                                    return name === expression.field;
-                                });
-                                expression.type =
-                                    ((_e = layerField.domain) === null || _e === void 0 ? void 0 : _e.type) === "coded-value" || ((_f = layerField.domain) === null || _f === void 0 ? void 0 : _f.type) === "range"
-                                        ? (_g = layerField.domain) === null || _g === void 0 ? void 0 : _g.type : expression.type;
-                                field = expression.field, type = expression.type;
-                                if (!(type === "string")) return [3 /*break*/, 2];
-                                _a = expression;
-                                return [4 /*yield*/, this.viewModel.getFeatureAttributes(id, field)];
-                            case 1:
-                                _a.selectFields = _r.sent();
-                                return [3 /*break*/, 15];
-                            case 2:
-                                if (!(type === "number")) return [3 /*break*/, 8];
-                                if (!((!(expression === null || expression === void 0 ? void 0 : expression.min) && (expression === null || expression === void 0 ? void 0 : expression.min) !== 0) || (!(expression === null || expression === void 0 ? void 0 : expression.max) && (expression === null || expression === void 0 ? void 0 : expression.max) !== 0))) return [3 /*break*/, 7];
-                                _r.label = 3;
-                            case 3:
-                                _r.trys.push([3, 5, 6, 7]);
-                                return [4 /*yield*/, this.viewModel.calculateMinMaxStatistics(id, field)];
-                            case 4:
-                                graphic = _r.sent();
-                                expression.min = (_h = graphic === null || graphic === void 0 ? void 0 : graphic[0]) === null || _h === void 0 ? void 0 : _h.attributes["min" + field];
-                                expression.max = (_j = graphic === null || graphic === void 0 ? void 0 : graphic[0]) === null || _j === void 0 ? void 0 : _j.attributes["max" + field];
-                                return [3 /*break*/, 7];
-                            case 5:
-                                _b = _r.sent();
-                                return [3 /*break*/, 7];
-                            case 6:
-                                this.scheduleRender();
-                                return [7 /*endfinally*/];
-                            case 7: return [3 /*break*/, 15];
-                            case 8:
-                                if (!(type === "date")) return [3 /*break*/, 14];
-                                _r.label = 9;
-                            case 9:
-                                _r.trys.push([9, 11, 12, 13]);
-                                return [4 /*yield*/, this.viewModel.calculateMinMaxStatistics(id, field)];
-                            case 10:
-                                graphic = _r.sent();
-                                expression.min = this.viewModel.convertToDate((_k = graphic === null || graphic === void 0 ? void 0 : graphic[0]) === null || _k === void 0 ? void 0 : _k.attributes["min" + field]);
-                                expression.max = this.viewModel.convertToDate((_l = graphic === null || graphic === void 0 ? void 0 : graphic[0]) === null || _l === void 0 ? void 0 : _l.attributes["max" + field]);
-                                return [3 /*break*/, 13];
-                            case 11:
-                                _c = _r.sent();
-                                return [3 /*break*/, 13];
-                            case 12:
-                                this.scheduleRender();
-                                return [7 /*endfinally*/];
-                            case 13: return [3 /*break*/, 15];
-                            case 14:
-                                if (type === "coded-value") {
-                                    selectFields_1 = [];
-                                    expression.codedValues = {};
-                                    (_o = (_m = layerField.domain) === null || _m === void 0 ? void 0 : _m.codedValues) === null || _o === void 0 ? void 0 : _o.forEach(function (cv) {
-                                        selectFields_1.push(cv.code);
-                                        expression.codedValues[cv.code] = cv.name;
-                                    });
-                                    expression.selectFields = selectFields_1;
-                                }
-                                else if (type === "range") {
-                                    expression.min = (_p = layerField.domain) === null || _p === void 0 ? void 0 : _p.minValue;
-                                    expression.max = (_q = layerField.domain) === null || _q === void 0 ? void 0 : _q.maxValue;
-                                }
-                                _r.label = 15;
-                            case 15: return [2 /*return*/];
-                        }
-                    });
-                }); });
-            }
         };
         __decorate([
             decorators_1.aliasOf("viewModel.map")
