@@ -127,7 +127,7 @@ class FilterList extends Widget {
           });
         });
         this.emit("filterListReset", resetLayers);
-        this.initExpressions();
+        this._initExpressions();
         this._reset = {
           disabled: this.layerExpressions && this.layerExpressions.length ? false : true,
           color: this.layerExpressions && this.layerExpressions.length ? "blue" : "dark"
@@ -320,7 +320,8 @@ class FilterList extends Widget {
 
   private _renderCombobox(layerId: string, expression: Expression) {
     const comboItems = expression?.selectFields?.map((field, index) => {
-      return <calcite-combobox-item key={`${field}-${index}`} value={field} text-label={field}></calcite-combobox-item>;
+      const name = expression.type === "coded-value" ? expression.codedValues[field] : field;
+      return <calcite-combobox-item key={`${name}-${index}`} value={field} text-label={name}></calcite-combobox-item>;
     });
     return (
       <label key="combo-select" class={CSS.filterItem.userInput}>
@@ -363,9 +364,9 @@ class FilterList extends Widget {
 
   private _initInput(layerId: string, expression: Expression) {
     const { type } = expression;
-    if (type === "string") {
+    if (type === "string" || type == "coded-value") {
       return this._renderCombobox(layerId, expression);
-    } else if (type === "number") {
+    } else if (type === "number" || type == "range") {
       return this._renderNumberSlider(layerId, expression);
     } else if (type === "date") {
       return this._renderDatePicker(layerId, expression);
@@ -391,7 +392,7 @@ class FilterList extends Widget {
     header.prepend(this._headerTitle);
   }
 
-  initExpressions(): void {
+  private _initExpressions(): void {
     this.layerExpressions?.forEach((layerExpression) => {
       const { id } = layerExpression;
       let tmpExp = {};
@@ -404,7 +405,7 @@ class FilterList extends Widget {
             [expression.definitionExpressionId]: expression.definitionExpression
           };
         }
-        this.setInitExpression(id, expression);
+        this.viewModel.setInitExpression(id, expression, () => this.scheduleRender());
       });
       this.layers[id] = {
         expressions: tmpExp,
@@ -414,35 +415,6 @@ class FilterList extends Widget {
         this.viewModel.generateOutput(id);
       }
     });
-  }
-
-  async setInitExpression(id: string, expression: Expression): Promise<void> {
-    if (expression.field && expression.type) {
-      const { field, type } = expression;
-      if (type === "string") {
-        expression.selectFields = await this.viewModel.getFeatureAttributes(id, field);
-      } else if (type === "number") {
-        if ((!expression?.min && expression?.min !== 0) || (!expression?.max && expression?.max !== 0)) {
-          try {
-            const graphic = await this.viewModel.calculateMinMaxStatistics(id, field);
-            expression.min = graphic?.[0]?.attributes[`min${field}`];
-            expression.max = graphic?.[0]?.attributes[`max${field}`];
-          } catch {
-          } finally {
-            this.scheduleRender();
-          }
-        }
-      } else if (type === "date") {
-        try {
-          const graphic = await this.viewModel.calculateMinMaxStatistics(id, field);
-          expression.min = this.viewModel.convertToDate(graphic?.[0]?.attributes[`min${field}`]);
-          expression.max = this.viewModel.convertToDate(graphic?.[0]?.attributes[`max${field}`]);
-        } catch {
-        } finally {
-          this.scheduleRender();
-        }
-      }
-    }
   }
 }
 

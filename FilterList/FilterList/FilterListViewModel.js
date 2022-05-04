@@ -97,6 +97,22 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         //  Public methods
         //
         // ----------------------------------
+        FilterListViewModel.prototype.setInitExpression = function (id, expression, scheduleRender) {
+            var _this = this;
+            if (expression.field && expression.type) {
+                var fl_1 = this.map.findLayerById(id);
+                fl_1 === null || fl_1 === void 0 ? void 0 : fl_1.load().then(function () {
+                    var _a, _b;
+                    var layerField = (_a = fl_1.fields) === null || _a === void 0 ? void 0 : _a.find(function (_a) {
+                        var name = _a.name;
+                        return name === expression.field;
+                    });
+                    var domainType = (_b = layerField.domain) === null || _b === void 0 ? void 0 : _b.type;
+                    expression.type = domainType === "coded-value" || domainType === "range" ? domainType : expression.type;
+                    _this._updateExpression(id, expression, layerField, scheduleRender);
+                });
+            }
+        };
         FilterListViewModel.prototype.initLayerHeader = function (accordionItem) {
             var style = document.createElement("style");
             if (this.theme === "dark") {
@@ -162,8 +178,8 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             this._debounceSliderChange(expression, layerId, maxValue, minValue);
         };
         FilterListViewModel.prototype.handleDatePickerCreate = function (expression, layerId, datePicker) {
-            datePicker.min = this.convertToDate(expression === null || expression === void 0 ? void 0 : expression.min);
-            datePicker.max = this.convertToDate(expression === null || expression === void 0 ? void 0 : expression.max);
+            datePicker.min = this._convertToDate(expression === null || expression === void 0 ? void 0 : expression.min);
+            datePicker.max = this._convertToDate(expression === null || expression === void 0 ? void 0 : expression.max);
             datePicker.addEventListener("calciteDatePickerRangeChange", this.handleDatePickerRangeChange.bind(this, expression, layerId));
             datePicker.addEventListener("input", this.handleDatePickerInputChange.bind(this, expression, layerId));
         };
@@ -190,8 +206,8 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         };
         FilterListViewModel.prototype.setExpressionDates = function (startDate, endDate, expression, layerId) {
             var expressions = this.layers[layerId].expressions;
-            var start = startDate ? this.convertToDate(Math.floor(startDate.getTime()), true) : null;
-            var end = endDate ? this.convertToDate(Math.floor(endDate.getTime()), true) : null;
+            var start = startDate ? this._convertToDate(Math.floor(startDate.getTime()), true) : null;
+            var end = endDate ? this._convertToDate(Math.floor(endDate.getTime()), true) : null;
             var chevron = end && !start ? "<" : !end && start ? ">" : null;
             if (chevron) {
                 expressions[expression.definitionExpressionId] = {
@@ -246,7 +262,30 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                 _this.layers[id].expressions = {};
             });
         };
-        FilterListViewModel.prototype.getFeatureAttributes = function (layerId, field) {
+        FilterListViewModel.prototype.generateOutput = function (id) {
+            var _a, _b, _c;
+            var defExpressions = [];
+            if (!((_b = (_a = this.layers) === null || _a === void 0 ? void 0 : _a[id]) === null || _b === void 0 ? void 0 : _b.expressions)) {
+                return;
+            }
+            (_c = Object.values(this.layers[id].expressions)) === null || _c === void 0 ? void 0 : _c.forEach(function (_a) {
+                var definitionExpression = _a.definitionExpression;
+                if (definitionExpression) {
+                    defExpressions.push(definitionExpression);
+                }
+            });
+            var newOutput = {
+                id: id,
+                definitionExpression: defExpressions.join(this.layers[id].operator)
+            };
+            this.set("output", newOutput);
+        };
+        // ----------------------------------
+        //
+        //  Private methods
+        //
+        // ----------------------------------
+        FilterListViewModel.prototype._getFeatureAttributes = function (layerId, field) {
             var _a, _b;
             return __awaiter(this, void 0, void 0, function () {
                 var layer, query, results, features;
@@ -283,7 +322,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                 });
             });
         };
-        FilterListViewModel.prototype.calculateMinMaxStatistics = function (layerId, field) {
+        FilterListViewModel.prototype._calculateMinMaxStatistics = function (layerId, field) {
             var _a, _b;
             return __awaiter(this, void 0, void 0, function () {
                 var layer, query, tmp, results;
@@ -327,7 +366,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                 });
             });
         };
-        FilterListViewModel.prototype.convertToDate = function (date, includeTime) {
+        FilterListViewModel.prototype._convertToDate = function (date, includeTime) {
             if (includeTime === void 0) { includeTime = false; }
             if (date) {
                 var tmpDate = new Date(date);
@@ -342,29 +381,6 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             }
             return null;
         };
-        FilterListViewModel.prototype.generateOutput = function (id) {
-            var _a, _b, _c;
-            var defExpressions = [];
-            if (!((_b = (_a = this.layers) === null || _a === void 0 ? void 0 : _a[id]) === null || _b === void 0 ? void 0 : _b.expressions)) {
-                return;
-            }
-            (_c = Object.values(this.layers[id].expressions)) === null || _c === void 0 ? void 0 : _c.forEach(function (_a) {
-                var definitionExpression = _a.definitionExpression;
-                if (definitionExpression) {
-                    defExpressions.push(definitionExpression);
-                }
-            });
-            var newOutput = {
-                id: id,
-                definitionExpression: defExpressions.join(this.layers[id].operator)
-            };
-            this.set("output", newOutput);
-        };
-        // ----------------------------------
-        //
-        //  Private methods
-        //
-        // ----------------------------------
         FilterListViewModel.prototype._getExtent = function (extentSelector, extentSelectorConfig) {
             if (extentSelector && extentSelectorConfig) {
                 var constraints = extentSelectorConfig.constraints;
@@ -412,8 +428,85 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                         expression.checked = true;
                     }
                 }
-                this.generateOutput(layerId);
             }
+        };
+        FilterListViewModel.prototype._updateExpression = function (id, expression, layerField, scheduleRender) {
+            var _a, _b, _c;
+            return __awaiter(this, void 0, void 0, function () {
+                var field, type, _d, graphic, attributes, _e, graphic, attributes, _f, selectFields_1, domain, domain;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
+                        case 0:
+                            field = expression.field, type = expression.type;
+                            if (!(type === "string")) return [3 /*break*/, 2];
+                            _d = expression;
+                            return [4 /*yield*/, this._getFeatureAttributes(id, field)];
+                        case 1:
+                            _d.selectFields = _g.sent();
+                            return [3 /*break*/, 15];
+                        case 2:
+                            if (!(type === "number")) return [3 /*break*/, 8];
+                            if (!((!(expression === null || expression === void 0 ? void 0 : expression.min) && (expression === null || expression === void 0 ? void 0 : expression.min) !== 0) || (!(expression === null || expression === void 0 ? void 0 : expression.max) && (expression === null || expression === void 0 ? void 0 : expression.max) !== 0))) return [3 /*break*/, 7];
+                            _g.label = 3;
+                        case 3:
+                            _g.trys.push([3, 5, 6, 7]);
+                            return [4 /*yield*/, this._calculateMinMaxStatistics(id, field)];
+                        case 4:
+                            graphic = _g.sent();
+                            attributes = (_a = graphic === null || graphic === void 0 ? void 0 : graphic[0]) === null || _a === void 0 ? void 0 : _a.attributes;
+                            expression.min = attributes["min" + field];
+                            expression.max = attributes["max" + field];
+                            return [3 /*break*/, 7];
+                        case 5:
+                            _e = _g.sent();
+                            return [3 /*break*/, 7];
+                        case 6:
+                            scheduleRender();
+                            return [7 /*endfinally*/];
+                        case 7: return [3 /*break*/, 15];
+                        case 8:
+                            if (!(type === "date")) return [3 /*break*/, 14];
+                            _g.label = 9;
+                        case 9:
+                            _g.trys.push([9, 11, 12, 13]);
+                            return [4 /*yield*/, this._calculateMinMaxStatistics(id, field)];
+                        case 10:
+                            graphic = _g.sent();
+                            attributes = (_b = graphic === null || graphic === void 0 ? void 0 : graphic[0]) === null || _b === void 0 ? void 0 : _b.attributes;
+                            expression.min = this._convertToDate(attributes["min" + field]);
+                            expression.max = this._convertToDate(attributes["max" + field]);
+                            return [3 /*break*/, 13];
+                        case 11:
+                            _f = _g.sent();
+                            return [3 /*break*/, 13];
+                        case 12:
+                            scheduleRender();
+                            return [7 /*endfinally*/];
+                        case 13: return [3 /*break*/, 15];
+                        case 14:
+                            if (type === "coded-value") {
+                                selectFields_1 = [];
+                                expression.codedValues = {};
+                                domain = layerField.domain;
+                                (_c = domain === null || domain === void 0 ? void 0 : domain.codedValues) === null || _c === void 0 ? void 0 : _c.forEach(function (cv) {
+                                    var code = cv.code, name = cv.name;
+                                    selectFields_1.push(code);
+                                    expression.codedValues[code] = name;
+                                });
+                                expression.selectFields = selectFields_1;
+                            }
+                            else if (type === "range") {
+                                domain = layerField.domain;
+                                expression.min = domain === null || domain === void 0 ? void 0 : domain.minValue;
+                                expression.max = domain === null || domain === void 0 ? void 0 : domain.maxValue;
+                            }
+                            _g.label = 15;
+                        case 15:
+                            scheduleRender();
+                            return [2 /*return*/];
+                    }
+                });
+            });
         };
         __decorate([
             decorators_1.property()

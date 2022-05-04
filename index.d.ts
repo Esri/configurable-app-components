@@ -164,18 +164,20 @@ declare namespace __esriConfigApps {
 
   interface Expression {
     id: number;
+    definitionExpressionId?: string;
     name: string;
     definitionExpression?: string;
     type?: string;
-    field?: "string" | "number" | "date";
+    field?: "string" | "number" | "date" | "coded-value" | "range";
     checked?: boolean;
-    selectFields?: string[];
+    selectFields?: string[] | number[];
+    codedValues?: { [key: string]: string };
     placeholder?: string;
     min?: number | string;
     max?: number | string;
     start?: number | string;
     end?: number | string;
-    useCombobox?: boolean;
+    step?: number;
   }
 
   interface LayerExpression {
@@ -197,7 +199,7 @@ declare namespace __esriConfigApps {
 
   interface Expressions {
     expressions: {
-      [key: string]: { definitionExpression: string; type?: "string" | "number" | "date"; min?: number; max?: number };
+      [key: string]: { definitionExpression: string; type?: "string" | "number" | "date" | "coded-value" | "range"; min?: number; max?: number };
     };
     operator: string;
   }

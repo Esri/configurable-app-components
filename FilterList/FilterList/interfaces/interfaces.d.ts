@@ -15,9 +15,10 @@ export interface Expression {
   name: string;
   definitionExpression?: string;
   type?: string;
-  field?: "string" | "number" | "date";
+  field?: ExpressionField;
   checked?: boolean;
-  selectFields?: string[];
+  selectFields?: string[] | number[];
+  codedValues?: { [key: string]: string };
   placeholder?: string;
   min?: number | string;
   max?: number | string;
@@ -45,7 +46,7 @@ export interface FilterOutput {
 
 interface Expressions {
   expressions: {
-    [key: string]: { definitionExpression: string; type?: "string" | "number" | "date"; min?: number; max?: number };
+    [key: string]: { definitionExpression: string; type?: ExpressionField; min?: number; max?: number };
   };
   operator: string;
 }
@@ -58,3 +59,5 @@ export interface ExtentSelector {
   constraints: __esri.MapViewConstraints;
   mapRotation: number;
 }
+
+type ExpressionField = "string" | "number" | "date" | "coded-value" | "range";
