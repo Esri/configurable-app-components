@@ -228,7 +228,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                 var id = layerExpression.id;
                 layerExpression.expressions.map(function (expression) {
                     var definitionExpressionId = expression.definitionExpressionId, max = expression.max, min = expression.min, type = expression.type;
-                    if (type === "string") {
+                    if (type === "string" || type === "coded-value") {
                         var combobox = document.getElementById(definitionExpressionId);
                         var wrapper = combobox.shadowRoot.querySelector(".wrapper");
                         for (var i = 0; i < wrapper.children.length; i++) {
@@ -248,7 +248,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                         datePicker.startAsDate = null;
                         datePicker.endAsDate = null;
                     }
-                    else if (type === "number") {
+                    else if (type === "number" || type === "range") {
                         var slider = document.getElementById(definitionExpressionId);
                         slider.minValue = min;
                         slider.maxValue = max;
@@ -271,7 +271,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             (_c = Object.values(this.layers[id].expressions)) === null || _c === void 0 ? void 0 : _c.forEach(function (_a) {
                 var definitionExpression = _a.definitionExpression;
                 if (definitionExpression) {
-                    defExpressions.push(definitionExpression);
+                    defExpressions.push("(" + definitionExpression + ")");
                 }
             });
             var newOutput = {
