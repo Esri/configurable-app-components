@@ -214,7 +214,7 @@ class FilterListViewModel extends Accessor {
       const { id } = layerExpression;
       layerExpression.expressions.map((expression) => {
         const { definitionExpressionId, max, min, type } = expression;
-        if (type === "string") {
+        if (type === "string" || type === "coded-value") {
           const combobox = document.getElementById(definitionExpressionId) as HTMLCalciteComboboxElement;
           const wrapper = combobox.shadowRoot.querySelector(".wrapper");
           for (let i = 0; i < wrapper.children.length; i++) {
@@ -232,7 +232,7 @@ class FilterListViewModel extends Accessor {
           const datePicker = document.getElementById(definitionExpressionId) as HTMLCalciteInputDatePickerElement;
           datePicker.startAsDate = null;
           datePicker.endAsDate = null;
-        } else if (type === "number") {
+        } else if (type === "number" || type === "range") {
           const slider = document.getElementById(definitionExpressionId) as HTMLCalciteSliderElement;
           slider.minValue = min as number;
           slider.maxValue = max as number;
@@ -253,14 +253,13 @@ class FilterListViewModel extends Accessor {
     }
     Object.values(this.layers[id].expressions)?.forEach(({ definitionExpression }) => {
       if (definitionExpression) {
-        defExpressions.push(definitionExpression);
+        defExpressions.push(`(${definitionExpression})`);
       }
     });
     const newOutput = {
       id,
       definitionExpression: defExpressions.join(this.layers[id].operator)
     };
-
     this.set("output", newOutput);
   }
 
