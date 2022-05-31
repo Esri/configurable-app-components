@@ -74,7 +74,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core/Accessor", "esri/geometry/support/jsonUtils"], function (require, exports, decorators_1, Accessor, jsonUtils_1) {
+define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core/Accessor", "esri/core/reactiveUtils", "esri/core/Handles", "esri/geometry/support/jsonUtils"], function (require, exports, decorators_1, Accessor, reactiveUtils_1, Handles, jsonUtils_1) {
     "use strict";
     var accordionStyle = ".accordion-item-content { padding: 0!important; }";
     var FilterListViewModel = /** @class */ (function (_super) {
@@ -90,8 +90,13 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             _this.theme = "light";
             _this.extentSelector = false;
             _this.layers = {};
+            _this._handles = new Handles();
             return _this;
         }
+        FilterListViewModel.prototype.destroy = function () {
+            this._handles.removeAll();
+            this._handles = null;
+        };
         // ----------------------------------
         //
         //  Public methods
@@ -114,6 +119,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             }
         };
         FilterListViewModel.prototype.initLayerHeader = function (accordionItem) {
+            var _this = this;
             var style = document.createElement("style");
             if (this.theme === "dark") {
                 accordionStyle += " .accordion-item-header {\n        border-bottom: 1px solid rgb(217, 218, 218)!important;\n        padding: 14px 20px!important;\n      }";
@@ -123,6 +129,8 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             }
             style.innerHTML = accordionStyle;
             accordionItem.shadowRoot.prepend(style);
+            this._openAccordion(accordionItem);
+            this._handles.add(reactiveUtils_1.watch(function () { return _this.expandFilters; }, this._openAccordion.bind(this, accordionItem)));
         };
         FilterListViewModel.prototype.initCheckbox = function (id, expression, checkbox) {
             var _this = this;
@@ -508,6 +516,14 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                 });
             });
         };
+        FilterListViewModel.prototype._openAccordion = function (accordionItem) {
+            if (this.expandFilters) {
+                accordionItem.setAttribute("active", "");
+            }
+            else {
+                accordionItem.removeAttribute("active");
+            }
+        };
         __decorate([
             decorators_1.property()
         ], FilterListViewModel.prototype, "map", void 0);
@@ -523,6 +539,9 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         __decorate([
             decorators_1.property()
         ], FilterListViewModel.prototype, "extentSelectorConfig", void 0);
+        __decorate([
+            decorators_1.property()
+        ], FilterListViewModel.prototype, "expandFilters", void 0);
         __decorate([
             decorators_1.property()
         ], FilterListViewModel.prototype, "output", void 0);

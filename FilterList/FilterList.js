@@ -27,7 +27,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core/watchUtils", "esri/widgets/support/widget", "esri/widgets/Widget", "esri/intl", "dojo/i18n!./FilterList/nls/resources", "./FilterList/FilterListViewModel"], function (require, exports, decorators_1, watchUtils_1, widget_1, Widget, intl_1, i18n, FilterListViewModel) {
+define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core/reactiveUtils", "esri/widgets/support/widget", "esri/widgets/Widget", "esri/intl", "dojo/i18n!./FilterList/nls/resources", "./FilterList/FilterListViewModel"], function (require, exports, decorators_1, reactiveUtils_1, widget_1, Widget, intl_1, i18n, FilterListViewModel) {
     "use strict";
     var CSS = {
         baseDark: "esri-filter-list esri-filter-list--dark",
@@ -65,24 +65,22 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         FilterList.prototype.postInitialize = function () {
             var _this = this;
             this._locale = intl_1.getLocale();
-            this.own([
-                watchUtils_1.init(this, "layerExpressions", function () {
-                    var _a;
-                    var resetLayers = [];
-                    (_a = _this.layerExpressions) === null || _a === void 0 ? void 0 : _a.map(function (layerExpression) {
-                        resetLayers.push({
-                            id: layerExpression.id,
-                            definitionExpression: ""
-                        });
+            this.own(reactiveUtils_1.watch(function () { return _this.layerExpressions; }, function () {
+                var _a;
+                var resetLayers = [];
+                (_a = _this.layerExpressions) === null || _a === void 0 ? void 0 : _a.map(function (layerExpression) {
+                    resetLayers.push({
+                        id: layerExpression.id,
+                        definitionExpression: ""
                     });
-                    _this.emit("filterListReset", resetLayers);
-                    _this._initExpressions();
-                    _this._reset = {
-                        disabled: _this.layerExpressions && _this.layerExpressions.length ? false : true,
-                        color: _this.layerExpressions && _this.layerExpressions.length ? "blue" : "dark"
-                    };
-                })
-            ]);
+                });
+                _this.emit("filterListReset", resetLayers);
+                _this._initExpressions();
+                _this._reset = {
+                    disabled: _this.layerExpressions && _this.layerExpressions.length ? false : true,
+                    color: _this.layerExpressions && _this.layerExpressions.length ? "blue" : "dark"
+                };
+            }, { initial: true }));
         };
         FilterList.prototype.render = function () {
             var filterConfig = this._initFilterConfig();
@@ -112,7 +110,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             var filter = this._renderFilter(layerExpression);
             var operator = layerExpression.operator;
             var operatorTranslation = (operator === null || operator === void 0 ? void 0 : operator.trim()) === "OR" ? "orOperator" : "andOperator";
-            return (widget_1.tsx("calcite-accordion-item", { key: layerExpression.id, bind: this, "item-title": layerExpression.title, "item-subtitle": i18n === null || i18n === void 0 ? void 0 : i18n[operatorTranslation], "icon-position": "start", afterCreate: this.viewModel.initLayerHeader }, filter));
+            return (widget_1.tsx("calcite-accordion-item", { key: layerExpression.id, bind: this.viewModel, "item-title": layerExpression.title, "item-subtitle": i18n === null || i18n === void 0 ? void 0 : i18n[operatorTranslation], "icon-position": "start", afterCreate: this.viewModel.initLayerHeader }, filter));
         };
         FilterList.prototype._renderFilter = function (layerExpression) {
             var _this = this;
@@ -261,6 +259,9 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         __decorate([
             decorators_1.property()
         ], FilterList.prototype, "optionalBtnText", void 0);
+        __decorate([
+            decorators_1.aliasOf("viewModel.expandFilters")
+        ], FilterList.prototype, "expandFilters", void 0);
         __decorate([
             decorators_1.property()
         ], FilterList.prototype, "optionalBtnOnClick", void 0);

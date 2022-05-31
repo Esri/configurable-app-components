@@ -227,6 +227,7 @@ declare namespace __esriConfigApps {
     extentSelector: boolean;
     extentSelectorConfig: ExtentSelector;
     output: FilterOutput;
+    expandFilters: boolean;
   }
 
   export class FilterListViewModel extends __esri.Accessor {
