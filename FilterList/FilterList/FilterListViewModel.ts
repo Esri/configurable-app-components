@@ -9,11 +9,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.​
 
-// esri.core.accessorSupport
-import { property, subclass } from "esri/core/accessorSupport/decorators";
-
 // General esri Imports
+import { property, subclass } from "esri/core/accessorSupport/decorators";
 import Accessor = require("esri/core/Accessor");
+import { watch } from "esri/core/reactiveUtils";
+import Handles = require("esri/core/Handles");
 import { fromJSON } from "esri/geometry/support/jsonUtils";
 
 // Config Panel Imports
@@ -45,6 +45,9 @@ class FilterListViewModel extends Accessor {
   extentSelectorConfig: ExtentSelector;
 
   @property()
+  expandFilters: boolean;
+
+  @property()
   output: FilterOutput;
 
   @property()
@@ -56,6 +59,7 @@ class FilterListViewModel extends Accessor {
   // ----------------------------------
 
   private _timeout: any;
+  private _handles: Handles = new Handles();
 
   // ----------------------------------
   //
@@ -65,6 +69,11 @@ class FilterListViewModel extends Accessor {
 
   constructor(params?: any) {
     super(params);
+  }
+
+  destroy() {
+    this._handles.removeAll();
+    this._handles = null;
   }
 
   // ----------------------------------
@@ -101,6 +110,10 @@ class FilterListViewModel extends Accessor {
     }
     style.innerHTML = accordionStyle;
     accordionItem.shadowRoot.prepend(style);
+    this._openAccordion(accordionItem);
+    this._handles.add(
+      watch(() => this.expandFilters, this._openAccordion.bind(this, accordionItem))
+    );
   }
 
   initCheckbox(id: string, expression: Expression, checkbox: HTMLCalciteCheckboxElement) {
@@ -437,6 +450,14 @@ class FilterListViewModel extends Accessor {
       expression.max = domain?.maxValue;
     }
     scheduleRender();
+  }
+
+  private _openAccordion(accordionItem: HTMLCalciteAccordionItemElement): void {
+    if (this.expandFilters) {
+      accordionItem.setAttribute("active","");
+    } else {
+      accordionItem.removeAttribute("active");
+    }
   }
 }
 

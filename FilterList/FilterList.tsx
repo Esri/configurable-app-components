@@ -11,7 +11,7 @@
 
 // esri.core.accessorSupport
 import { aliasOf, property, subclass } from "esri/core/accessorSupport/decorators";
-import { init } from "esri/core/watchUtils";
+import { watch, when } from "esri/core/reactiveUtils";
 
 // esri.widgets.support.widget
 import { tsx } from "esri/widgets/support/widget";
@@ -85,6 +85,9 @@ class FilterList extends Widget {
   @property()
   optionalBtnText: string = "Close Filter";
 
+  @aliasOf("viewModel.expandFilters")
+  expandFilters: boolean;
+
   @property()
   optionalBtnOnClick: Function;
 
@@ -117,8 +120,8 @@ class FilterList extends Widget {
 
   postInitialize() {
     this._locale = getLocale();
-    this.own([
-      init(this, "layerExpressions", () => {
+    this.own(
+      watch(() => this.layerExpressions, () => {
         const resetLayers: FilterOutput[] = [];
         this.layerExpressions?.map((layerExpression) => {
           resetLayers.push({
@@ -132,8 +135,8 @@ class FilterList extends Widget {
           disabled: this.layerExpressions && this.layerExpressions.length ? false : true,
           color: this.layerExpressions && this.layerExpressions.length ? "blue" : "dark"
         };
-      })
-    ]);
+      }, { initial: true })
+    );
   }
 
   render() {
@@ -178,7 +181,7 @@ class FilterList extends Widget {
     return (
       <calcite-accordion-item
         key={layerExpression.id}
-        bind={this}
+        bind={this.viewModel}
         item-title={layerExpression.title}
         item-subtitle={i18n?.[operatorTranslation]}
         icon-position="start"
