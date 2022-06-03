@@ -20,11 +20,7 @@ import MapView = require("esri/views/MapView");
 import SceneView = require("esri/views/SceneView");
 import watchUtils = require("esri/core/watchUtils");
 import Handles = require("esri/core/Handles");
-import {
-  accessibleHandler,
-  tsx,
-  storeNode
-} from "esri/widgets/support/widget";
+import { accessibleHandler, tsx, storeNode } from "esri/widgets/support/widget";
 import ScreenshotViewModel = require("./Screenshot/ScreenshotViewModel");
 import Legend = require("esri/widgets/Legend");
 import FeatureWidget = require("esri/widgets/Feature");
@@ -150,7 +146,7 @@ class Screenshot extends Widget {
 
   @property()
   previewContainer: HTMLDivElement = null;
-  
+
   @property()
   viewModel: ScreenshotViewModel = new ScreenshotViewModel();
 
@@ -182,10 +178,10 @@ class Screenshot extends Widget {
           if (this.viewModel.previewIsVisible) {
             const selectors =
               'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-            const focusableElements = this.previewContainer.querySelectorAll(
-              selectors
-            );
-            const firstFocusableElement = focusableElements[0] as HTMLInputElement;
+            const focusableElements =
+              this.previewContainer.querySelectorAll(selectors);
+            const firstFocusableElement =
+              focusableElements[0] as HTMLInputElement;
             const lastFocusableElement = focusableElements[
               focusableElements.length - 1
             ] as HTMLButtonElement;
@@ -221,8 +217,8 @@ class Screenshot extends Widget {
             {optOutOfScreenshotButton}
           </div>
         ) : (
-            screenshotPanel
-          )}
+          screenshotPanel
+        )}
         {screenshotPreviewOverlay}
         {maskNode}
       </div>
