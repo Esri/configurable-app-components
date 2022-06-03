@@ -450,8 +450,14 @@ define(["require", "exports", "esri/core/Accessor", "./html2canvas/html2canvas",
             viewLegendCanvasContext.fillStyle = "#fff";
             viewLegendCanvasContext.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
             if (this.outputLayout === "horizontal") {
-                viewLegendCanvasContext.drawImage(mapComponent, 0, 0);
-                viewLegendCanvasContext.drawImage(viewCanvas, mapComponent.width, 0);
+                if (document.dir === "rtl") {
+                    viewLegendCanvasContext.drawImage(viewCanvas, 0, 0);
+                    viewLegendCanvasContext.drawImage(mapComponent, viewCanvas.width, 0);
+                }
+                else {
+                    viewLegendCanvasContext.drawImage(mapComponent, 0, 0);
+                    viewLegendCanvasContext.drawImage(viewCanvas, mapComponent.width, 0);
+                }
             }
             else if (this.outputLayout === "vertical") {
                 viewLegendCanvasContext.drawImage(viewCanvas, 0, 0);
@@ -480,9 +486,16 @@ define(["require", "exports", "esri/core/Accessor", "./html2canvas/html2canvas",
             combinedCanvasContext.fillStyle = "#fff";
             combinedCanvasContext.fillRect(0, 0, combinedCanvasElements.width, combinedCanvasElements.height);
             if (this.outputLayout === "horizontal") {
-                combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
-                combinedCanvasContext.drawImage(viewCanvas, firstMapComponent.width, 0);
-                combinedCanvasContext.drawImage(secondMapComponent, viewScreenshot.data.width + firstMapComponent.width, 0);
+                if (document.dir === "rtl") {
+                    combinedCanvasContext.drawImage(secondMapComponent, 0, 0);
+                    combinedCanvasContext.drawImage(viewCanvas, secondMapComponent.width, 0);
+                    combinedCanvasContext.drawImage(firstMapComponent, viewScreenshot.data.width + secondMapComponent.width, 0);
+                }
+                else {
+                    combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
+                    combinedCanvasContext.drawImage(viewCanvas, firstMapComponent.width, 0);
+                    combinedCanvasContext.drawImage(secondMapComponent, viewScreenshot.data.width + firstMapComponent.width, 0);
+                }
             }
             else if (this.outputLayout === "vertical") {
                 combinedCanvasContext.drawImage(viewCanvas, 0, 0);
@@ -515,12 +528,22 @@ define(["require", "exports", "esri/core/Accessor", "./html2canvas/html2canvas",
             combinedCanvasContext.fillStyle = "#fff";
             combinedCanvasContext.fillRect(0, 0, combinedCanvasElements.width, combinedCanvasElements.height);
             if (this.outputLayout === "horizontal") {
-                combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
-                combinedCanvasContext.drawImage(viewCanvas, firstMapComponent.width, 0);
-                combinedCanvasContext.drawImage(secondMapComponent, viewScreenshot.data.width + firstMapComponent.width, 0);
-                combinedCanvasContext.drawImage(thirdMapComponent, viewScreenshot.data.width +
-                    firstMapComponent.width +
-                    secondMapComponent.width, 0);
+                if (document.dir === "rtl") {
+                    combinedCanvasContext.drawImage(thirdMapComponent, 0, 0);
+                    combinedCanvasContext.drawImage(secondMapComponent, thirdMapComponent.width, 0);
+                    combinedCanvasContext.drawImage(viewCanvas, thirdMapComponent.width + secondMapComponent.width, 0);
+                    combinedCanvasContext.drawImage(firstMapComponent, viewScreenshot.data.width +
+                        thirdMapComponent.width +
+                        secondMapComponent.width, 0);
+                }
+                else {
+                    combinedCanvasContext.drawImage(firstMapComponent, 0, 0);
+                    combinedCanvasContext.drawImage(viewCanvas, firstMapComponent.width, 0);
+                    combinedCanvasContext.drawImage(secondMapComponent, viewScreenshot.data.width + firstMapComponent.width, 0);
+                    combinedCanvasContext.drawImage(thirdMapComponent, viewScreenshot.data.width +
+                        firstMapComponent.width +
+                        secondMapComponent.width, 0);
+                }
             }
             else if (this.outputLayout === "vertical") {
                 combinedCanvasContext.drawImage(viewCanvas, 0, 0);
@@ -707,9 +730,18 @@ define(["require", "exports", "esri/core/Accessor", "./html2canvas/html2canvas",
             var boundClientRect = this.view.container.getBoundingClientRect();
             if (area) {
                 maskDiv.style.top = area.y + boundClientRect.top + "px";
-                maskDiv.style.left = area.x + boundClientRect.left + "px";
                 maskDiv.style.bottom = area.y + boundClientRect.bottom + "px";
-                maskDiv.style.right = area.x + boundClientRect.right + "px";
+                var isRTL = document.dir === "rtl";
+                maskDiv.style.left = isRTL
+                    ? area.x + boundClientRect.right + "px"
+                    : area.x + boundClientRect.left + "px";
+                maskDiv.style.right = isRTL
+                    ? document.body.offsetWidth -
+                        this.view.container.offsetWidth +
+                        boundClientRect.right -
+                        area.width -
+                        area.x + "px"
+                    : area.x + boundClientRect.right + "px";
                 maskDiv.style.width = area.width + "px";
                 maskDiv.style.height = area.height + "px";
                 this.screenshotModeIsActive = true;
