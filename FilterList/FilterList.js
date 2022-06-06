@@ -134,21 +134,19 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                     widget_1.tsx("calcite-button", { bind: this, appearance: "outline", color: this._reset.color, theme: this.theme, disabled: this._reset.disabled, onclick: this._handleResetFilter }, i18n.resetFilter),
                     widget_1.tsx("calcite-button", { bind: this, appearance: "solid", color: "blue", theme: this.theme, onclick: this.optionalBtnOnClick }, this.optionalBtnText))));
         };
-        // HARDCODED IN EN
         FilterList.prototype._renderDatePicker = function (layerId, expression) {
             var _a;
             return (widget_1.tsx("label", { class: CSS.filterItem.userInput },
                 widget_1.tsx("span", null, expression === null || expression === void 0 ? void 0 : expression.name),
                 widget_1.tsx("div", { class: CSS.dateInputContainer },
-                    widget_1.tsx("calcite-input-date-picker", { id: expression === null || expression === void 0 ? void 0 : expression.definitionExpressionId, afterCreate: this.viewModel.handleDatePickerCreate.bind(this.viewModel, expression, layerId), scale: "s", start: expression === null || expression === void 0 ? void 0 : expression.start, end: expression === null || expression === void 0 ? void 0 : expression.end, min: expression === null || expression === void 0 ? void 0 : expression.min, max: expression === null || expression === void 0 ? void 0 : expression.max, locale: (_a = this._locale) !== null && _a !== void 0 ? _a : "en", "next-month-label": "Next month", "prev-month-label": "Previous month", range: true, layout: "vertical", theme: this.theme }),
-                    widget_1.tsx("calcite-action", { onclick: this.viewModel.handleResetDatePicker.bind(this.viewModel, expression, layerId), icon: "reset", label: "Reset date picker", scale: "s", theme: this.theme }))));
+                    widget_1.tsx("calcite-input-date-picker", { id: expression === null || expression === void 0 ? void 0 : expression.definitionExpressionId, afterCreate: this.viewModel.handleDatePickerCreate.bind(this.viewModel, expression, layerId), scale: "s", start: expression === null || expression === void 0 ? void 0 : expression.start, end: expression === null || expression === void 0 ? void 0 : expression.end, min: expression === null || expression === void 0 ? void 0 : expression.min, max: expression === null || expression === void 0 ? void 0 : expression.max, locale: (_a = this._locale) !== null && _a !== void 0 ? _a : "en", "next-month-label": i18n.nextMonth, "prev-month-label": i18n.previousMonth, range: true, layout: "vertical", theme: this.theme }),
+                    widget_1.tsx("calcite-action", { onclick: this.viewModel.handleResetDatePicker.bind(this.viewModel, expression, layerId), icon: "reset", label: i18n.resetDatePicker, scale: "s", theme: this.theme }))));
         };
-        // HARDCODED IN EN
         FilterList.prototype._renderNumberSlider = function (layerId, expression) {
             return (expression === null || expression === void 0 ? void 0 : expression.min) && (expression === null || expression === void 0 ? void 0 : expression.max) ? (widget_1.tsx("label", { key: expression === null || expression === void 0 ? void 0 : expression.definitionExpressionId, class: CSS.filterItem.userInput },
                 widget_1.tsx("span", null, expression === null || expression === void 0 ? void 0 : expression.name),
                 widget_1.tsx("div", { class: CSS.numberInputContainer },
-                    widget_1.tsx("calcite-slider", { id: expression === null || expression === void 0 ? void 0 : expression.definitionExpressionId, afterCreate: this.viewModel.handleSliderCreate.bind(this.viewModel, expression, layerId), "min-label": expression.field + ", lower bound", "max-label": expression.field + ", upper bound", step: (expression === null || expression === void 0 ? void 0 : expression.step) ? expression.step : 1, "label-handles": "", snap: "", theme: this.theme })))) : null;
+                    widget_1.tsx("calcite-slider", { id: expression === null || expression === void 0 ? void 0 : expression.definitionExpressionId, afterCreate: this.viewModel.handleSliderCreate.bind(this.viewModel, expression, layerId), "min-label": i18n.minSlider.replace("{field}", expression.field), "max-label": i18n.maxSlider.replace("{field}", expression.field), step: (expression === null || expression === void 0 ? void 0 : expression.step) ? expression.step : 1, "label-handles": "", snap: "", theme: this.theme })))) : null;
         };
         FilterList.prototype._renderCombobox = function (layerId, expression) {
             var _a;

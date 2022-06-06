@@ -4,5 +4,10 @@ define({
   "andOperator": "Alleen resultaten die voldoen aan ALLE (ALL) filters worden getoond",
   "orOperator": "Resultaten die voldoen aan EEN (ANY) filter worden getoond",
   "andOperator2": "AND: Resultaten die voldoen aan ALLE (ALL) filters",
-  "orOperator2": "OR: Resultaten die voldoen aan EEN (ANY) filter"
+  "orOperator2": "OR: Resultaten die voldoen aan EEN (ANY) filter",
+  "nextMonth": "Volgende maand",
+  "previousMonth": "Vorige maand",
+  "resetDatePicker": "Datumkiezer opnieuw instellen",
+  "minSlider": "{field}, ondergrens",
+  "maxSlider": "{field},bovengrens"
 });

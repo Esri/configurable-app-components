@@ -137,15 +137,16 @@ class FilterListViewModel extends Accessor {
 
   handleComboSelect(expression: Expression, layerId: string, event: CustomEvent): void {
     const items = event.detail as HTMLCalciteComboboxItemElement[];
+    const { definitionExpressionId, field, type } = expression;
     if (items && items.length) {
-      const values = items.map((item) => `'${item.value}'`);
-      const definitionExpression = `${expression.field} IN (${values.join(",")})`;
-      this.layers[layerId].expressions[expression.definitionExpressionId] = {
+      const values = items.map(({value}) => type === "coded-value" ? value : `'${value}'`);
+      const definitionExpression = `${field} IN (${values.join(",")})`;
+      this.layers[layerId].expressions[definitionExpressionId] = {
         definitionExpression
       };
       expression.checked = true;
     } else {
-      delete this.layers[layerId].expressions[expression.definitionExpressionId];
+      delete this.layers[layerId].expressions[definitionExpressionId];
       expression.checked = false;
     }
     this.generateOutput(layerId);
