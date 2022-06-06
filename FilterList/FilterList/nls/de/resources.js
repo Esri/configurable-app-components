@@ -4,5 +4,10 @@ define({
   "andOperator": "In den Ergebnissen werden ALLE übereinstimmenden Filter angezeigt.",
   "orOperator": "In den Ergebnissen werden BELIEBIGE übereinstimmende Filter angezeigt.",
   "andOperator2": "AND: In den Ergebnissen werden ALLE übereinstimmenden Filter angezeigt.",
-  "orOperator2": "OR: In den Ergebnissen werden BELIEBIGE übereinstimmende Filter angezeigt."
+  "orOperator2": "OR: In den Ergebnissen werden BELIEBIGE übereinstimmende Filter angezeigt.",
+  "nextMonth": "Nächster Monat",
+  "previousMonth": "Vorheriger Monat",
+  "resetDatePicker": "Datumsauswahl zurücksetzen",
+  "minSlider": "{field}, Minimum",
+  "maxSlider": "{field}, Maximum"
 });

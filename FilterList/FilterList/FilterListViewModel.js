@@ -153,16 +153,20 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         };
         FilterListViewModel.prototype.handleComboSelect = function (expression, layerId, event) {
             var items = event.detail;
+            var definitionExpressionId = expression.definitionExpressionId, field = expression.field, type = expression.type;
             if (items && items.length) {
-                var values = items.map(function (item) { return "'" + item.value + "'"; });
-                var definitionExpression = expression.field + " IN (" + values.join(",") + ")";
-                this.layers[layerId].expressions[expression.definitionExpressionId] = {
+                var values = items.map(function (_a) {
+                    var value = _a.value;
+                    return type === "coded-value" ? value : "'" + value + "'";
+                });
+                var definitionExpression = field + " IN (" + values.join(",") + ")";
+                this.layers[layerId].expressions[definitionExpressionId] = {
                     definitionExpression: definitionExpression
                 };
                 expression.checked = true;
             }
             else {
-                delete this.layers[layerId].expressions[expression.definitionExpressionId];
+                delete this.layers[layerId].expressions[definitionExpressionId];
                 expression.checked = false;
             }
             this.generateOutput(layerId);

@@ -5,7 +5,12 @@ define({
     andOperator: "Results will show ALL matching filters",
     orOperator: "Results will show ANY matching filters",
     andOperator2: "AND: Results will show ALL matching filters",
-    orOperator2: "OR: Results will show ANY matching filters"
+    orOperator2: "OR: Results will show ANY matching filters",
+    nextMonth: "Next month",
+    previousMonth: "Previous month",
+    resetDatePicker: "Reset date picker",
+    minSlider: "{field}, lower bound",
+    maxSlider: "{field}, upper bound",
   },
   "ar": 1,
   "bg": 1,

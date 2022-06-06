@@ -267,7 +267,6 @@ class FilterList extends Widget {
     );
   }
 
-  // HARDCODED IN EN
   private _renderDatePicker(layerId: string, expression: Expression) {
     return (
       <label class={CSS.filterItem.userInput}>
@@ -282,8 +281,8 @@ class FilterList extends Widget {
             min={expression?.min}
             max={expression?.max}
             locale={this._locale ?? "en"}
-            next-month-label="Next month"
-            prev-month-label="Previous month"
+            next-month-label={i18n.nextMonth}
+            prev-month-label={i18n.previousMonth}
             range
             layout="vertical"
             theme={this.theme}
@@ -291,7 +290,7 @@ class FilterList extends Widget {
           <calcite-action
             onclick={this.viewModel.handleResetDatePicker.bind(this.viewModel, expression, layerId)}
             icon="reset"
-            label="Reset date picker"
+            label={i18n.resetDatePicker}
             scale="s"
             theme={this.theme}
           ></calcite-action>
@@ -300,7 +299,6 @@ class FilterList extends Widget {
     );
   }
 
-  // HARDCODED IN EN
   private _renderNumberSlider(layerId: string, expression: Expression) {
     return expression?.min && expression?.max ? (
       <label key={expression?.definitionExpressionId} class={CSS.filterItem.userInput}>
@@ -309,8 +307,8 @@ class FilterList extends Widget {
           <calcite-slider
             id={expression?.definitionExpressionId}
             afterCreate={this.viewModel.handleSliderCreate.bind(this.viewModel, expression, layerId)}
-            min-label={`${expression.field}, lower bound`}
-            max-label={`${expression.field}, upper bound`}
+            min-label={i18n.minSlider.replace("{field}",expression.field)}
+            max-label={i18n.maxSlider.replace("{field}",expression.field)}
             step={expression?.step ? expression.step : 1}
             label-handles=""
             snap=""
