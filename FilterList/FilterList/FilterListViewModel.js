@@ -97,6 +97,25 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             this._handles.removeAll();
             this._handles = null;
         };
+        FilterListViewModel.prototype.initialize = function () {
+            return __awaiter(this, void 0, void 0, function () {
+                var _this = this;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, reactiveUtils_1.whenOnce(function () { return _this.map; })];
+                        case 1:
+                            _a.sent();
+                            this._initDefExpressions = {};
+                            this.map.allLayers.forEach(function (layer) {
+                                if (layer.hasOwnProperty("definitionExpression")) {
+                                    _this._initDefExpressions[layer.id] = layer["definitionExpression"];
+                                }
+                            });
+                            return [2 /*return*/];
+                    }
+                });
+            });
+        };
         // ----------------------------------
         //
         //  Public methods
@@ -116,6 +135,9 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                     expression.type = domainType === "coded-value" || domainType === "range" ? domainType : expression.type;
                     _this._updateExpression(id, expression, layerField, scheduleRender);
                 });
+            }
+            else {
+                this._updateExpression(id, expression, null, scheduleRender);
             }
         };
         FilterListViewModel.prototype.initLayerHeader = function (accordionItem) {
@@ -153,11 +175,15 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         };
         FilterListViewModel.prototype.handleComboSelect = function (expression, layerId, event) {
             var items = event.detail;
-            var definitionExpressionId = expression.definitionExpressionId, field = expression.field, type = expression.type;
+            var definitionExpressionId = expression.definitionExpressionId, field = expression.field;
             if (items && items.length) {
                 var values = items.map(function (_a) {
                     var value = _a.value;
-                    return type === "coded-value" ? value : "'" + value + "'";
+                    return (typeof value === "number" ? value : "'" + value + "'");
+                });
+                expression.selectedFields = items.map(function (_a) {
+                    var value = _a.value;
+                    return value;
                 });
                 var definitionExpression = field + " IN (" + values.join(",") + ")";
                 this.layers[layerId].expressions[definitionExpressionId] = {
@@ -172,13 +198,19 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             this.generateOutput(layerId);
         };
         FilterListViewModel.prototype.handleSliderCreate = function (expression, layerId, slider) {
-            var max = expression.max, min = expression.min;
+            var max = expression.max, min = expression.min, range = expression.range;
             if ((max || max === 0) && (min || min === 0)) {
                 slider.setAttribute("min-value", min);
                 slider.setAttribute("max-value", max);
                 slider.min = min;
                 slider.max = max;
                 slider.ticks = (max - min) / 4;
+            }
+            if (range && Object.keys(range)) {
+                var minValue = range.min;
+                var maxValue = range.max;
+                slider.minValue = minValue;
+                slider.maxValue = maxValue;
             }
             var style = document.createElement("style");
             style.innerHTML = ".thumb .handle__label--minValue.hyphen::after {content: unset!important}";
@@ -220,19 +252,22 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             var expressions = this.layers[layerId].expressions;
             var start = startDate ? this._convertToDate(Math.floor(startDate.getTime()), true) : null;
             var end = endDate ? this._convertToDate(Math.floor(endDate.getTime()), true) : null;
-            var chevron = end && !start ? "<" : !end && start ? ">" : null;
-            if (chevron) {
-                expressions[expression.definitionExpressionId] = {
-                    definitionExpression: expression.field + " " + chevron + " '" + (start !== null && start !== void 0 ? start : end) + "'"
-                };
+            if (start || end) {
+                var chevron = end && !start ? "<" : !end && start ? ">" : null;
+                if (chevron) {
+                    expressions[expression.definitionExpressionId] = {
+                        definitionExpression: expression.field + " " + chevron + " '" + (start !== null && start !== void 0 ? start : end) + "'"
+                    };
+                }
+                else {
+                    expressions[expression.definitionExpressionId] = {
+                        definitionExpression: expression.field + " BETWEEN '" + start + "' AND '" + end + "'"
+                    };
+                }
+                expression.range = { min: start, max: end };
+                expression.checked = true;
+                this.generateOutput(layerId);
             }
-            else {
-                expressions[expression.definitionExpressionId] = {
-                    definitionExpression: expression.field + " BETWEEN '" + start + "' AND '" + end + "'"
-                };
-            }
-            expression.checked = true;
-            this.generateOutput(layerId);
         };
         FilterListViewModel.prototype.handleResetFilter = function () {
             var _this = this;
@@ -270,6 +305,8 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                         checkbox.removeAttribute("checked");
                     }
                     expression.checked = false;
+                    expression.range = null;
+                    expression.selectedFields = null;
                 });
                 _this.layers[id].expressions = {};
             });
@@ -298,11 +335,11 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         //
         // ----------------------------------
         FilterListViewModel.prototype._getFeatureAttributes = function (layerId, field) {
-            var _a, _b;
+            var _a, _b, _c;
             return __awaiter(this, void 0, void 0, function () {
                 var layer, query, results, features;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
                         case 0:
                             layer = this.map.allLayers.find(function (_a) {
                                 var id = _a.id;
@@ -314,6 +351,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                                 query.cacheHint = true;
                             }
                             if (!field) return [3 /*break*/, 2];
+                            query.where = (_c = this._initDefExpressions) === null || _c === void 0 ? void 0 : _c[layerId];
                             query.outFields = [field];
                             query.orderByFields = [field + " DESC"];
                             query.returnDistinctValues = true;
@@ -326,7 +364,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                             }
                             return [4 /*yield*/, layer.queryFeatures(query)];
                         case 1:
-                            results = _c.sent();
+                            results = _d.sent();
                             features = results === null || results === void 0 ? void 0 : results.features.filter(function (feature) { var _a; return (_a = feature.attributes) === null || _a === void 0 ? void 0 : _a[field]; });
                             return [2 /*return*/, features === null || features === void 0 ? void 0 : features.map(function (feature) { var _a; return (_a = feature.attributes) === null || _a === void 0 ? void 0 : _a[field]; }).sort()];
                         case 2: return [2 /*return*/, []];
@@ -335,11 +373,11 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             });
         };
         FilterListViewModel.prototype._calculateMinMaxStatistics = function (layerId, field) {
-            var _a, _b;
+            var _a, _b, _c;
             return __awaiter(this, void 0, void 0, function () {
                 var layer, query, tmp, results;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
                         case 0:
                             layer = this.map.allLayers.find(function (_a) {
                                 var id = _a.id;
@@ -347,8 +385,8 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                             });
                             if (!(layer && layer.type === "feature")) return [3 /*break*/, 2];
                             query = layer.createQuery();
-                            query.where = layer.definitionExpression;
-                            if ((_b = (_a = layer === null || layer === void 0 ? void 0 : layer.capabilities) === null || _a === void 0 ? void 0 : _a.query) === null || _b === void 0 ? void 0 : _b.supportsCacheHint) {
+                            query.where = (_a = this._initDefExpressions) === null || _a === void 0 ? void 0 : _a[layerId];
+                            if ((_c = (_b = layer === null || layer === void 0 ? void 0 : layer.capabilities) === null || _b === void 0 ? void 0 : _b.query) === null || _c === void 0 ? void 0 : _c.supportsCacheHint) {
                                 query.cacheHint = true;
                             }
                             if (!field) return [3 /*break*/, 2];
@@ -371,7 +409,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                             }
                             return [4 /*yield*/, layer.queryFeatures(query)];
                         case 1:
-                            results = _c.sent();
+                            results = _d.sent();
                             return [2 /*return*/, results === null || results === void 0 ? void 0 : results.features];
                         case 2: return [2 /*return*/, []];
                     }
@@ -441,79 +479,202 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                     }
                 }
             }
+            expression.range = { min: min, max: max };
         };
-        FilterListViewModel.prototype._updateExpression = function (id, expression, layerField, scheduleRender) {
-            var _a, _b, _c;
+        FilterListViewModel.prototype._updateStringExpression = function (id, expression) {
             return __awaiter(this, void 0, void 0, function () {
-                var field, type, _d, graphic, attributes, _e, graphic, attributes, _f, selectFields_1, domain, domain;
-                return __generator(this, function (_g) {
-                    switch (_g.label) {
+                var definitionExpressionId, field, _a, selectedFields, definitionExpression;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
                         case 0:
-                            field = expression.field, type = expression.type;
-                            if (!(type === "string")) return [3 /*break*/, 2];
-                            _d = expression;
+                            definitionExpressionId = expression.definitionExpressionId, field = expression.field;
+                            _a = expression;
                             return [4 /*yield*/, this._getFeatureAttributes(id, field)];
                         case 1:
-                            _d.selectFields = _g.sent();
-                            return [3 /*break*/, 15];
-                        case 2:
-                            if (!(type === "number")) return [3 /*break*/, 8];
-                            if (!((!(expression === null || expression === void 0 ? void 0 : expression.min) && (expression === null || expression === void 0 ? void 0 : expression.min) !== 0) || (!(expression === null || expression === void 0 ? void 0 : expression.max) && (expression === null || expression === void 0 ? void 0 : expression.max) !== 0))) return [3 /*break*/, 7];
-                            _g.label = 3;
-                        case 3:
-                            _g.trys.push([3, 5, 6, 7]);
+                            _a.selectFields = _b.sent();
+                            if (expression === null || expression === void 0 ? void 0 : expression.selectedFields) {
+                                selectedFields = expression.selectedFields.map(function (field) {
+                                    return typeof field === "number" ? field : "'" + field + "'";
+                                });
+                                definitionExpression = field + " IN (" + selectedFields.join(",") + ")";
+                                this.layers[id].expressions[definitionExpressionId] = {
+                                    definitionExpression: definitionExpression
+                                };
+                                return [2 /*return*/, true];
+                            }
+                            return [2 /*return*/];
+                    }
+                });
+            });
+        };
+        FilterListViewModel.prototype._updateNumberExpression = function (id, expression, scheduleRender) {
+            var _a;
+            return __awaiter(this, void 0, void 0, function () {
+                var definitionExpressionId, field, graphic, attributes, _b, _c, min, max, definitionExpression;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0:
+                            if (!((!(expression === null || expression === void 0 ? void 0 : expression.min) && (expression === null || expression === void 0 ? void 0 : expression.min) !== 0) || (!(expression === null || expression === void 0 ? void 0 : expression.max) && (expression === null || expression === void 0 ? void 0 : expression.max) !== 0))) return [3 /*break*/, 5];
+                            definitionExpressionId = expression.definitionExpressionId, field = expression.field;
+                            _d.label = 1;
+                        case 1:
+                            _d.trys.push([1, 3, 4, 5]);
                             return [4 /*yield*/, this._calculateMinMaxStatistics(id, field)];
-                        case 4:
-                            graphic = _g.sent();
+                        case 2:
+                            graphic = _d.sent();
                             attributes = (_a = graphic === null || graphic === void 0 ? void 0 : graphic[0]) === null || _a === void 0 ? void 0 : _a.attributes;
                             expression.min = attributes["min" + field];
                             expression.max = attributes["max" + field];
-                            return [3 /*break*/, 7];
-                        case 5:
-                            _e = _g.sent();
-                            return [3 /*break*/, 7];
-                        case 6:
+                            return [3 /*break*/, 5];
+                        case 3:
+                            _b = _d.sent();
+                            return [3 /*break*/, 5];
+                        case 4:
+                            if ((expression === null || expression === void 0 ? void 0 : expression.range) && Object.keys(expression.range).length) {
+                                _c = expression.range, min = _c.min, max = _c.max;
+                                definitionExpression = expression.field + " BETWEEN " + min + " AND " + max;
+                                this.layers[id].expressions[definitionExpressionId] = {
+                                    definitionExpression: definitionExpression
+                                };
+                            }
                             scheduleRender();
-                            return [7 /*endfinally*/];
-                        case 7: return [3 /*break*/, 15];
-                        case 8:
-                            if (!(type === "date")) return [3 /*break*/, 14];
-                            _g.label = 9;
-                        case 9:
-                            _g.trys.push([9, 11, 12, 13]);
+                            return [2 /*return*/, true];
+                        case 5: return [2 /*return*/];
+                    }
+                });
+            });
+        };
+        FilterListViewModel.prototype._updateDateExpression = function (id, expression, scheduleRender) {
+            var _a, _b, _c;
+            return __awaiter(this, void 0, void 0, function () {
+                var definitionExpressionId, field, range, graphic, attributes, _d, min, max, chevron;
+                return __generator(this, function (_e) {
+                    switch (_e.label) {
+                        case 0:
+                            definitionExpressionId = expression.definitionExpressionId, field = expression.field, range = expression.range;
+                            _e.label = 1;
+                        case 1:
+                            _e.trys.push([1, 3, 4, 5]);
                             return [4 /*yield*/, this._calculateMinMaxStatistics(id, field)];
-                        case 10:
-                            graphic = _g.sent();
-                            attributes = (_b = graphic === null || graphic === void 0 ? void 0 : graphic[0]) === null || _b === void 0 ? void 0 : _b.attributes;
+                        case 2:
+                            graphic = _e.sent();
+                            attributes = (_a = graphic === null || graphic === void 0 ? void 0 : graphic[0]) === null || _a === void 0 ? void 0 : _a.attributes;
                             expression.min = this._convertToDate(attributes["min" + field]);
                             expression.max = this._convertToDate(attributes["max" + field]);
-                            return [3 /*break*/, 13];
-                        case 11:
-                            _f = _g.sent();
-                            return [3 /*break*/, 13];
-                        case 12:
+                            return [3 /*break*/, 5];
+                        case 3:
+                            _d = _e.sent();
+                            return [3 /*break*/, 5];
+                        case 4:
+                            if (range && Object.keys(range).length) {
+                                min = range.min, max = range.max;
+                                min = (_b = min) === null || _b === void 0 ? void 0 : _b.replace("+", " ");
+                                max = (_c = max) === null || _c === void 0 ? void 0 : _c.replace("+", " ");
+                                if (min || max) {
+                                    chevron = max && !min ? "<" : !max && min ? ">" : null;
+                                    if (chevron) {
+                                        this.layers[id].expressions[definitionExpressionId] = {
+                                            definitionExpression: field + " " + chevron + " '" + (min !== null && min !== void 0 ? min : max) + "'"
+                                        };
+                                    }
+                                    else {
+                                        this.layers[id].expressions[definitionExpressionId] = {
+                                            definitionExpression: field + " BETWEEN '" + min + "' AND '" + max + "'"
+                                        };
+                                    }
+                                    expression.start = min;
+                                    expression.end = max;
+                                }
+                            }
                             scheduleRender();
-                            return [7 /*endfinally*/];
-                        case 13: return [3 /*break*/, 15];
-                        case 14:
+                            return [2 /*return*/, true];
+                        case 5: return [2 /*return*/];
+                    }
+                });
+            });
+        };
+        FilterListViewModel.prototype._updateCodedValueExpression = function (id, expression, layerField) {
+            var _a;
+            var definitionExpressionId = expression.definitionExpressionId, field = expression.field;
+            var selectFields = [];
+            expression.codedValues = {};
+            var domain = layerField.domain;
+            (_a = domain === null || domain === void 0 ? void 0 : domain.codedValues) === null || _a === void 0 ? void 0 : _a.forEach(function (cv) {
+                var code = cv.code, name = cv.name;
+                selectFields.push(code);
+                expression.codedValues[code] = name;
+            });
+            expression.selectFields = selectFields;
+            if (expression === null || expression === void 0 ? void 0 : expression.selectedFields) {
+                var selectedFields = expression.selectedFields.map(function (field) {
+                    return typeof field === "number" ? field : "'" + field + "'";
+                });
+                var definitionExpression = field + " IN (" + selectedFields.join(",") + ")";
+                this.layers[id].expressions[definitionExpressionId] = {
+                    definitionExpression: definitionExpression
+                };
+                return true;
+            }
+        };
+        FilterListViewModel.prototype._updateRangeExpression = function (id, expression, layerField) {
+            var definitionExpressionId = expression.definitionExpressionId, field = expression.field, range = expression.range;
+            var domain = layerField.domain;
+            expression.min = domain === null || domain === void 0 ? void 0 : domain.minValue;
+            expression.max = domain === null || domain === void 0 ? void 0 : domain.maxValue;
+            if (range && Object.keys(range).length) {
+                var min = range.min, max = range.max;
+                var definitionExpression = field + " BETWEEN " + min + " AND " + max;
+                this.layers[id].expressions[definitionExpressionId] = {
+                    definitionExpression: definitionExpression
+                };
+                return true;
+            }
+        };
+        FilterListViewModel.prototype._updateExpression = function (id, expression, layerField, scheduleRender) {
+            return __awaiter(this, void 0, void 0, function () {
+                var update, definitionExpressionId, type;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            update = false;
+                            definitionExpressionId = expression.definitionExpressionId, type = expression.type;
+                            if (!(type === "string")) return [3 /*break*/, 2];
+                            return [4 /*yield*/, this._updateStringExpression(id, expression)];
+                        case 1:
+                            update = _a.sent();
+                            return [3 /*break*/, 7];
+                        case 2:
+                            if (!(type === "number")) return [3 /*break*/, 4];
+                            return [4 /*yield*/, this._updateNumberExpression(id, expression, scheduleRender)];
+                        case 3:
+                            update = _a.sent();
+                            return [3 /*break*/, 7];
+                        case 4:
+                            if (!(type === "date")) return [3 /*break*/, 6];
+                            return [4 /*yield*/, this._updateDateExpression(id, expression, scheduleRender)];
+                        case 5:
+                            update = _a.sent();
+                            return [3 /*break*/, 7];
+                        case 6:
                             if (type === "coded-value") {
-                                selectFields_1 = [];
-                                expression.codedValues = {};
-                                domain = layerField.domain;
-                                (_c = domain === null || domain === void 0 ? void 0 : domain.codedValues) === null || _c === void 0 ? void 0 : _c.forEach(function (cv) {
-                                    var code = cv.code, name = cv.name;
-                                    selectFields_1.push(code);
-                                    expression.codedValues[code] = name;
-                                });
-                                expression.selectFields = selectFields_1;
+                                update = this._updateCodedValueExpression(id, expression, layerField);
                             }
                             else if (type === "range") {
-                                domain = layerField.domain;
-                                expression.min = domain === null || domain === void 0 ? void 0 : domain.minValue;
-                                expression.max = domain === null || domain === void 0 ? void 0 : domain.maxValue;
+                                update = this._updateRangeExpression(id, expression, layerField);
                             }
-                            _g.label = 15;
-                        case 15:
+                            else {
+                                if (expression.checked && expression.definitionExpression) {
+                                    this.layers[id].expressions[definitionExpressionId] = {
+                                        definitionExpression: expression.definitionExpression
+                                    };
+                                    update = true;
+                                }
+                            }
+                            _a.label = 7;
+                        case 7:
+                            if (update) {
+                                this.generateOutput(id);
+                            }
                             scheduleRender();
                             return [2 /*return*/];
                     }

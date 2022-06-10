@@ -65,22 +65,15 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         FilterList.prototype.postInitialize = function () {
             var _this = this;
             this._locale = intl_1.getLocale();
-            this.own(reactiveUtils_1.watch(function () { return _this.layerExpressions; }, function () {
-                var _a;
-                var resetLayers = [];
-                (_a = _this.layerExpressions) === null || _a === void 0 ? void 0 : _a.map(function (layerExpression) {
-                    resetLayers.push({
-                        id: layerExpression.id,
-                        definitionExpression: ""
-                    });
-                });
-                _this.emit("filterListReset", resetLayers);
-                _this._initExpressions();
-                _this._reset = {
-                    disabled: _this.layerExpressions && _this.layerExpressions.length ? false : true,
-                    color: _this.layerExpressions && _this.layerExpressions.length ? "blue" : "dark"
-                };
-            }, { initial: true }));
+            this.own([
+                reactiveUtils_1.watch(function () { return _this.layerExpressions; }, function () {
+                    _this._initExpressions();
+                    _this._reset = {
+                        disabled: _this.layerExpressions && _this.layerExpressions.length ? false : true,
+                        color: _this.layerExpressions && _this.layerExpressions.length ? "blue" : "dark"
+                    };
+                }, { initial: true })
+            ]);
         };
         FilterList.prototype.render = function () {
             var filterConfig = this._initFilterConfig();
@@ -151,8 +144,11 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         FilterList.prototype._renderCombobox = function (layerId, expression) {
             var _a;
             var comboItems = (_a = expression === null || expression === void 0 ? void 0 : expression.selectFields) === null || _a === void 0 ? void 0 : _a.map(function (field, index) {
+                var _a;
                 var name = expression.type === "coded-value" ? expression.codedValues[field] : field;
-                return widget_1.tsx("calcite-combobox-item", { key: name + "-" + index, value: field, "text-label": name });
+                var selectedFields = expression === null || expression === void 0 ? void 0 : expression.selectedFields;
+                var selected = (_a = selectedFields === null || selectedFields === void 0 ? void 0 : selectedFields.includes(field)) !== null && _a !== void 0 ? _a : false;
+                return (widget_1.tsx("calcite-combobox-item", { key: name + "-" + index, value: field, "text-label": name, selected: selected }));
             });
             return (widget_1.tsx("label", { key: "combo-select", class: CSS.filterItem.userInput },
                 widget_1.tsx("span", null, expression === null || expression === void 0 ? void 0 : expression.name),
@@ -210,27 +206,17 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             (_a = this.layerExpressions) === null || _a === void 0 ? void 0 : _a.forEach(function (layerExpression) {
                 var _a, _b;
                 var id = layerExpression.id;
-                var tmpExp = {};
-                (_a = layerExpression.expressions) === null || _a === void 0 ? void 0 : _a.forEach(function (expression, index) {
-                    var _a;
+                _this.layers[id] = {
+                    expressions: {},
+                    operator: (_a = layerExpression === null || layerExpression === void 0 ? void 0 : layerExpression.operator) !== null && _a !== void 0 ? _a : " AND "
+                };
+                (_b = layerExpression.expressions) === null || _b === void 0 ? void 0 : _b.forEach(function (expression, index) {
                     expression.definitionExpressionId = id + "-" + index;
                     if (!expression.checked) {
                         expression.checked = false;
                     }
-                    else if (expression.definitionExpression) {
-                        tmpExp = (_a = {},
-                            _a[expression.definitionExpressionId] = expression.definitionExpression,
-                            _a);
-                    }
                     _this.viewModel.setInitExpression(id, expression, function () { return _this.scheduleRender(); });
                 });
-                _this.layers[id] = {
-                    expressions: tmpExp,
-                    operator: (_b = layerExpression === null || layerExpression === void 0 ? void 0 : layerExpression.operator) !== null && _b !== void 0 ? _b : " AND "
-                };
-                if (Object.values(tmpExp).length) {
-                    _this.viewModel.generateOutput(id);
-                }
             });
         };
         __decorate([
