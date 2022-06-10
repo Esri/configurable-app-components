@@ -18,10 +18,12 @@ export interface Expression {
   field?: ExpressionField;
   checked?: boolean;
   selectFields?: string[] | number[];
+  selectedFields?: string[] | number[];
   codedValues?: { [key: string]: string };
   placeholder?: string;
   min?: number | string;
   max?: number | string;
+  range?: { min: string | number; max: string | number };
   start?: number | string;
   end?: number | string;
   step?: number;

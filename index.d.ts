@@ -171,6 +171,7 @@ declare namespace __esriConfigApps {
     field?: "string" | "number" | "date" | "coded-value" | "range";
     checked?: boolean;
     selectFields?: string[] | number[];
+    selectedFields?: string[] | number[];
     codedValues?: { [key: string]: string };
     placeholder?: string;
     min?: number | string;
@@ -178,6 +179,7 @@ declare namespace __esriConfigApps {
     start?: number | string;
     end?: number | string;
     step?: number;
+    range?: { min: string | number; max: string | number };
   }
 
   interface LayerExpression {

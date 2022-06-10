@@ -12,7 +12,7 @@
 // General esri Imports
 import { property, subclass } from "esri/core/accessorSupport/decorators";
 import Accessor = require("esri/core/Accessor");
-import { watch } from "esri/core/reactiveUtils";
+import { watch, whenOnce } from "esri/core/reactiveUtils";
 import Handles = require("esri/core/Handles");
 import { fromJSON } from "esri/geometry/support/jsonUtils";
 
@@ -60,6 +60,7 @@ class FilterListViewModel extends Accessor {
 
   private _timeout: any;
   private _handles: Handles = new Handles();
+  private _initDefExpressions: {};
 
   // ----------------------------------
   //
@@ -76,6 +77,16 @@ class FilterListViewModel extends Accessor {
     this._handles = null;
   }
 
+  async initialize(): Promise<void> {
+    await whenOnce(() => this.map);
+    this._initDefExpressions = {};
+    this.map.allLayers.forEach((layer) => {
+      if (layer.hasOwnProperty("definitionExpression")) {
+        this._initDefExpressions[layer.id] = layer["definitionExpression"];
+      }
+    });
+  }
+
   // ----------------------------------
   //
   //  Public methods
@@ -89,8 +100,10 @@ class FilterListViewModel extends Accessor {
         const layerField = fl.fields?.find(({ name }) => name === expression.field);
         const domainType = layerField.domain?.type;
         expression.type = domainType === "coded-value" || domainType === "range" ? domainType : expression.type;
-        this._updateExpression(id, expression, layerField, scheduleRender)
+        this._updateExpression(id, expression, layerField, scheduleRender);
       });
+    } else {
+      this._updateExpression(id, expression, null, scheduleRender);
     }
   }
 
@@ -111,9 +124,7 @@ class FilterListViewModel extends Accessor {
     style.innerHTML = accordionStyle;
     accordionItem.shadowRoot.prepend(style);
     this._openAccordion(accordionItem);
-    this._handles.add(
-      watch(() => this.expandFilters, this._openAccordion.bind(this, accordionItem))
-    );
+    this._handles.add(watch(() => this.expandFilters, this._openAccordion.bind(this, accordionItem)));
   }
 
   initCheckbox(id: string, expression: Expression, checkbox: HTMLCalciteCheckboxElement) {
@@ -137,9 +148,10 @@ class FilterListViewModel extends Accessor {
 
   handleComboSelect(expression: Expression, layerId: string, event: CustomEvent): void {
     const items = event.detail as HTMLCalciteComboboxItemElement[];
-    const { definitionExpressionId, field, type } = expression;
+    const { definitionExpressionId, field } = expression;
     if (items && items.length) {
-      const values = items.map(({value}) => type === "coded-value" ? value : `'${value}'`);
+      const values = items.map(({ value }) => (typeof value === "number" ? value : `'${value}'`));
+      expression.selectedFields = items.map(({ value }) => value);
       const definitionExpression = `${field} IN (${values.join(",")})`;
       this.layers[layerId].expressions[definitionExpressionId] = {
         definitionExpression
@@ -153,13 +165,19 @@ class FilterListViewModel extends Accessor {
   }
 
   handleSliderCreate(expression: Expression, layerId: string, slider: HTMLCalciteSliderElement): void {
-    const { max, min } = expression;
+    const { max, min, range } = expression;
     if ((max || max === 0) && (min || min === 0)) {
       slider.setAttribute("min-value", min);
       slider.setAttribute("max-value", max);
       slider.min = min;
       slider.max = max;
       slider.ticks = ((max as number) - (min as number)) / 4;
+    }
+    if (range && Object.keys(range)) {
+      const minValue = range.min as number;
+      const maxValue = range.max as number;
+      slider.minValue = minValue;
+      slider.maxValue = maxValue;
     }
     const style = document.createElement("style");
     style.innerHTML = `.thumb .handle__label--minValue.hyphen::after {content: unset!important}`;
@@ -208,19 +226,21 @@ class FilterListViewModel extends Accessor {
     const { expressions } = this.layers[layerId];
     const start = startDate ? this._convertToDate(Math.floor(startDate.getTime()), true) : null;
     const end = endDate ? this._convertToDate(Math.floor(endDate.getTime()), true) : null;
-    const chevron = end && !start ? "<" : !end && start ? ">" : null;
-
-    if (chevron) {
-      expressions[expression.definitionExpressionId] = {
-        definitionExpression: `${expression.field} ${chevron} '${start ?? end}'`
-      };
-    } else {
-      expressions[expression.definitionExpressionId] = {
-        definitionExpression: `${expression.field} BETWEEN '${start}' AND '${end}'`
-      };
+    if (start || end) {
+      const chevron = end && !start ? "<" : !end && start ? ">" : null;
+      if (chevron) {
+        expressions[expression.definitionExpressionId] = {
+          definitionExpression: `${expression.field} ${chevron} '${start ?? end}'`
+        };
+      } else {
+        expressions[expression.definitionExpressionId] = {
+          definitionExpression: `${expression.field} BETWEEN '${start}' AND '${end}'`
+        };
+      }
+      expression.range = { min: start, max: end };
+      expression.checked = true;
+      this.generateOutput(layerId);
     }
-    expression.checked = true;
-    this.generateOutput(layerId);
   }
 
   handleResetFilter(): void {
@@ -255,6 +275,8 @@ class FilterListViewModel extends Accessor {
           checkbox.removeAttribute("checked");
         }
         expression.checked = false;
+        expression.range = null;
+        expression.selectedFields = null;
       });
       this.layers[id].expressions = {};
     });
@@ -265,15 +287,18 @@ class FilterListViewModel extends Accessor {
     if (!this.layers?.[id]?.expressions) {
       return;
     }
+
     Object.values(this.layers[id].expressions)?.forEach(({ definitionExpression }) => {
       if (definitionExpression) {
         defExpressions.push(`(${definitionExpression})`);
       }
     });
+
     const newOutput = {
       id,
       definitionExpression: defExpressions.join(this.layers[id].operator)
     };
+
     this.set("output", newOutput);
   }
 
@@ -291,6 +316,7 @@ class FilterListViewModel extends Accessor {
         query.cacheHint = true;
       }
       if (field) {
+        query.where = this._initDefExpressions?.[layerId];
         query.outFields = [field];
         query.orderByFields = [`${field} DESC`];
         query.returnDistinctValues = true;
@@ -313,7 +339,7 @@ class FilterListViewModel extends Accessor {
     const layer = this.map.allLayers.find(({ id }) => id === layerId) as __esri.FeatureLayer;
     if (layer && layer.type === "feature") {
       const query = layer.createQuery();
-      query.where = layer.definitionExpression;
+      query.where = this._initDefExpressions?.[layerId];
       if (layer?.capabilities?.query?.supportsCacheHint) {
         query.cacheHint = true;
       }
@@ -407,55 +433,162 @@ class FilterListViewModel extends Accessor {
         }
       }
     }
+    expression.range = { min, max };
   }
 
-  private async _updateExpression(id: string, expression: Expression, layerField: __esri.Field, scheduleRender: () => void): Promise<void> {
-    const { field, type } = expression;
-    if (type === "string") {
-      expression.selectFields = await this._getFeatureAttributes(id, field);
-    } else if (type === "number") {
-      if ((!expression?.min && expression?.min !== 0) || (!expression?.max && expression?.max !== 0)) {
-        try {
-          const graphic = await this._calculateMinMaxStatistics(id, field);
-          const attributes = graphic?.[0]?.attributes;
-          expression.min = attributes[`min${field}`];
-          expression.max = attributes[`max${field}`];
-        } catch {
-        } finally {
-          scheduleRender();
-        }
-      }
-    } else if (type === "date") {
+  private async _updateStringExpression(id: string, expression: Expression): Promise<boolean> {
+    const { definitionExpressionId, field } = expression;
+    expression.selectFields = await this._getFeatureAttributes(id, field);
+    if (expression?.selectedFields) {
+      const selectedFields = expression.selectedFields.map((field: string | number) =>
+        typeof field === "number" ? field : `'${field}'`
+      );
+      const definitionExpression = `${field} IN (${selectedFields.join(",")})`;
+      this.layers[id].expressions[definitionExpressionId] = {
+        definitionExpression
+      };
+      return true;
+    }
+  }
+
+  private async _updateNumberExpression(
+    id: string,
+    expression: Expression,
+    scheduleRender: () => void
+  ): Promise<boolean> {
+    if ((!expression?.min && expression?.min !== 0) || (!expression?.max && expression?.max !== 0)) {
+      const { definitionExpressionId, field } = expression;
       try {
         const graphic = await this._calculateMinMaxStatistics(id, field);
         const attributes = graphic?.[0]?.attributes;
-        expression.min = this._convertToDate(attributes[`min${field}`]);
-        expression.max = this._convertToDate(attributes[`max${field}`]);
+        expression.min = attributes[`min${field}`];
+        expression.max = attributes[`max${field}`];
       } catch {
       } finally {
+        if (expression?.range && Object.keys(expression.range).length) {
+          const { min, max } = expression.range;
+          const definitionExpression = `${expression.field} BETWEEN ${min} AND ${max}`;
+          this.layers[id].expressions[definitionExpressionId] = {
+            definitionExpression
+          };
+        }
         scheduleRender();
+        return true;
       }
+    }
+  }
+
+  private async _updateDateExpression(
+    id: string,
+    expression: Expression,
+    scheduleRender: () => void
+  ): Promise<boolean> {
+    const { definitionExpressionId, field, range } = expression;
+    try {
+      const graphic = await this._calculateMinMaxStatistics(id, field);
+      const attributes = graphic?.[0]?.attributes;
+      expression.min = this._convertToDate(attributes[`min${field}`]);
+      expression.max = this._convertToDate(attributes[`max${field}`]);
+    } catch {
+    } finally {
+      if (range && Object.keys(range).length) {
+        let { min, max } = range;
+        min = (min as string)?.replace("+", " ");
+        max = (max as string)?.replace("+", " ");
+        if (min || max) {
+          const chevron = max && !min ? "<" : !max && min ? ">" : null;
+          if (chevron) {
+            this.layers[id].expressions[definitionExpressionId] = {
+              definitionExpression: `${field} ${chevron} '${min ?? max}'`
+            };
+          } else {
+            this.layers[id].expressions[definitionExpressionId] = {
+              definitionExpression: `${field} BETWEEN '${min}' AND '${max}'`
+            };
+          }
+          expression.start = min;
+          expression.end = max;
+        }
+      }
+      scheduleRender();
+      return true;
+    }
+  }
+
+  private _updateCodedValueExpression(id: string, expression: Expression, layerField: __esri.Field): boolean {
+    const { definitionExpressionId, field } = expression;
+    const selectFields: any[] = [];
+    expression.codedValues = {};
+    const domain = layerField.domain as __esri.CodedValueDomain;
+    domain?.codedValues?.forEach((cv) => {
+      const { code, name } = cv;
+      selectFields.push(code);
+      expression.codedValues[code] = name;
+    });
+    expression.selectFields = selectFields;
+    if (expression?.selectedFields) {
+      const selectedFields = expression.selectedFields.map((field: string | number) =>
+        typeof field === "number" ? field : `'${field}'`
+      );
+      const definitionExpression = `${field} IN (${selectedFields.join(",")})`;
+      this.layers[id].expressions[definitionExpressionId] = {
+        definitionExpression
+      };
+      return true;
+    }
+  }
+
+  private _updateRangeExpression(id: string, expression: Expression, layerField: __esri.Field): boolean {
+    const { definitionExpressionId, field, range } = expression;
+    const domain = layerField.domain as __esri.RangeDomain;
+    expression.min = domain?.minValue;
+    expression.max = domain?.maxValue;
+    if (range && Object.keys(range).length) {
+      const { min, max } = range;
+      const definitionExpression = `${field} BETWEEN ${min} AND ${max}`;
+      this.layers[id].expressions[definitionExpressionId] = {
+        definitionExpression
+      };
+      return true;
+    }
+  }
+
+  private async _updateExpression(
+    id: string,
+    expression: Expression,
+    layerField: __esri.Field,
+    scheduleRender: () => void
+  ): Promise<void> {
+    let update = false;
+    const { definitionExpressionId, type } = expression;
+    if (type === "string") {
+      update = await this._updateStringExpression(id, expression);
+    } else if (type === "number") {
+      update = await this._updateNumberExpression(id, expression, scheduleRender);
+    } else if (type === "date") {
+      update = await this._updateDateExpression(id, expression, scheduleRender);
     } else if (type === "coded-value") {
-      const selectFields: any[] = [];
-      expression.codedValues = {};
-      const domain = layerField.domain as __esri.CodedValueDomain;
-      domain?.codedValues?.forEach((cv) => {
-        const { code, name } = cv;
-        selectFields.push(code);
-        expression.codedValues[code] = name;
-      });
-      expression.selectFields = selectFields;
+      update = this._updateCodedValueExpression(id, expression, layerField);
     } else if (type === "range") {
-      const domain = layerField.domain as __esri.RangeDomain;
-      expression.min = domain?.minValue;
-      expression.max = domain?.maxValue;
+      update = this._updateRangeExpression(id, expression, layerField);
+    } else {
+      if (expression.checked && expression.definitionExpression) {
+        this.layers[id].expressions[definitionExpressionId] = {
+          definitionExpression: expression.definitionExpression
+        };
+        update = true;
+      }
+    }
+
+    if (update) {
+      this.generateOutput(id);
     }
     scheduleRender();
   }
 
   private _openAccordion(accordionItem: HTMLCalciteAccordionItemElement): void {
     if (this.expandFilters) {
-      accordionItem.setAttribute("active","");
+      accordionItem.setAttribute("active", "");
     } else {
       accordionItem.removeAttribute("active");
     }

@@ -11,7 +11,7 @@
 
 // esri.core.accessorSupport
 import { aliasOf, property, subclass } from "esri/core/accessorSupport/decorators";
-import { watch, when } from "esri/core/reactiveUtils";
+import { watch } from "esri/core/reactiveUtils";
 
 // esri.widgets.support.widget
 import { tsx } from "esri/widgets/support/widget";
@@ -120,23 +120,19 @@ class FilterList extends Widget {
 
   postInitialize() {
     this._locale = getLocale();
-    this.own(
-      watch(() => this.layerExpressions, () => {
-        const resetLayers: FilterOutput[] = [];
-        this.layerExpressions?.map((layerExpression) => {
-          resetLayers.push({
-            id: layerExpression.id,
-            definitionExpression: ""
-          });
-        });
-        this.emit("filterListReset", resetLayers);
-        this._initExpressions();
-        this._reset = {
-          disabled: this.layerExpressions && this.layerExpressions.length ? false : true,
-          color: this.layerExpressions && this.layerExpressions.length ? "blue" : "dark"
-        };
-      }, { initial: true })
-    );
+    this.own([
+      watch(
+        () => this.layerExpressions,
+        () => {
+          this._initExpressions();
+          this._reset = {
+            disabled: this.layerExpressions && this.layerExpressions.length ? false : true,
+            color: this.layerExpressions && this.layerExpressions.length ? "blue" : "dark"
+          };
+        },
+        { initial: true }
+      )
+    ]);
   }
 
   render() {
@@ -307,8 +303,8 @@ class FilterList extends Widget {
           <calcite-slider
             id={expression?.definitionExpressionId}
             afterCreate={this.viewModel.handleSliderCreate.bind(this.viewModel, expression, layerId)}
-            min-label={i18n.minSlider.replace("{field}",expression.field)}
-            max-label={i18n.maxSlider.replace("{field}",expression.field)}
+            min-label={i18n.minSlider.replace("{field}", expression.field)}
+            max-label={i18n.maxSlider.replace("{field}", expression.field)}
             step={expression?.step ? expression.step : 1}
             label-handles=""
             snap=""
@@ -322,7 +318,16 @@ class FilterList extends Widget {
   private _renderCombobox(layerId: string, expression: Expression) {
     const comboItems = expression?.selectFields?.map((field, index) => {
       const name = expression.type === "coded-value" ? expression.codedValues[field] : field;
-      return <calcite-combobox-item key={`${name}-${index}`} value={field} text-label={name}></calcite-combobox-item>;
+      const selectedFields = expression?.selectedFields as string[];
+      const selected = selectedFields?.includes(field) ?? false;
+      return (
+        <calcite-combobox-item
+          key={`${name}-${index}`}
+          value={field}
+          text-label={name}
+          selected={selected}
+        ></calcite-combobox-item>
+      );
     });
     return (
       <label key="combo-select" class={CSS.filterItem.userInput}>
@@ -396,25 +401,17 @@ class FilterList extends Widget {
   private _initExpressions(): void {
     this.layerExpressions?.forEach((layerExpression) => {
       const { id } = layerExpression;
-      let tmpExp = {};
+      this.layers[id] = {
+        expressions: {},
+        operator: layerExpression?.operator ?? " AND "
+      };
       layerExpression.expressions?.forEach((expression, index) => {
         expression.definitionExpressionId = `${id}-${index}`;
         if (!expression.checked) {
           expression.checked = false;
-        } else if (expression.definitionExpression) {
-          tmpExp = {
-            [expression.definitionExpressionId]: expression.definitionExpression
-          };
         }
         this.viewModel.setInitExpression(id, expression, () => this.scheduleRender());
       });
-      this.layers[id] = {
-        expressions: tmpExp,
-        operator: layerExpression?.operator ?? " AND "
-      };
-      if (Object.values(tmpExp).length) {
-        this.viewModel.generateOutput(id);
-      }
     });
   }
 }

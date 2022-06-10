@@ -80,7 +80,7 @@
   width: 100%;
 }
 .esri-filter-list__date-picker-input-container calcite-action {
-  height: 64px;
+  height: 48px;
   border: 1px solid var(--calcite-ui-border-1);
 }
 .esri-filter-list__filter-title {
@@ -136,3 +136,5 @@
 .esri-filter-list.esri-filter-list--dark .esri-filter-list__operator-description {
   background: #353535;
 }
+
+/*# sourceMappingURL=FilterList.css.map */
