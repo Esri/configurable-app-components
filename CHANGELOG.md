@@ -5,47 +5,62 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.6.3
+
+- Screenshot
+  1. Feature warning CSS fix
+
 ## 1.6.2
+
 - FilterList
   1. Add support for init expression values
 
 ## 1.6.1
+
 - FilterList
   1. coded values bug fix
   2. Add translations
 
 ## 1.6.0
+
 - Screenshot
   1. RTL Fixes
 
 ## 1.5.9
+
 - FilterList
   1. Add ability to expand FilterList accordions
 
 ## 1.5.8
+
 - FilterList bug fix
   1. Reset coded-value and range types
   2. Def Expression bug fix
 
 ## 1.5.7
+
 - FilterList layer field domain update
   1. Use field domain's constraints if it exist
 
 ## 1.5.6
+
 - Page
   1. Token bug fix
 
 ## 1.5.5
+
 - FilterList bug fixes
   1. Optional chaining if operator doesn't exist (older apps)
   2. Use allLayers instead of layers
 
 ## 1.5.3
+
 - Page
   1. Prefers-reduced-motion: Remove animation from 'Explore' button
   2. Add support for 'bg' locale
 
 ## 1.5.2
+
 - Share
   1. Add support for 'bg' locale
   2. Add aria-label to 'Copy to clipboard' buttons
@@ -53,15 +68,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   4. Resolve 'renderable()' helper method deprecation errors
 
 ## 1.5.1
+
 - FilterList bug fix and updated translations
 
 ## 1.5.0
+
 - Added 'disableCustom' property to Screenshot widget
 
 ## 1.4.8
+
 - Increase FilterList maxRecordCount for combobox string attribute
 
 ## 1.4.8
+
 - Update FilterList:
   1. Bug fixes for FilterList
   2. Query for min and max for user input filters

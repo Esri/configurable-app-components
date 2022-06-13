@@ -63,12 +63,12 @@
 }
 
 .esri-screenshot__feature-warning {
-  height: 15px;
   margin-top: 2%;
   margin-bottom: 2%;
 }
 .esri-screenshot__feature-warning .esri-screenshot__feature-warning-text-container {
   display: flex;
+  align-items: center;
 }
 .esri-screenshot__feature-warning .esri-screenshot__feature-warning-text-container .esri-screenshot__warning-svg {
   fill: #d9bf2b;
