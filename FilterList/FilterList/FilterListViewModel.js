@@ -351,7 +351,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                                 query.cacheHint = true;
                             }
                             if (!field) return [3 /*break*/, 2];
-                            query.where = (_c = this._initDefExpressions) === null || _c === void 0 ? void 0 : _c[layerId];
+                            query.where = ((_c = this._initDefExpressions) === null || _c === void 0 ? void 0 : _c[layerId]) || "1=1";
                             query.outFields = [field];
                             query.orderByFields = [field + " DESC"];
                             query.returnDistinctValues = true;
@@ -385,7 +385,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                             });
                             if (!(layer && layer.type === "feature")) return [3 /*break*/, 2];
                             query = layer.createQuery();
-                            query.where = (_a = this._initDefExpressions) === null || _a === void 0 ? void 0 : _a[layerId];
+                            query.where = ((_a = this._initDefExpressions) === null || _a === void 0 ? void 0 : _a[layerId]) || "1=1";
                             if ((_c = (_b = layer === null || layer === void 0 ? void 0 : layer.capabilities) === null || _b === void 0 ? void 0 : _b.query) === null || _c === void 0 ? void 0 : _c.supportsCacheHint) {
                                 query.cacheHint = true;
                             }

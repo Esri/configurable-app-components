@@ -316,7 +316,7 @@ class FilterListViewModel extends Accessor {
         query.cacheHint = true;
       }
       if (field) {
-        query.where = this._initDefExpressions?.[layerId];
+        query.where = this._initDefExpressions?.[layerId] || "1=1";
         query.outFields = [field];
         query.orderByFields = [`${field} DESC`];
         query.returnDistinctValues = true;
@@ -339,7 +339,7 @@ class FilterListViewModel extends Accessor {
     const layer = this.map.allLayers.find(({ id }) => id === layerId) as __esri.FeatureLayer;
     if (layer && layer.type === "feature") {
       const query = layer.createQuery();
-      query.where = this._initDefExpressions?.[layerId];
+      query.where = this._initDefExpressions?.[layerId] || "1=1";
       if (layer?.capabilities?.query?.supportsCacheHint) {
         query.cacheHint = true;
       }
