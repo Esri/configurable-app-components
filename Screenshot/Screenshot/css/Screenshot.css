@@ -139,7 +139,8 @@
 }
 
 .esri-screenshot__js-screenshot-image {
-  width: 100%;
+  max-width: 100%;
+  width: auto;
   background-color: #fff;
 }
 
