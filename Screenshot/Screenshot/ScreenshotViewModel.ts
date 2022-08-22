@@ -577,16 +577,25 @@ class ScreenshotViewModel extends Accessor {
         viewLegendCanvasContext.drawImage(viewCanvas, mapComponent.width, 0);
       }
     } else if (this.outputLayout === "vertical") {
-      viewLegendCanvasContext.drawImage(
-        viewCanvas,
-        combinedCanvas.width - viewCanvas.width,
-        0
-      );
-      viewLegendCanvasContext.drawImage(
-        mapComponent,
-        combinedCanvas.width - mapComponent.width,
-        viewScreenshotHeight
-      );
+      if (document.dir === "rtl") {
+        viewLegendCanvasContext.drawImage(
+          viewCanvas,
+          combinedCanvas.width - viewCanvas.width,
+          0
+        );
+        viewLegendCanvasContext.drawImage(
+          mapComponent,
+          combinedCanvas.width - mapComponent.width,
+          viewScreenshotHeight
+        );
+      } else {
+        viewLegendCanvasContext.drawImage(viewCanvas, 0, 0);
+        viewLegendCanvasContext.drawImage(
+          mapComponent,
+          0,
+          viewScreenshotHeight
+        );
+      }
     }
   }
 
