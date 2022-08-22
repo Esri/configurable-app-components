@@ -577,8 +577,16 @@ class ScreenshotViewModel extends Accessor {
         viewLegendCanvasContext.drawImage(viewCanvas, mapComponent.width, 0);
       }
     } else if (this.outputLayout === "vertical") {
-      viewLegendCanvasContext.drawImage(viewCanvas, 0, 0);
-      viewLegendCanvasContext.drawImage(mapComponent, 0, viewScreenshotHeight);
+      viewLegendCanvasContext.drawImage(
+        viewCanvas,
+        combinedCanvas.width - viewCanvas.width,
+        0
+      );
+      viewLegendCanvasContext.drawImage(
+        mapComponent,
+        combinedCanvas.width - mapComponent.width,
+        viewScreenshotHeight
+      );
     }
   }
 
@@ -647,17 +655,35 @@ class ScreenshotViewModel extends Accessor {
         );
       }
     } else if (this.outputLayout === "vertical") {
-      combinedCanvasContext.drawImage(viewCanvas, 0, 0);
-      combinedCanvasContext.drawImage(
-        firstMapComponent,
-        0,
-        viewScreenshotHeight
-      );
-      combinedCanvasContext.drawImage(
-        secondMapComponent,
-        0,
-        viewScreenshotHeight + firstMapComponentHeight
-      );
+      if (document.dir === "rtl") {
+        combinedCanvasContext.drawImage(
+          viewCanvas,
+          combinedCanvasElements.width - viewCanvas.width,
+          0
+        );
+        combinedCanvasContext.drawImage(
+          firstMapComponent,
+          combinedCanvasElements.width - firstMapComponent.width,
+          viewScreenshotHeight
+        );
+        combinedCanvasContext.drawImage(
+          secondMapComponent,
+          combinedCanvasElements.width - secondMapComponent.width,
+          viewScreenshotHeight + firstMapComponentHeight
+        );
+      } else {
+        combinedCanvasContext.drawImage(viewCanvas, 0, 0);
+        combinedCanvasContext.drawImage(
+          firstMapComponent,
+          0,
+          viewScreenshotHeight
+        );
+        combinedCanvasContext.drawImage(
+          secondMapComponent,
+          0,
+          viewScreenshotHeight + firstMapComponentHeight
+        );
+      }
     }
   }
 
@@ -746,24 +772,49 @@ class ScreenshotViewModel extends Accessor {
         );
       }
     } else if (this.outputLayout === "vertical") {
-      combinedCanvasContext.drawImage(viewCanvas, 0, 0);
-      combinedCanvasContext.drawImage(
-        firstMapComponent,
-        0,
-        viewScreenshotHeight
-      );
-      combinedCanvasContext.drawImage(
-        secondMapComponent,
-        0,
-        viewScreenshot.data.height + firstMapComponent.height
-      );
-      combinedCanvasContext.drawImage(
-        thirdMapComponent,
-        0,
-        viewScreenshot.data.height +
-          firstMapComponent.height +
-          secondMapComponent.height
-      );
+      if (document.dir === "rtl") {
+        combinedCanvasContext.drawImage(
+          viewCanvas,
+          combinedCanvasElements.width - viewCanvas.width,
+          0
+        );
+        combinedCanvasContext.drawImage(
+          firstMapComponent,
+          combinedCanvasElements.width - firstMapComponent.width,
+          viewScreenshotHeight
+        );
+        combinedCanvasContext.drawImage(
+          secondMapComponent,
+          combinedCanvasElements.width - secondMapComponent.width,
+          viewScreenshot.data.height + firstMapComponent.height
+        );
+        combinedCanvasContext.drawImage(
+          thirdMapComponent,
+          combinedCanvasElements.width - thirdMapComponent.width,
+          viewScreenshot.data.height +
+            firstMapComponent.height +
+            secondMapComponent.height
+        );
+      } else {
+        combinedCanvasContext.drawImage(viewCanvas, 0, 0);
+        combinedCanvasContext.drawImage(
+          firstMapComponent,
+          0,
+          viewScreenshotHeight
+        );
+        combinedCanvasContext.drawImage(
+          secondMapComponent,
+          0,
+          viewScreenshot.data.height + firstMapComponent.height
+        );
+        combinedCanvasContext.drawImage(
+          thirdMapComponent,
+          0,
+          viewScreenshot.data.height +
+            firstMapComponent.height +
+            secondMapComponent.height
+        );
+      }
     }
   }
 

@@ -460,8 +460,8 @@ define(["require", "exports", "esri/core/Accessor", "./html2canvas/html2canvas",
                 }
             }
             else if (this.outputLayout === "vertical") {
-                viewLegendCanvasContext.drawImage(viewCanvas, 0, 0);
-                viewLegendCanvasContext.drawImage(mapComponent, 0, viewScreenshotHeight);
+                viewLegendCanvasContext.drawImage(viewCanvas, combinedCanvas.width - viewCanvas.width, 0);
+                viewLegendCanvasContext.drawImage(mapComponent, combinedCanvas.width - mapComponent.width, viewScreenshotHeight);
             }
         };
         ScreenshotViewModel.prototype._generateImageForTwoComponents = function (viewCanvas, combinedCanvasElements, viewScreenshot, firstMapComponent, secondMapComponent) {
@@ -498,9 +498,16 @@ define(["require", "exports", "esri/core/Accessor", "./html2canvas/html2canvas",
                 }
             }
             else if (this.outputLayout === "vertical") {
-                combinedCanvasContext.drawImage(viewCanvas, 0, 0);
-                combinedCanvasContext.drawImage(firstMapComponent, 0, viewScreenshotHeight);
-                combinedCanvasContext.drawImage(secondMapComponent, 0, viewScreenshotHeight + firstMapComponentHeight);
+                if (document.dir === "rtl") {
+                    combinedCanvasContext.drawImage(viewCanvas, combinedCanvasElements.width - viewCanvas.width, 0);
+                    combinedCanvasContext.drawImage(firstMapComponent, combinedCanvasElements.width - firstMapComponent.width, viewScreenshotHeight);
+                    combinedCanvasContext.drawImage(secondMapComponent, combinedCanvasElements.width - secondMapComponent.width, viewScreenshotHeight + firstMapComponentHeight);
+                }
+                else {
+                    combinedCanvasContext.drawImage(viewCanvas, 0, 0);
+                    combinedCanvasContext.drawImage(firstMapComponent, 0, viewScreenshotHeight);
+                    combinedCanvasContext.drawImage(secondMapComponent, 0, viewScreenshotHeight + firstMapComponentHeight);
+                }
             }
         };
         ScreenshotViewModel.prototype._generateImageForThreeComponents = function (viewCanvas, combinedCanvasElements, viewScreenshot, firstMapComponent, secondMapComponent, thirdMapComponent) {
@@ -546,12 +553,22 @@ define(["require", "exports", "esri/core/Accessor", "./html2canvas/html2canvas",
                 }
             }
             else if (this.outputLayout === "vertical") {
-                combinedCanvasContext.drawImage(viewCanvas, 0, 0);
-                combinedCanvasContext.drawImage(firstMapComponent, 0, viewScreenshotHeight);
-                combinedCanvasContext.drawImage(secondMapComponent, 0, viewScreenshot.data.height + firstMapComponent.height);
-                combinedCanvasContext.drawImage(thirdMapComponent, 0, viewScreenshot.data.height +
-                    firstMapComponent.height +
-                    secondMapComponent.height);
+                if (document.dir === "rtl") {
+                    combinedCanvasContext.drawImage(viewCanvas, combinedCanvasElements.width - viewCanvas.width, 0);
+                    combinedCanvasContext.drawImage(firstMapComponent, combinedCanvasElements.width - firstMapComponent.width, viewScreenshotHeight);
+                    combinedCanvasContext.drawImage(secondMapComponent, combinedCanvasElements.width - secondMapComponent.width, viewScreenshot.data.height + firstMapComponent.height);
+                    combinedCanvasContext.drawImage(thirdMapComponent, combinedCanvasElements.width - thirdMapComponent.width, viewScreenshot.data.height +
+                        firstMapComponent.height +
+                        secondMapComponent.height);
+                }
+                else {
+                    combinedCanvasContext.drawImage(viewCanvas, 0, 0);
+                    combinedCanvasContext.drawImage(firstMapComponent, 0, viewScreenshotHeight);
+                    combinedCanvasContext.drawImage(secondMapComponent, 0, viewScreenshot.data.height + firstMapComponent.height);
+                    combinedCanvasContext.drawImage(thirdMapComponent, 0, viewScreenshot.data.height +
+                        firstMapComponent.height +
+                        secondMapComponent.height);
+                }
             }
         };
         ScreenshotViewModel.prototype._showPreview = function (canvasElement, screenshotImageElement, maskDiv) {
