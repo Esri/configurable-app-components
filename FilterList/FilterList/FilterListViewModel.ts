@@ -441,7 +441,7 @@ class FilterListViewModel extends Accessor {
     expression.selectFields = await this._getFeatureAttributes(id, field);
     if (expression?.selectedFields) {
       const selectedFields = expression.selectedFields.map((field: string | number) =>
-        typeof field === "number" ? field : `'${field}'`
+        typeof field === "number" ? field : `'${this._handleSingleQuote(field)}'`
       );
       const definitionExpression = `${field} IN (${selectedFields.join(",")})`;
       this.layers[id].expressions[definitionExpressionId] = {
@@ -528,7 +528,7 @@ class FilterListViewModel extends Accessor {
     expression.selectFields = selectFields;
     if (expression?.selectedFields) {
       const selectedFields = expression.selectedFields.map((field: string | number) =>
-        typeof field === "number" ? field : `'${field}'`
+        typeof field === "number" ? field : `'${this._handleSingleQuote(field)}'`
       );
       const definitionExpression = `${field} IN (${selectedFields.join(",")})`;
       this.layers[id].expressions[definitionExpressionId] = {
