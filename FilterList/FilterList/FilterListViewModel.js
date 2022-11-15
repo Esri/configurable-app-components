@@ -174,12 +174,13 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             comboBox.addEventListener("calciteLookupChange", this.handleComboSelect.bind(this, expression, layerId));
         };
         FilterListViewModel.prototype.handleComboSelect = function (expression, layerId, event) {
+            var _this = this;
             var items = event.detail;
             var definitionExpressionId = expression.definitionExpressionId, field = expression.field;
             if (items && items.length) {
                 var values = items.map(function (_a) {
                     var value = _a.value;
-                    return (typeof value === "number" ? value : "'" + value + "'");
+                    return (typeof value === "number" ? value : "'" + _this._handleSingleQuote(value) + "'");
                 });
                 expression.selectedFields = items.map(function (_a) {
                     var value = _a.value;
@@ -484,6 +485,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         FilterListViewModel.prototype._updateStringExpression = function (id, expression) {
             return __awaiter(this, void 0, void 0, function () {
                 var definitionExpressionId, field, _a, selectedFields, definitionExpression;
+                var _this = this;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
@@ -494,7 +496,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                             _a.selectFields = _b.sent();
                             if (expression === null || expression === void 0 ? void 0 : expression.selectedFields) {
                                 selectedFields = expression.selectedFields.map(function (field) {
-                                    return typeof field === "number" ? field : "'" + field + "'";
+                                    return typeof field === "number" ? field : "'" + _this._handleSingleQuote(field) + "'";
                                 });
                                 definitionExpression = field + " IN (" + selectedFields.join(",") + ")";
                                 this.layers[id].expressions[definitionExpressionId] = {
@@ -594,6 +596,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             });
         };
         FilterListViewModel.prototype._updateCodedValueExpression = function (id, expression, layerField) {
+            var _this = this;
             var _a;
             var definitionExpressionId = expression.definitionExpressionId, field = expression.field;
             var selectFields = [];
@@ -607,7 +610,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             expression.selectFields = selectFields;
             if (expression === null || expression === void 0 ? void 0 : expression.selectedFields) {
                 var selectedFields = expression.selectedFields.map(function (field) {
-                    return typeof field === "number" ? field : "'" + field + "'";
+                    return typeof field === "number" ? field : "'" + _this._handleSingleQuote(field) + "'";
                 });
                 var definitionExpression = field + " IN (" + selectedFields.join(",") + ")";
                 this.layers[id].expressions[definitionExpressionId] = {
@@ -688,6 +691,9 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             else {
                 accordionItem.removeAttribute("active");
             }
+        };
+        FilterListViewModel.prototype._handleSingleQuote = function (value) {
+            return value.replaceAll("'", "''");
         };
         __decorate([
             decorators_1.property()

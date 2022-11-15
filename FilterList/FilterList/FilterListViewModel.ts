@@ -150,7 +150,7 @@ class FilterListViewModel extends Accessor {
     const items = event.detail as HTMLCalciteComboboxItemElement[];
     const { definitionExpressionId, field } = expression;
     if (items && items.length) {
-      const values = items.map(({ value }) => (typeof value === "number" ? value : `'${value}'`));
+      const values = items.map(({ value }) => (typeof value === "number" ? value : `'${this._handleSingleQuote(value)}'`));
       expression.selectedFields = items.map(({ value }) => value);
       const definitionExpression = `${field} IN (${values.join(",")})`;
       this.layers[layerId].expressions[definitionExpressionId] = {
@@ -441,7 +441,7 @@ class FilterListViewModel extends Accessor {
     expression.selectFields = await this._getFeatureAttributes(id, field);
     if (expression?.selectedFields) {
       const selectedFields = expression.selectedFields.map((field: string | number) =>
-        typeof field === "number" ? field : `'${field}'`
+        typeof field === "number" ? field : `'${this._handleSingleQuote(field)}'`
       );
       const definitionExpression = `${field} IN (${selectedFields.join(",")})`;
       this.layers[id].expressions[definitionExpressionId] = {
@@ -528,7 +528,7 @@ class FilterListViewModel extends Accessor {
     expression.selectFields = selectFields;
     if (expression?.selectedFields) {
       const selectedFields = expression.selectedFields.map((field: string | number) =>
-        typeof field === "number" ? field : `'${field}'`
+        typeof field === "number" ? field : `'${this._handleSingleQuote(field)}'`
       );
       const definitionExpression = `${field} IN (${selectedFields.join(",")})`;
       this.layers[id].expressions[definitionExpressionId] = {
@@ -592,6 +592,10 @@ class FilterListViewModel extends Accessor {
     } else {
       accordionItem.removeAttribute("active");
     }
+  }
+
+  private _handleSingleQuote(value: string): string {
+    return value.replaceAll("'", "''")
   }
 }
 
