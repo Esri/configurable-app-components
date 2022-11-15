@@ -174,12 +174,13 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             comboBox.addEventListener("calciteLookupChange", this.handleComboSelect.bind(this, expression, layerId));
         };
         FilterListViewModel.prototype.handleComboSelect = function (expression, layerId, event) {
+            var _this = this;
             var items = event.detail;
             var definitionExpressionId = expression.definitionExpressionId, field = expression.field;
             if (items && items.length) {
                 var values = items.map(function (_a) {
                     var value = _a.value;
-                    return (typeof value === "number" ? value : "'" + value + "'");
+                    return (typeof value === "number" ? value : "'" + _this._handleSingleQuote(value) + "'");
                 });
                 expression.selectedFields = items.map(function (_a) {
                     var value = _a.value;
@@ -688,6 +689,9 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             else {
                 accordionItem.removeAttribute("active");
             }
+        };
+        FilterListViewModel.prototype._handleSingleQuote = function (value) {
+            return value.replaceAll("'", "''");
         };
         __decorate([
             decorators_1.property()
