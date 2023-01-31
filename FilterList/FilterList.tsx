@@ -10,7 +10,11 @@
 // limitations under the License.​
 
 // esri.core.accessorSupport
-import { aliasOf, property, subclass } from "esri/core/accessorSupport/decorators";
+import {
+  aliasOf,
+  property,
+  subclass,
+} from "esri/core/accessorSupport/decorators";
 import { watch } from "esri/core/reactiveUtils";
 
 // esri.widgets.support.widget
@@ -29,7 +33,7 @@ import {
   FilterLayers,
   FilterOutput,
   LayerExpression,
-  ResetFilter
+  ResetFilter,
 } from "./FilterList/interfaces/interfaces";
 import FilterListViewModel = require("./FilterList/FilterListViewModel");
 
@@ -42,15 +46,18 @@ const CSS = {
   resetBtn: "esri-filter-list__reset-btn",
   optionalBtn: "esri-filter-list__optional-btn",
   filterItem: {
-    single: "esri-filter-list__filter-item-container esri-filter-list__filter-item-container--single",
-    accordion: "esri-filter-list__filter-item-container esri-filter-list__filter-item-container--accordion",
-    userInput: "esri-filter-list__filter-item-container esri-filter-list__filter-item-container--user-input"
+    single:
+      "esri-filter-list__filter-item-container esri-filter-list__filter-item-container--single",
+    accordion:
+      "esri-filter-list__filter-item-container esri-filter-list__filter-item-container--accordion",
+    userInput:
+      "esri-filter-list__filter-item-container esri-filter-list__filter-item-container--user-input",
   },
   filterItemTitle: "esri-filter-list__filter-title",
   checkboxContainer: "esri-filter-list__checkbox-container",
   numberInputContainer: "esri-filter-list__number-input-container",
   dateInputContainer: "esri-filter-list__date-picker-input-container",
-  operatorDesc: "esri-filter-list__operator-description"
+  operatorDesc: "esri-filter-list__operator-description",
 };
 
 @subclass("FilterList")
@@ -126,22 +133,33 @@ class FilterList extends Widget {
         () => {
           this._initExpressions();
           this._reset = {
-            disabled: this.layerExpressions && this.layerExpressions.length ? false : true,
-            color: this.layerExpressions && this.layerExpressions.length ? "blue" : "dark"
+            disabled:
+              this.layerExpressions && this.layerExpressions.length
+                ? false
+                : true,
+            color:
+              this.layerExpressions && this.layerExpressions.length
+                ? "brand"
+                : "inverse",
           };
         },
         { initial: true }
-      )
+      ),
     ]);
   }
 
   render() {
     const filterConfig = this._initFilterConfig();
     const header = this._renderFilterHeader();
-    const reset = this.optionalBtnOnClick ? this._renderOptionalButton() : this._renderReset();
+    const reset = this.optionalBtnOnClick
+      ? this._renderOptionalButton()
+      : this._renderReset();
     return (
       <div class={this.theme === "light" ? CSS.baseLight : CSS.baseDark}>
-        <div class={CSS.filterContainer} style={!this._isSingleFilterConfig ? "border:unset" : null}>
+        <div
+          class={CSS.filterContainer}
+          style={!this._isSingleFilterConfig ? "border:unset" : null}
+        >
           {header}
           {filterConfig}
           {reset}
@@ -157,12 +175,18 @@ class FilterList extends Widget {
   // ----------------------------------
 
   private _renderFilterHeader(): any {
-    return <div bind={this} afterCreate={this._createHeaderTitle} class={CSS.headerContainer}></div>;
+    return (
+      <div
+        bind={this}
+        afterCreate={this._createHeaderTitle}
+        class={CSS.headerContainer}
+      ></div>
+    );
   }
 
   private _renderLayerAccordion(): any {
     return (
-      <calcite-accordion theme={this.theme}>
+      <calcite-accordion icon-position="start">
         {this.layerExpressions.map((layerExpression) => {
           return this._renderFilterAccordionItem(layerExpression);
         })}
@@ -173,14 +197,14 @@ class FilterList extends Widget {
   private _renderFilterAccordionItem(layerExpression: LayerExpression): any {
     const filter = this._renderFilter(layerExpression);
     const { operator } = layerExpression;
-    const operatorTranslation = operator?.trim() === "OR" ? "orOperator" : "andOperator";
+    const operatorTranslation =
+      operator?.trim() === "OR" ? "orOperator" : "andOperator";
     return (
       <calcite-accordion-item
         key={layerExpression.id}
         bind={this.viewModel}
-        item-title={layerExpression.title}
-        item-subtitle={i18n?.[operatorTranslation]}
-        icon-position="start"
+        heading={layerExpression.title}
+        description={i18n?.[operatorTranslation]}
         afterCreate={this.viewModel.initLayerHeader}
       >
         {filter}
@@ -194,7 +218,11 @@ class FilterList extends Widget {
       return expression.definitionExpression ? (
         <div
           key={`${id}-${index}`}
-          class={this._isSingleFilterConfig ? CSS.filterItem.single : CSS.filterItem.accordion}
+          class={
+            this._isSingleFilterConfig
+              ? CSS.filterItem.single
+              : CSS.filterItem.accordion
+          }
         >
           <div class={CSS.filterItemTitle}>
             <p>{expression.name}</p>
@@ -204,8 +232,11 @@ class FilterList extends Widget {
               id={expression.definitionExpressionId}
               scale="l"
               checked={expression.checked}
-              theme={this.theme}
-              afterCreate={this.viewModel.initCheckbox.bind(this.viewModel, id, expression)}
+              afterCreate={this.viewModel.initCheckbox.bind(
+                this.viewModel,
+                id,
+                expression
+              )}
             ></calcite-checkbox>
           </div>
         </div>
@@ -223,8 +254,7 @@ class FilterList extends Widget {
             bind={this}
             appearance="outline"
             width="half"
-            color={this._reset.color}
-            theme={this.theme}
+            kind={this._reset.color}
             disabled={this._reset.disabled}
             onclick={this._handleResetFilter}
           >
@@ -242,8 +272,7 @@ class FilterList extends Widget {
           <calcite-button
             bind={this}
             appearance="outline"
-            color={this._reset.color}
-            theme={this.theme}
+            kind={this._reset.color}
             disabled={this._reset.disabled}
             onclick={this._handleResetFilter}
           >
@@ -252,8 +281,7 @@ class FilterList extends Widget {
           <calcite-button
             bind={this}
             appearance="solid"
-            color="blue"
-            theme={this.theme}
+            kind="brand"
             onclick={this.optionalBtnOnClick}
           >
             {this.optionalBtnText}
@@ -270,25 +298,26 @@ class FilterList extends Widget {
         <div class={CSS.dateInputContainer}>
           <calcite-input-date-picker
             id={expression?.definitionExpressionId}
-            afterCreate={this.viewModel.handleDatePickerCreate.bind(this.viewModel, expression, layerId)}
+            afterCreate={this.viewModel.handleDatePickerCreate.bind(
+              this.viewModel,
+              expression,
+              layerId
+            )}
             scale="s"
-            start={expression?.start}
-            end={expression?.end}
-            min={expression?.min}
-            max={expression?.max}
-            locale={this._locale ?? "en"}
-            next-month-label={i18n.nextMonth}
-            prev-month-label={i18n.previousMonth}
+            lang={this._locale ?? "en"}
+            overlay-positioning="fixed"
             range
             layout="vertical"
-            theme={this.theme}
-          ></calcite-input-date-picker>
+          />
           <calcite-action
-            onclick={this.viewModel.handleResetDatePicker.bind(this.viewModel, expression, layerId)}
+            onclick={this.viewModel.handleResetDatePicker.bind(
+              this.viewModel,
+              expression,
+              layerId
+            )}
             icon="reset"
             label={i18n.resetDatePicker}
             scale="s"
-            theme={this.theme}
           ></calcite-action>
         </div>
       </label>
@@ -297,18 +326,24 @@ class FilterList extends Widget {
 
   private _renderNumberSlider(layerId: string, expression: Expression) {
     return expression?.min && expression?.max ? (
-      <label key={expression?.definitionExpressionId} class={CSS.filterItem.userInput}>
+      <label
+        key={expression?.definitionExpressionId}
+        class={CSS.filterItem.userInput}
+      >
         <span>{expression?.name}</span>
         <div class={CSS.numberInputContainer}>
           <calcite-slider
             id={expression?.definitionExpressionId}
-            afterCreate={this.viewModel.handleSliderCreate.bind(this.viewModel, expression, layerId)}
+            afterCreate={this.viewModel.handleSliderCreate.bind(
+              this.viewModel,
+              expression,
+              layerId
+            )}
             min-label={i18n.minSlider.replace("{field}", expression.field)}
             max-label={i18n.maxSlider.replace("{field}", expression.field)}
             step={expression?.step ? expression.step : 1}
             label-handles=""
             snap=""
-            theme={this.theme}
           ></calcite-slider>
         </div>
       </label>
@@ -317,7 +352,10 @@ class FilterList extends Widget {
 
   private _renderCombobox(layerId: string, expression: Expression) {
     const comboItems = expression?.selectFields?.map((field, index) => {
-      const name = expression.type === "coded-value" ? expression.codedValues[field] : field;
+      const name =
+        expression.type === "coded-value"
+          ? expression.codedValues[field]
+          : field;
       const selectedFields = expression?.selectedFields as string[];
       const selected = selectedFields?.includes(field) ?? false;
       return (
@@ -334,13 +372,16 @@ class FilterList extends Widget {
         <span>{expression?.name}</span>
         <calcite-combobox
           id={expression?.definitionExpressionId}
-          afterCreate={this.viewModel.handleComboSelectCreate.bind(this.viewModel, expression, layerId)}
+          afterCreate={this.viewModel.handleComboSelectCreate.bind(
+            this.viewModel,
+            expression,
+            layerId
+          )}
           label={expression?.name}
           placeholder={expression?.placeholder}
           selection-mode="multi"
           scale="s"
           max-items="6"
-          theme={this.theme}
         >
           {comboItems}
         </calcite-combobox>
@@ -352,7 +393,8 @@ class FilterList extends Widget {
     if (this.layerExpressions && this.layerExpressions.length) {
       if (this.layerExpressions.length === 1) {
         const { operator } = this.layerExpressions[0];
-        const operatorTranslation = operator?.trim() === "OR" ? "orOperator" : "andOperator";
+        const operatorTranslation =
+          operator?.trim() === "OR" ? "orOperator" : "andOperator";
         this._isSingleFilterConfig = true;
         return (
           <div>
@@ -384,7 +426,7 @@ class FilterList extends Widget {
     this.layerExpressions.map((layerExpression) => {
       resetLayers.push({
         id: layerExpression.id,
-        definitionExpression: ""
+        definitionExpression: "",
       });
     });
     this.viewModel.handleResetFilter();
@@ -403,14 +445,16 @@ class FilterList extends Widget {
       const { id } = layerExpression;
       this.layers[id] = {
         expressions: {},
-        operator: layerExpression?.operator ?? " AND "
+        operator: layerExpression?.operator ?? " AND ",
       };
       layerExpression.expressions?.forEach((expression, index) => {
         expression.definitionExpressionId = `${id}-${index}`;
         if (!expression.checked) {
           expression.checked = false;
         }
-        this.viewModel.setInitExpression(id, expression, () => this.scheduleRender());
+        this.viewModel.setInitExpression(id, expression, () =>
+          this.scheduleRender()
+        );
       });
     });
   }
