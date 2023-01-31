@@ -40,13 +40,13 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         filterItem: {
             single: "esri-filter-list__filter-item-container esri-filter-list__filter-item-container--single",
             accordion: "esri-filter-list__filter-item-container esri-filter-list__filter-item-container--accordion",
-            userInput: "esri-filter-list__filter-item-container esri-filter-list__filter-item-container--user-input"
+            userInput: "esri-filter-list__filter-item-container esri-filter-list__filter-item-container--user-input",
         },
         filterItemTitle: "esri-filter-list__filter-title",
         checkboxContainer: "esri-filter-list__checkbox-container",
         numberInputContainer: "esri-filter-list__number-input-container",
         dateInputContainer: "esri-filter-list__date-picker-input-container",
-        operatorDesc: "esri-filter-list__operator-description"
+        operatorDesc: "esri-filter-list__operator-description",
     };
     var FilterList = /** @class */ (function (_super) {
         __extends(FilterList, _super);
@@ -69,16 +69,22 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                 reactiveUtils_1.watch(function () { return _this.layerExpressions; }, function () {
                     _this._initExpressions();
                     _this._reset = {
-                        disabled: _this.layerExpressions && _this.layerExpressions.length ? false : true,
-                        color: _this.layerExpressions && _this.layerExpressions.length ? "blue" : "dark"
+                        disabled: _this.layerExpressions && _this.layerExpressions.length
+                            ? false
+                            : true,
+                        color: _this.layerExpressions && _this.layerExpressions.length
+                            ? "brand"
+                            : "inverse",
                     };
-                }, { initial: true })
+                }, { initial: true }),
             ]);
         };
         FilterList.prototype.render = function () {
             var filterConfig = this._initFilterConfig();
             var header = this._renderFilterHeader();
-            var reset = this.optionalBtnOnClick ? this._renderOptionalButton() : this._renderReset();
+            var reset = this.optionalBtnOnClick
+                ? this._renderOptionalButton()
+                : this._renderReset();
             return (widget_1.tsx("div", { class: this.theme === "light" ? CSS.baseLight : CSS.baseDark },
                 widget_1.tsx("div", { class: CSS.filterContainer, style: !this._isSingleFilterConfig ? "border:unset" : null },
                     header,
@@ -91,11 +97,11 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
         //
         // ----------------------------------
         FilterList.prototype._renderFilterHeader = function () {
-            return widget_1.tsx("div", { bind: this, afterCreate: this._createHeaderTitle, class: CSS.headerContainer });
+            return (widget_1.tsx("div", { bind: this, afterCreate: this._createHeaderTitle, class: CSS.headerContainer }));
         };
         FilterList.prototype._renderLayerAccordion = function () {
             var _this = this;
-            return (widget_1.tsx("calcite-accordion", { theme: this.theme }, this.layerExpressions.map(function (layerExpression) {
+            return (widget_1.tsx("calcite-accordion", { "icon-position": "start" }, this.layerExpressions.map(function (layerExpression) {
                 return _this._renderFilterAccordionItem(layerExpression);
             })));
         };
@@ -103,56 +109,60 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             var filter = this._renderFilter(layerExpression);
             var operator = layerExpression.operator;
             var operatorTranslation = (operator === null || operator === void 0 ? void 0 : operator.trim()) === "OR" ? "orOperator" : "andOperator";
-            return (widget_1.tsx("calcite-accordion-item", { key: layerExpression.id, bind: this.viewModel, "item-title": layerExpression.title, "item-subtitle": i18n === null || i18n === void 0 ? void 0 : i18n[operatorTranslation], "icon-position": "start", afterCreate: this.viewModel.initLayerHeader }, filter));
+            return (widget_1.tsx("calcite-accordion-item", { key: layerExpression.id, bind: this.viewModel, heading: layerExpression.title, description: i18n === null || i18n === void 0 ? void 0 : i18n[operatorTranslation], afterCreate: this.viewModel.initLayerHeader }, filter));
         };
         FilterList.prototype._renderFilter = function (layerExpression) {
             var _this = this;
             var id = layerExpression.id;
             return layerExpression.expressions.map(function (expression, index) {
-                return expression.definitionExpression ? (widget_1.tsx("div", { key: id + "-" + index, class: _this._isSingleFilterConfig ? CSS.filterItem.single : CSS.filterItem.accordion },
+                return expression.definitionExpression ? (widget_1.tsx("div", { key: id + "-" + index, class: _this._isSingleFilterConfig
+                        ? CSS.filterItem.single
+                        : CSS.filterItem.accordion },
                     widget_1.tsx("div", { class: CSS.filterItemTitle },
                         widget_1.tsx("p", null, expression.name)),
                     widget_1.tsx("div", { class: CSS.checkboxContainer },
-                        widget_1.tsx("calcite-checkbox", { id: expression.definitionExpressionId, scale: "l", checked: expression.checked, theme: _this.theme, afterCreate: _this.viewModel.initCheckbox.bind(_this.viewModel, id, expression) })))) : (_this._initInput(id, expression));
+                        widget_1.tsx("calcite-checkbox", { id: expression.definitionExpressionId, scale: "l", checked: expression.checked, afterCreate: _this.viewModel.initCheckbox.bind(_this.viewModel, id, expression) })))) : (_this._initInput(id, expression));
             });
         };
         FilterList.prototype._renderReset = function () {
             return (widget_1.tsx("div", { class: CSS.resetContainer },
                 widget_1.tsx("div", { class: CSS.resetBtn },
-                    widget_1.tsx("calcite-button", { bind: this, appearance: "outline", width: "half", color: this._reset.color, theme: this.theme, disabled: this._reset.disabled, onclick: this._handleResetFilter }, i18n.resetFilter))));
+                    widget_1.tsx("calcite-button", { bind: this, appearance: "outline", width: "half", kind: this._reset.color, disabled: this._reset.disabled, onclick: this._handleResetFilter }, i18n.resetFilter))));
         };
         FilterList.prototype._renderOptionalButton = function () {
             return (widget_1.tsx("div", { class: CSS.resetContainer },
                 widget_1.tsx("div", { class: CSS.optionalBtn },
-                    widget_1.tsx("calcite-button", { bind: this, appearance: "outline", color: this._reset.color, theme: this.theme, disabled: this._reset.disabled, onclick: this._handleResetFilter }, i18n.resetFilter),
-                    widget_1.tsx("calcite-button", { bind: this, appearance: "solid", color: "blue", theme: this.theme, onclick: this.optionalBtnOnClick }, this.optionalBtnText))));
+                    widget_1.tsx("calcite-button", { bind: this, appearance: "outline", kind: this._reset.color, disabled: this._reset.disabled, onclick: this._handleResetFilter }, i18n.resetFilter),
+                    widget_1.tsx("calcite-button", { bind: this, appearance: "solid", kind: "brand", onclick: this.optionalBtnOnClick }, this.optionalBtnText))));
         };
         FilterList.prototype._renderDatePicker = function (layerId, expression) {
             var _a;
             return (widget_1.tsx("label", { class: CSS.filterItem.userInput },
                 widget_1.tsx("span", null, expression === null || expression === void 0 ? void 0 : expression.name),
                 widget_1.tsx("div", { class: CSS.dateInputContainer },
-                    widget_1.tsx("calcite-input-date-picker", { id: expression === null || expression === void 0 ? void 0 : expression.definitionExpressionId, afterCreate: this.viewModel.handleDatePickerCreate.bind(this.viewModel, expression, layerId), scale: "s", start: expression === null || expression === void 0 ? void 0 : expression.start, end: expression === null || expression === void 0 ? void 0 : expression.end, min: expression === null || expression === void 0 ? void 0 : expression.min, max: expression === null || expression === void 0 ? void 0 : expression.max, locale: (_a = this._locale) !== null && _a !== void 0 ? _a : "en", "next-month-label": i18n.nextMonth, "prev-month-label": i18n.previousMonth, range: true, layout: "vertical", theme: this.theme }),
-                    widget_1.tsx("calcite-action", { onclick: this.viewModel.handleResetDatePicker.bind(this.viewModel, expression, layerId), icon: "reset", label: i18n.resetDatePicker, scale: "s", theme: this.theme }))));
+                    widget_1.tsx("calcite-input-date-picker", { id: expression === null || expression === void 0 ? void 0 : expression.definitionExpressionId, afterCreate: this.viewModel.handleDatePickerCreate.bind(this.viewModel, expression, layerId), scale: "s", lang: (_a = this._locale) !== null && _a !== void 0 ? _a : "en", "overlay-positioning": "fixed", range: true, layout: "vertical" }),
+                    widget_1.tsx("calcite-action", { onclick: this.viewModel.handleResetDatePicker.bind(this.viewModel, expression, layerId), icon: "reset", label: i18n.resetDatePicker, scale: "s" }))));
         };
         FilterList.prototype._renderNumberSlider = function (layerId, expression) {
             return (expression === null || expression === void 0 ? void 0 : expression.min) && (expression === null || expression === void 0 ? void 0 : expression.max) ? (widget_1.tsx("label", { key: expression === null || expression === void 0 ? void 0 : expression.definitionExpressionId, class: CSS.filterItem.userInput },
                 widget_1.tsx("span", null, expression === null || expression === void 0 ? void 0 : expression.name),
                 widget_1.tsx("div", { class: CSS.numberInputContainer },
-                    widget_1.tsx("calcite-slider", { id: expression === null || expression === void 0 ? void 0 : expression.definitionExpressionId, afterCreate: this.viewModel.handleSliderCreate.bind(this.viewModel, expression, layerId), "min-label": i18n.minSlider.replace("{field}", expression.field), "max-label": i18n.maxSlider.replace("{field}", expression.field), step: (expression === null || expression === void 0 ? void 0 : expression.step) ? expression.step : 1, "label-handles": "", snap: "", theme: this.theme })))) : null;
+                    widget_1.tsx("calcite-slider", { id: expression === null || expression === void 0 ? void 0 : expression.definitionExpressionId, afterCreate: this.viewModel.handleSliderCreate.bind(this.viewModel, expression, layerId), "min-label": i18n.minSlider.replace("{field}", expression.field), "max-label": i18n.maxSlider.replace("{field}", expression.field), step: (expression === null || expression === void 0 ? void 0 : expression.step) ? expression.step : 1, "label-handles": "", snap: "" })))) : null;
         };
         FilterList.prototype._renderCombobox = function (layerId, expression) {
             var _a;
             var comboItems = (_a = expression === null || expression === void 0 ? void 0 : expression.selectFields) === null || _a === void 0 ? void 0 : _a.map(function (field, index) {
                 var _a;
-                var name = expression.type === "coded-value" ? expression.codedValues[field] : field;
+                var name = expression.type === "coded-value"
+                    ? expression.codedValues[field]
+                    : field;
                 var selectedFields = expression === null || expression === void 0 ? void 0 : expression.selectedFields;
                 var selected = (_a = selectedFields === null || selectedFields === void 0 ? void 0 : selectedFields.includes(field)) !== null && _a !== void 0 ? _a : false;
                 return (widget_1.tsx("calcite-combobox-item", { key: name + "-" + index, value: field, "text-label": name, selected: selected }));
             });
             return (widget_1.tsx("label", { key: "combo-select", class: CSS.filterItem.userInput },
                 widget_1.tsx("span", null, expression === null || expression === void 0 ? void 0 : expression.name),
-                widget_1.tsx("calcite-combobox", { id: expression === null || expression === void 0 ? void 0 : expression.definitionExpressionId, afterCreate: this.viewModel.handleComboSelectCreate.bind(this.viewModel, expression, layerId), label: expression === null || expression === void 0 ? void 0 : expression.name, placeholder: expression === null || expression === void 0 ? void 0 : expression.placeholder, "selection-mode": "multi", scale: "s", "max-items": "6", theme: this.theme }, comboItems)));
+                widget_1.tsx("calcite-combobox", { id: expression === null || expression === void 0 ? void 0 : expression.definitionExpressionId, afterCreate: this.viewModel.handleComboSelectCreate.bind(this.viewModel, expression, layerId), label: expression === null || expression === void 0 ? void 0 : expression.name, placeholder: expression === null || expression === void 0 ? void 0 : expression.placeholder, "selection-mode": "multi", scale: "s", "max-items": "6" }, comboItems)));
         };
         FilterList.prototype._initFilterConfig = function () {
             if (this.layerExpressions && this.layerExpressions.length) {
@@ -188,7 +198,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
             this.layerExpressions.map(function (layerExpression) {
                 resetLayers.push({
                     id: layerExpression.id,
-                    definitionExpression: ""
+                    definitionExpression: "",
                 });
             });
             this.viewModel.handleResetFilter();
@@ -208,14 +218,16 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                 var id = layerExpression.id;
                 _this.layers[id] = {
                     expressions: {},
-                    operator: (_a = layerExpression === null || layerExpression === void 0 ? void 0 : layerExpression.operator) !== null && _a !== void 0 ? _a : " AND "
+                    operator: (_a = layerExpression === null || layerExpression === void 0 ? void 0 : layerExpression.operator) !== null && _a !== void 0 ? _a : " AND ",
                 };
                 (_b = layerExpression.expressions) === null || _b === void 0 ? void 0 : _b.forEach(function (expression, index) {
                     expression.definitionExpressionId = id + "-" + index;
                     if (!expression.checked) {
                         expression.checked = false;
                     }
-                    _this.viewModel.setInitExpression(id, expression, function () { return _this.scheduleRender(); });
+                    _this.viewModel.setInitExpression(id, expression, function () {
+                        return _this.scheduleRender();
+                    });
                 });
             });
         };

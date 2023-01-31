@@ -17,7 +17,13 @@ import Handles = require("esri/core/Handles");
 import { fromJSON } from "esri/geometry/support/jsonUtils";
 
 // Config Panel Imports
-import { Expression, ExtentSelector, FilterLayers, FilterOutput, LayerExpression } from "./interfaces/interfaces";
+import {
+  Expression,
+  ExtentSelector,
+  FilterLayers,
+  FilterOutput,
+  LayerExpression,
+} from "./interfaces/interfaces";
 
 let accordionStyle = `.accordion-item-content { padding: 0!important; }`;
 
@@ -93,13 +99,22 @@ class FilterListViewModel extends Accessor {
   //
   // ----------------------------------
 
-  setInitExpression(id: string, expression: Expression, scheduleRender: () => void): void {
+  setInitExpression(
+    id: string,
+    expression: Expression,
+    scheduleRender: () => void
+  ): void {
     if (expression.field && expression.type) {
       const fl = this.map.findLayerById(id) as __esri.FeatureLayer;
       fl?.load().then(() => {
-        const layerField = fl.fields?.find(({ name }) => name === expression.field);
+        const layerField = fl.fields?.find(
+          ({ name }) => name === expression.field
+        );
         const domainType = layerField.domain?.type;
-        expression.type = domainType === "coded-value" || domainType === "range" ? domainType : expression.type;
+        expression.type =
+          domainType === "coded-value" || domainType === "range"
+            ? domainType
+            : expression.type;
         this._updateExpression(id, expression, layerField, scheduleRender);
       });
     } else {
@@ -124,16 +139,25 @@ class FilterListViewModel extends Accessor {
     style.innerHTML = accordionStyle;
     accordionItem.shadowRoot.prepend(style);
     this._openAccordion(accordionItem);
-    this._handles.add(watch(() => this.expandFilters, this._openAccordion.bind(this, accordionItem)));
+    this._handles.add(
+      watch(
+        () => this.expandFilters,
+        this._openAccordion.bind(this, accordionItem)
+      )
+    );
   }
 
-  initCheckbox(id: string, expression: Expression, checkbox: HTMLCalciteCheckboxElement) {
+  initCheckbox(
+    id: string,
+    expression: Expression,
+    checkbox: HTMLCalciteCheckboxElement
+  ) {
     checkbox.addEventListener("calciteCheckboxChange", (event: CustomEvent) => {
       const node = event.target as HTMLCalciteCheckboxElement;
       expression.checked = node.checked;
       if (node.checked) {
         this.layers[id].expressions[expression.definitionExpressionId] = {
-          definitionExpression: expression.definitionExpression
+          definitionExpression: expression.definitionExpression,
         };
       } else {
         delete this.layers[id].expressions[expression.definitionExpressionId];
@@ -142,19 +166,35 @@ class FilterListViewModel extends Accessor {
     });
   }
 
-  handleComboSelectCreate(expression: Expression, layerId: string, comboBox: HTMLCalciteComboboxElement): void {
-    comboBox.addEventListener("calciteLookupChange", this.handleComboSelect.bind(this, expression, layerId));
+  handleComboSelectCreate(
+    expression: Expression,
+    layerId: string,
+    combobox: HTMLCalciteComboboxElement
+  ): void {
+    combobox.addEventListener(
+      "calciteComboboxChange",
+      this.handleComboSelect.bind(this, expression, layerId)
+    );
   }
 
-  handleComboSelect(expression: Expression, layerId: string, event: CustomEvent): void {
-    const items = event.detail as HTMLCalciteComboboxItemElement[];
+  handleComboSelect(
+    expression: Expression,
+    layerId: string,
+    event: CustomEvent
+  ): void {
+    const combobox = event.target as HTMLCalciteComboboxElement;
+    const items = combobox.selectedItems as HTMLCalciteComboboxItemElement[];
     const { definitionExpressionId, field } = expression;
     if (items && items.length) {
-      const values = items.map(({ value }) => (typeof value === "number" ? value : `'${this._handleSingleQuote(value)}'`));
+      const values = items.map(({ value }) =>
+        typeof value === "number"
+          ? value
+          : `'${this._handleSingleQuote(value)}'`
+      );
       expression.selectedFields = items.map(({ value }) => value);
       const definitionExpression = `${field} IN (${values.join(",")})`;
       this.layers[layerId].expressions[definitionExpressionId] = {
-        definitionExpression
+        definitionExpression,
       };
       expression.checked = true;
     } else {
@@ -164,7 +204,11 @@ class FilterListViewModel extends Accessor {
     this.generateOutput(layerId);
   }
 
-  handleSliderCreate(expression: Expression, layerId: string, slider: HTMLCalciteSliderElement): void {
+  handleSliderCreate(
+    expression: Expression,
+    layerId: string,
+    slider: HTMLCalciteSliderElement
+  ): void {
     const { max, min, range } = expression;
     if ((max || max === 0) && (min || min === 0)) {
       slider.setAttribute("min-value", min);
@@ -182,37 +226,75 @@ class FilterListViewModel extends Accessor {
     const style = document.createElement("style");
     style.innerHTML = `.thumb .handle__label--minValue.hyphen::after {content: unset!important}`;
     slider.shadowRoot.prepend(style);
-    slider.addEventListener("calciteSliderChange", this.handleSliderChange.bind(this, expression, layerId));
+    slider.addEventListener(
+      "calciteSliderChange",
+      this.handleSliderChange.bind(this, expression, layerId)
+    );
   }
 
-  handleSliderChange(expression: Expression, layerId: string, event: CustomEvent): void {
+  handleSliderChange(
+    expression: Expression,
+    layerId: string,
+    event: CustomEvent
+  ): void {
     const { maxValue, minValue } = event.target as HTMLCalciteSliderElement;
     this._debounceSliderChange(expression, layerId, maxValue, minValue);
   }
 
-  handleDatePickerCreate(expression: Expression, layerId: string, datePicker: HTMLCalciteInputDatePickerElement): void {
+  handleDatePickerCreate(
+    expression: Expression,
+    layerId: string,
+    datePicker: HTMLCalciteInputDatePickerElement
+  ): void {
     datePicker.min = this._convertToDate(expression?.min);
     datePicker.max = this._convertToDate(expression?.max);
     datePicker.addEventListener(
-      "calciteDatePickerRangeChange",
+      "calciteInputDatePickerChange",
       this.handleDatePickerRangeChange.bind(this, expression, layerId)
     );
-    datePicker.addEventListener("input", this.handleDatePickerInputChange.bind(this, expression, layerId));
+    datePicker.addEventListener(
+      "input",
+      this.handleDatePickerInputChange.bind(this, expression, layerId)
+    );
   }
 
-  handleDatePickerRangeChange(expression: Expression, layerId: string, event: CustomEvent): void {
-    this.setExpressionDates(event.detail?.startDate, event.detail?.endDate, expression, layerId);
+  handleDatePickerRangeChange(
+    expression: Expression,
+    layerId: string,
+    event: CustomEvent
+  ): void {
+    this.setExpressionDates(
+      event.detail?.startDate,
+      event.detail?.endDate,
+      expression,
+      layerId
+    );
   }
 
-  handleDatePickerInputChange(expression: Expression, layerId: string, event: Event) {
+  handleDatePickerInputChange(
+    expression: Expression,
+    layerId: string,
+    event: Event
+  ) {
     setTimeout(() => {
       const datePicker = event.target as HTMLCalciteInputDatePickerElement;
-      this.setExpressionDates(datePicker.startAsDate, datePicker.endAsDate, expression, layerId);
+      this.setExpressionDates(
+        datePicker.startAsDate,
+        datePicker.endAsDate,
+        expression,
+        layerId
+      );
     }, 1000);
   }
 
-  handleResetDatePicker(expression: Expression, layerId: string, event: Event): void {
-    const datePicker = document.getElementById(expression.definitionExpressionId) as HTMLCalciteInputDatePickerElement;
+  handleResetDatePicker(
+    expression: Expression,
+    layerId: string,
+    event: Event
+  ): void {
+    const datePicker = document.getElementById(
+      expression.definitionExpressionId
+    ) as HTMLCalciteInputDatePickerElement;
     datePicker.start = null;
     datePicker.startAsDate = null;
     datePicker.end = null;
@@ -222,19 +304,30 @@ class FilterListViewModel extends Accessor {
     this.generateOutput(layerId);
   }
 
-  setExpressionDates(startDate: Date, endDate: Date, expression: Expression, layerId: string): void {
+  setExpressionDates(
+    startDate: Date,
+    endDate: Date,
+    expression: Expression,
+    layerId: string
+  ): void {
     const { expressions } = this.layers[layerId];
-    const start = startDate ? this._convertToDate(Math.floor(startDate.getTime()), true) : null;
-    const end = endDate ? this._convertToDate(Math.floor(endDate.getTime()), true) : null;
+    const start = startDate
+      ? this._convertToDate(Math.floor(startDate.getTime()), true)
+      : null;
+    const end = endDate
+      ? this._convertToDate(Math.floor(endDate.getTime()), true)
+      : null;
     if (start || end) {
       const chevron = end && !start ? "<" : !end && start ? ">" : null;
       if (chevron) {
         expressions[expression.definitionExpressionId] = {
-          definitionExpression: `${expression.field} ${chevron} '${start ?? end}'`
+          definitionExpression: `${expression.field} ${chevron} '${
+            start ?? end
+          }'`,
         };
       } else {
         expressions[expression.definitionExpressionId] = {
-          definitionExpression: `${expression.field} BETWEEN '${start}' AND '${end}'`
+          definitionExpression: `${expression.field} BETWEEN '${start}' AND '${end}'`,
         };
       }
       expression.range = { min: start, max: end };
@@ -249,7 +342,9 @@ class FilterListViewModel extends Accessor {
       layerExpression.expressions.map((expression) => {
         const { definitionExpressionId, max, min, type } = expression;
         if (type === "string" || type === "coded-value") {
-          const combobox = document.getElementById(definitionExpressionId) as HTMLCalciteComboboxElement;
+          const combobox = document.getElementById(
+            definitionExpressionId
+          ) as HTMLCalciteComboboxElement;
           const wrapper = combobox.shadowRoot.querySelector(".wrapper");
           for (let i = 0; i < wrapper.children.length; i++) {
             const child = wrapper.children[i];
@@ -259,19 +354,27 @@ class FilterListViewModel extends Accessor {
             }
           }
           for (let i = 0; i < combobox.children.length; i++) {
-            const comboboxItem = combobox.children[i] as HTMLCalciteComboboxItemElement;
+            const comboboxItem = combobox.children[
+              i
+            ] as HTMLCalciteComboboxItemElement;
             comboboxItem.selected = false;
           }
         } else if (type === "date") {
-          const datePicker = document.getElementById(definitionExpressionId) as HTMLCalciteInputDatePickerElement;
+          const datePicker = document.getElementById(
+            definitionExpressionId
+          ) as HTMLCalciteInputDatePickerElement;
           datePicker.startAsDate = null;
           datePicker.endAsDate = null;
         } else if (type === "number" || type === "range") {
-          const slider = document.getElementById(definitionExpressionId) as HTMLCalciteSliderElement;
+          const slider = document.getElementById(
+            definitionExpressionId
+          ) as HTMLCalciteSliderElement;
           slider.minValue = min as number;
           slider.maxValue = max as number;
         } else {
-          const checkbox = document.getElementById(definitionExpressionId) as HTMLCalciteCheckboxElement;
+          const checkbox = document.getElementById(
+            definitionExpressionId
+          ) as HTMLCalciteCheckboxElement;
           checkbox.removeAttribute("checked");
         }
         expression.checked = false;
@@ -288,15 +391,17 @@ class FilterListViewModel extends Accessor {
       return;
     }
 
-    Object.values(this.layers[id].expressions)?.forEach(({ definitionExpression }) => {
-      if (definitionExpression) {
-        defExpressions.push(`(${definitionExpression})`);
+    Object.values(this.layers[id].expressions)?.forEach(
+      ({ definitionExpression }) => {
+        if (definitionExpression) {
+          defExpressions.push(`(${definitionExpression})`);
+        }
       }
-    });
+    );
 
     const newOutput = {
       id,
-      definitionExpression: defExpressions.join(this.layers[id].operator)
+      definitionExpression: defExpressions.join(this.layers[id].operator),
     };
 
     this.set("output", newOutput);
@@ -308,8 +413,13 @@ class FilterListViewModel extends Accessor {
   //
   // ----------------------------------
 
-  private async _getFeatureAttributes(layerId: string, field: string): Promise<string[]> {
-    const layer = this.map.allLayers.find(({ id }) => id === layerId) as __esri.FeatureLayer;
+  private async _getFeatureAttributes(
+    layerId: string,
+    field: string
+  ): Promise<string[]> {
+    const layer = this.map.allLayers.find(
+      ({ id }) => id === layerId
+    ) as __esri.FeatureLayer;
     if (layer && layer.type === "feature") {
       const query = layer.createQuery();
       if (layer?.capabilities?.query?.supportsCacheHint) {
@@ -324,19 +434,29 @@ class FilterListViewModel extends Accessor {
         query.maxRecordCountFactor = 3;
         query.returnExceededLimitFeatures = true;
         if (this.extentSelector && this.extentSelectorConfig) {
-          query.geometry = this._getExtent(this.extentSelector, this.extentSelectorConfig);
+          query.geometry = this._getExtent(
+            this.extentSelector,
+            this.extentSelectorConfig
+          );
           query.spatialRelationship = "intersects";
         }
         const results = await layer.queryFeatures(query);
-        const features = results?.features.filter((feature) => feature.attributes?.[field]);
+        const features = results?.features.filter(
+          (feature) => feature.attributes?.[field]
+        );
         return features?.map((feature) => feature.attributes?.[field]).sort();
       }
     }
     return [];
   }
 
-  private async _calculateMinMaxStatistics(layerId: string, field: string): Promise<__esri.Graphic[]> {
-    const layer = this.map.allLayers.find(({ id }) => id === layerId) as __esri.FeatureLayer;
+  private async _calculateMinMaxStatistics(
+    layerId: string,
+    field: string
+  ): Promise<__esri.Graphic[]> {
+    const layer = this.map.allLayers.find(
+      ({ id }) => id === layerId
+    ) as __esri.FeatureLayer;
     if (layer && layer.type === "feature") {
       const query = layer.createQuery();
       query.where = this._initDefExpressions?.[layerId] || "1=1";
@@ -348,17 +468,20 @@ class FilterListViewModel extends Accessor {
           {
             onStatisticField: field,
             outStatisticFieldName: `max${field}`,
-            statisticType: "max"
+            statisticType: "max",
           },
           {
             onStatisticField: field,
             outStatisticFieldName: `min${field}`,
-            statisticType: "min"
-          }
+            statisticType: "min",
+          },
         ];
         query.outStatistics = tmp as any;
         if (this.extentSelector && this.extentSelectorConfig) {
-          query.geometry = this._getExtent(this.extentSelector, this.extentSelectorConfig);
+          query.geometry = this._getExtent(
+            this.extentSelector,
+            this.extentSelectorConfig
+          );
           query.spatialRelationship = "intersects";
         }
         const results = await layer.queryFeatures(query);
@@ -368,10 +491,15 @@ class FilterListViewModel extends Accessor {
     return [];
   }
 
-  private _convertToDate(date: string | number, includeTime: boolean = false): string {
+  private _convertToDate(
+    date: string | number,
+    includeTime: boolean = false
+  ): string {
     if (date) {
       const tmpDate = new Date(date);
-      const formattedDate = `${tmpDate.getFullYear()}-${tmpDate.getMonth() + 1}-${tmpDate.getDate()}`;
+      const formattedDate = `${tmpDate.getFullYear()}-${
+        tmpDate.getMonth() + 1
+      }-${tmpDate.getDate()}`;
       if (includeTime) {
         const time = `${tmpDate.getHours()}:${tmpDate.getMinutes()}:${tmpDate.getSeconds()}`;
         return `${formattedDate} ${time}`;
@@ -382,14 +510,20 @@ class FilterListViewModel extends Accessor {
     return null;
   }
 
-  private _getExtent(extentSelector: boolean, extentSelectorConfig: ExtentSelector): __esri.Geometry {
+  private _getExtent(
+    extentSelector: boolean,
+    extentSelectorConfig: ExtentSelector
+  ): __esri.Geometry {
     if (extentSelector && extentSelectorConfig) {
       const { constraints } = extentSelectorConfig;
       let newConstraints = { ...constraints };
       const geometry = newConstraints?.geometry;
       if (geometry) {
         const tmpExtent = fromJSON(geometry);
-        if (tmpExtent && (tmpExtent?.type === "extent" || tmpExtent?.type === "polygon")) {
+        if (
+          tmpExtent &&
+          (tmpExtent?.type === "extent" || tmpExtent?.type === "polygon")
+        ) {
           return tmpExtent;
         }
       }
@@ -397,7 +531,12 @@ class FilterListViewModel extends Accessor {
     return null;
   }
 
-  private _debounceSliderChange(expression: Expression, layerId: string, max: number, min: number): void {
+  private _debounceSliderChange(
+    expression: Expression,
+    layerId: string,
+    max: number,
+    min: number
+  ): void {
     if (this._timeout) {
       clearTimeout(this._timeout);
     }
@@ -407,7 +546,12 @@ class FilterListViewModel extends Accessor {
     }, 800);
   }
 
-  private _updateExpressions(expression: Expression, layerId: string, max: number, min: number): void {
+  private _updateExpressions(
+    expression: Expression,
+    layerId: string,
+    max: number,
+    min: number
+  ): void {
     if (!this.layers[layerId]) {
       return;
     }
@@ -417,7 +561,7 @@ class FilterListViewModel extends Accessor {
       if (expressions[definitionExpressionId]) {
         expressions[definitionExpressionId] = {
           ...expressions[definitionExpressionId],
-          definitionExpression: `${expression?.field} BETWEEN ${min} AND ${max}`
+          definitionExpression: `${expression?.field} BETWEEN ${min} AND ${max}`,
         };
         expression.checked = true;
         if (min === expression?.min && max === expression?.max) {
@@ -427,7 +571,7 @@ class FilterListViewModel extends Accessor {
       } else {
         if (min !== expression?.min || max !== expression?.max) {
           expressions[definitionExpressionId] = {
-            definitionExpression: `${expression?.field} BETWEEN ${min} AND ${max}`
+            definitionExpression: `${expression?.field} BETWEEN ${min} AND ${max}`,
           };
           expression.checked = true;
         }
@@ -436,16 +580,22 @@ class FilterListViewModel extends Accessor {
     expression.range = { min, max };
   }
 
-  private async _updateStringExpression(id: string, expression: Expression): Promise<boolean> {
+  private async _updateStringExpression(
+    id: string,
+    expression: Expression
+  ): Promise<boolean> {
     const { definitionExpressionId, field } = expression;
     expression.selectFields = await this._getFeatureAttributes(id, field);
     if (expression?.selectedFields) {
-      const selectedFields = expression.selectedFields.map((field: string | number) =>
-        typeof field === "number" ? field : `'${this._handleSingleQuote(field)}'`
+      const selectedFields = expression.selectedFields.map(
+        (field: string | number) =>
+          typeof field === "number"
+            ? field
+            : `'${this._handleSingleQuote(field)}'`
       );
       const definitionExpression = `${field} IN (${selectedFields.join(",")})`;
       this.layers[id].expressions[definitionExpressionId] = {
-        definitionExpression
+        definitionExpression,
       };
       return true;
     }
@@ -456,7 +606,10 @@ class FilterListViewModel extends Accessor {
     expression: Expression,
     scheduleRender: () => void
   ): Promise<boolean> {
-    if ((!expression?.min && expression?.min !== 0) || (!expression?.max && expression?.max !== 0)) {
+    if (
+      (!expression?.min && expression?.min !== 0) ||
+      (!expression?.max && expression?.max !== 0)
+    ) {
       const { definitionExpressionId, field } = expression;
       try {
         const graphic = await this._calculateMinMaxStatistics(id, field);
@@ -469,7 +622,7 @@ class FilterListViewModel extends Accessor {
           const { min, max } = expression.range;
           const definitionExpression = `${expression.field} BETWEEN ${min} AND ${max}`;
           this.layers[id].expressions[definitionExpressionId] = {
-            definitionExpression
+            definitionExpression,
           };
         }
         scheduleRender();
@@ -499,11 +652,11 @@ class FilterListViewModel extends Accessor {
           const chevron = max && !min ? "<" : !max && min ? ">" : null;
           if (chevron) {
             this.layers[id].expressions[definitionExpressionId] = {
-              definitionExpression: `${field} ${chevron} '${min ?? max}'`
+              definitionExpression: `${field} ${chevron} '${min ?? max}'`,
             };
           } else {
             this.layers[id].expressions[definitionExpressionId] = {
-              definitionExpression: `${field} BETWEEN '${min}' AND '${max}'`
+              definitionExpression: `${field} BETWEEN '${min}' AND '${max}'`,
             };
           }
           expression.start = min;
@@ -515,7 +668,11 @@ class FilterListViewModel extends Accessor {
     }
   }
 
-  private _updateCodedValueExpression(id: string, expression: Expression, layerField: __esri.Field): boolean {
+  private _updateCodedValueExpression(
+    id: string,
+    expression: Expression,
+    layerField: __esri.Field
+  ): boolean {
     const { definitionExpressionId, field } = expression;
     const selectFields: any[] = [];
     expression.codedValues = {};
@@ -527,18 +684,25 @@ class FilterListViewModel extends Accessor {
     });
     expression.selectFields = selectFields;
     if (expression?.selectedFields) {
-      const selectedFields = expression.selectedFields.map((field: string | number) =>
-        typeof field === "number" ? field : `'${this._handleSingleQuote(field)}'`
+      const selectedFields = expression.selectedFields.map(
+        (field: string | number) =>
+          typeof field === "number"
+            ? field
+            : `'${this._handleSingleQuote(field)}'`
       );
       const definitionExpression = `${field} IN (${selectedFields.join(",")})`;
       this.layers[id].expressions[definitionExpressionId] = {
-        definitionExpression
+        definitionExpression,
       };
       return true;
     }
   }
 
-  private _updateRangeExpression(id: string, expression: Expression, layerField: __esri.Field): boolean {
+  private _updateRangeExpression(
+    id: string,
+    expression: Expression,
+    layerField: __esri.Field
+  ): boolean {
     const { definitionExpressionId, field, range } = expression;
     const domain = layerField.domain as __esri.RangeDomain;
     expression.min = domain?.minValue;
@@ -547,7 +711,7 @@ class FilterListViewModel extends Accessor {
       const { min, max } = range;
       const definitionExpression = `${field} BETWEEN ${min} AND ${max}`;
       this.layers[id].expressions[definitionExpressionId] = {
-        definitionExpression
+        definitionExpression,
       };
       return true;
     }
@@ -564,7 +728,11 @@ class FilterListViewModel extends Accessor {
     if (type === "string") {
       update = await this._updateStringExpression(id, expression);
     } else if (type === "number") {
-      update = await this._updateNumberExpression(id, expression, scheduleRender);
+      update = await this._updateNumberExpression(
+        id,
+        expression,
+        scheduleRender
+      );
     } else if (type === "date") {
       update = await this._updateDateExpression(id, expression, scheduleRender);
     } else if (type === "coded-value") {
@@ -574,7 +742,7 @@ class FilterListViewModel extends Accessor {
     } else {
       if (expression.checked && expression.definitionExpression) {
         this.layers[id].expressions[definitionExpressionId] = {
-          definitionExpression: expression.definitionExpression
+          definitionExpression: expression.definitionExpression,
         };
         update = true;
       }
@@ -588,14 +756,14 @@ class FilterListViewModel extends Accessor {
 
   private _openAccordion(accordionItem: HTMLCalciteAccordionItemElement): void {
     if (this.expandFilters) {
-      accordionItem.setAttribute("active", "");
+      accordionItem.epanded = true;
     } else {
-      accordionItem.removeAttribute("active");
+      accordionItem.epanded = false;
     }
   }
 
   private _handleSingleQuote(value: string): string {
-    return value.replaceAll("'", "''")
+    return value.replaceAll("'", "''");
   }
 }
 
