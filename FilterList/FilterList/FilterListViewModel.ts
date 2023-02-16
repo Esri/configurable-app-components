@@ -345,37 +345,45 @@ class FilterListViewModel extends Accessor {
           const combobox = document.getElementById(
             definitionExpressionId
           ) as HTMLCalciteComboboxElement;
-          const wrapper = combobox.shadowRoot.querySelector(".wrapper");
-          for (let i = 0; i < wrapper.children.length; i++) {
-            const child = wrapper.children[i];
-            if (child.nodeName === "CALCITE-CHIP") {
-              const chip = child as HTMLCalciteChipElement;
-              chip.style.display = "none";
+          if (combobox != null) {
+            const wrapper = combobox.shadowRoot.querySelector(".wrapper");
+            for (let i = 0; i < wrapper.children.length; i++) {
+              const child = wrapper.children[i];
+              if (child.nodeName === "CALCITE-CHIP") {
+                const chip = child as HTMLCalciteChipElement;
+                chip.style.display = "none";
+              }
             }
-          }
-          for (let i = 0; i < combobox.children.length; i++) {
-            const comboboxItem = combobox.children[
-              i
-            ] as HTMLCalciteComboboxItemElement;
-            comboboxItem.selected = false;
+            for (let i = 0; i < combobox.children.length; i++) {
+              const comboboxItem = combobox.children[
+                i
+              ] as HTMLCalciteComboboxItemElement;
+              comboboxItem.selected = false;
+            }
           }
         } else if (type === "date") {
           const datePicker = document.getElementById(
             definitionExpressionId
           ) as HTMLCalciteInputDatePickerElement;
-          datePicker.startAsDate = null;
-          datePicker.endAsDate = null;
+          if (datePicker != null) {
+            datePicker.startAsDate = null;
+            datePicker.endAsDate = null;
+          }
         } else if (type === "number" || type === "range") {
           const slider = document.getElementById(
             definitionExpressionId
           ) as HTMLCalciteSliderElement;
-          slider.minValue = min as number;
-          slider.maxValue = max as number;
+          if (slider != null) {
+            slider.minValue = min as number;
+            slider.maxValue = max as number;
+          }
         } else {
           const checkbox = document.getElementById(
             definitionExpressionId
           ) as HTMLCalciteCheckboxElement;
-          checkbox.removeAttribute("checked");
+          if (checkbox != null) {
+            checkbox.removeAttribute("checked");
+          }
         }
         expression.checked = false;
         expression.range = null;

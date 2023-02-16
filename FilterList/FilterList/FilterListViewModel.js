@@ -288,32 +288,40 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                     var definitionExpressionId = expression.definitionExpressionId, max = expression.max, min = expression.min, type = expression.type;
                     if (type === "string" || type === "coded-value") {
                         var combobox = document.getElementById(definitionExpressionId);
-                        var wrapper = combobox.shadowRoot.querySelector(".wrapper");
-                        for (var i = 0; i < wrapper.children.length; i++) {
-                            var child = wrapper.children[i];
-                            if (child.nodeName === "CALCITE-CHIP") {
-                                var chip = child;
-                                chip.style.display = "none";
+                        if (combobox != null) {
+                            var wrapper = combobox.shadowRoot.querySelector(".wrapper");
+                            for (var i = 0; i < wrapper.children.length; i++) {
+                                var child = wrapper.children[i];
+                                if (child.nodeName === "CALCITE-CHIP") {
+                                    var chip = child;
+                                    chip.style.display = "none";
+                                }
                             }
-                        }
-                        for (var i = 0; i < combobox.children.length; i++) {
-                            var comboboxItem = combobox.children[i];
-                            comboboxItem.selected = false;
+                            for (var i = 0; i < combobox.children.length; i++) {
+                                var comboboxItem = combobox.children[i];
+                                comboboxItem.selected = false;
+                            }
                         }
                     }
                     else if (type === "date") {
                         var datePicker = document.getElementById(definitionExpressionId);
-                        datePicker.startAsDate = null;
-                        datePicker.endAsDate = null;
+                        if (datePicker != null) {
+                            datePicker.startAsDate = null;
+                            datePicker.endAsDate = null;
+                        }
                     }
                     else if (type === "number" || type === "range") {
                         var slider = document.getElementById(definitionExpressionId);
-                        slider.minValue = min;
-                        slider.maxValue = max;
+                        if (slider != null) {
+                            slider.minValue = min;
+                            slider.maxValue = max;
+                        }
                     }
                     else {
                         var checkbox = document.getElementById(definitionExpressionId);
-                        checkbox.removeAttribute("checked");
+                        if (checkbox != null) {
+                            checkbox.removeAttribute("checked");
+                        }
                     }
                     expression.checked = false;
                     expression.range = null;

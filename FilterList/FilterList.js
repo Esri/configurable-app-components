@@ -144,7 +144,8 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/core
                     widget_1.tsx("calcite-action", { onclick: this.viewModel.handleResetDatePicker.bind(this.viewModel, expression, layerId), icon: "reset", label: i18n.resetDatePicker, scale: "s" }))));
         };
         FilterList.prototype._renderNumberSlider = function (layerId, expression) {
-            return (expression === null || expression === void 0 ? void 0 : expression.min) && (expression === null || expression === void 0 ? void 0 : expression.max) ? (widget_1.tsx("label", { key: expression === null || expression === void 0 ? void 0 : expression.definitionExpressionId, class: CSS.filterItem.userInput },
+            var check = (expression === null || expression === void 0 ? void 0 : expression.min) != null && (expression === null || expression === void 0 ? void 0 : expression.max) != null;
+            return check ? (widget_1.tsx("label", { key: expression === null || expression === void 0 ? void 0 : expression.definitionExpressionId, class: CSS.filterItem.userInput },
                 widget_1.tsx("span", null, expression === null || expression === void 0 ? void 0 : expression.name),
                 widget_1.tsx("div", { class: CSS.numberInputContainer },
                     widget_1.tsx("calcite-slider", { id: expression === null || expression === void 0 ? void 0 : expression.definitionExpressionId, afterCreate: this.viewModel.handleSliderCreate.bind(this.viewModel, expression, layerId), "min-label": i18n.minSlider.replace("{field}", expression.field), "max-label": i18n.maxSlider.replace("{field}", expression.field), step: (expression === null || expression === void 0 ? void 0 : expression.step) ? expression.step : 1, "label-handles": "", snap: "" })))) : null;

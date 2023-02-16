@@ -325,7 +325,8 @@ class FilterList extends Widget {
   }
 
   private _renderNumberSlider(layerId: string, expression: Expression) {
-    return expression?.min && expression?.max ? (
+    const check = expression?.min != null && expression?.max != null;
+    return check ? (
       <label
         key={expression?.definitionExpressionId}
         class={CSS.filterItem.userInput}
