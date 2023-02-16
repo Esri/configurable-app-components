@@ -24,7 +24,7 @@
   "devDependencies": {
     "@types/arcgis-js-api": "^4.16.0",
     "dojo-typings": "^1.11.11",
-    "gh-release": "^3.5.0",
+    "gh-release": "^6.0.4",
     "typescript": "^3.9.7"
   },
   "peerDependencies": {
