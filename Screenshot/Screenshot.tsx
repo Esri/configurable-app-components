@@ -190,6 +190,22 @@ class Screenshot extends Widget {
         });
       })
     ]);
+
+    // clean up offscreen popup and legend containers, if they already exist
+    const existingOffScreenPopup = document.querySelector(
+      `.${CSS.offScreenPopupContainer}`
+    ) as HTMLElement;
+    if(existingOffScreenPopup) {
+      existingOffScreenPopup.remove();
+    }
+    const existingOffScreenLegend = document.querySelector(
+      `.${CSS.offScreenLegendContainer}`
+    ) as HTMLElement;
+    if(existingOffScreenLegend) {
+      existingOffScreenLegend.remove();
+    }
+
+    // create new offscreen popup and legend containers
     const offScreenPopupContainer = document.createElement("div");
     const offScreenLegendContainer = document.createElement("div");
     offScreenPopupContainer.classList.add(CSS.offScreenPopupContainer);
