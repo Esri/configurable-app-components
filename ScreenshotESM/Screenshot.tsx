@@ -1,4 +1,4 @@
-// Copyright 2021 Esri
+// Copyright 2024 Esri
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -10,7 +10,11 @@
 // limitations under the License.​
 
 import Widget from "@arcgis/core/widgets/Widget";
-import { subclass, property, aliasOf } from "@arcgis/core/core/accessorSupport/decorators";
+import {
+  subclass,
+  property,
+  aliasOf,
+} from "@arcgis/core/core/accessorSupport/decorators";
 import MapView from "@arcgis/core/views/MapView";
 import SceneView from "@arcgis/core/views/SceneView";
 import { when, watch, whenOnce } from "@arcgis/core/core/reactiveUtils";
@@ -19,7 +23,7 @@ import {
   accessibleHandler,
   tsx,
   storeNode,
-  messageBundle
+  messageBundle,
 } from "@arcgis/core/widgets/support/widget";
 import ScreenshotViewModel from "./Screenshot/ScreenshotViewModel";
 import Legend from "@arcgis/core/widgets/Legend";
@@ -50,7 +54,8 @@ const CSS = {
   pointerCursor: "esri-screenshot--pointer",
   disabledCursor: "esri-screenshot--disabled",
   featureWarning: "esri-screenshot__feature-warning",
-  featureWarningTextContainer: "esri-screenshot__feature-warning-text-container",
+  featureWarningTextContainer:
+    "esri-screenshot__feature-warning-text-container",
   warningSVG: "esri-screenshot__warning-svg",
   selectFeatureText: "esri-screenshot__select-feature-text",
   screenshotfieldSetCheckbox: "esri-screenshot__field-set-checkbox",
@@ -59,7 +64,7 @@ const CSS = {
   screenshotClose: "esri-screenshot__close-button",
   closeButtonContainer: "esri-screenshot__close-button-container",
   screenshotPreviewContainer: "esri-screenshot__img-preview-container",
-  selectLayout: "esri-screenshot__select-layout"
+  selectLayout: "esri-screenshot__select-layout",
 };
 
 @subclass("Screenshot")
@@ -97,7 +102,7 @@ export default class Screenshot extends Widget {
 
   @aliasOf("viewModel.featureWidget")
   @property({
-    readOnly: true
+    readOnly: true,
   })
   featureWidget: FeatureWidget = null;
   @property()
@@ -122,7 +127,7 @@ export default class Screenshot extends Widget {
 
   @aliasOf("viewModel.legendWidget")
   @property({
-    readOnly: true
+    readOnly: true,
   })
   legendWidget: Legend = null;
 
@@ -169,7 +174,8 @@ export default class Screenshot extends Widget {
         { initial: true }
       ),
       when(
-        () => this?.enableLegendOption || this?.enablePopupOption || this?.custom,
+        () =>
+          this?.enableLegendOption || this?.enablePopupOption || this?.custom,
         () => {
           if (this.enableLegendOption) {
             this._elementOptions.legend = this.includeLegendInScreenshot;
@@ -190,8 +196,10 @@ export default class Screenshot extends Widget {
             if (this.viewModel.previewIsVisible) {
               const selectors =
                 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-              const focusableElements = this.previewContainer.querySelectorAll(selectors);
-              const firstFocusableElement = focusableElements[0] as HTMLInputElement;
+              const focusableElements =
+                this.previewContainer.querySelectorAll(selectors);
+              const firstFocusableElement =
+                focusableElements[0] as HTMLInputElement;
               const lastFocusableElement = focusableElements[
                 focusableElements.length - 1
               ] as HTMLButtonElement;
@@ -200,7 +208,7 @@ export default class Screenshot extends Widget {
           });
         },
         {
-          initial: true
+          initial: true,
         }
       ),
       watch(
@@ -210,7 +218,7 @@ export default class Screenshot extends Widget {
           this._isOpen = false;
           this.scheduleRender();
         }
-      )
+      ),
     ]);
     const offScreenPopupContainer = document.createElement("div");
     const offScreenLegendContainer = document.createElement("div");
@@ -274,14 +282,17 @@ export default class Screenshot extends Widget {
     }
     this.viewModel.screenshotModeIsActive = true;
     this.view.container.classList.add(CSS.screenshotCursor);
-    this.viewModel.dragHandler = (this.view as any).on("drag", (event: Event) => {
-      this.viewModel.setScreenshotArea(
-        event,
-        this._maskNode,
-        this._screenshotImgNode,
-        this.viewModel.dragHandler
-      );
-    });
+    this.viewModel.dragHandler = (this.view as any).on(
+      "drag",
+      (event: Event) => {
+        this.viewModel.setScreenshotArea(
+          event,
+          this._maskNode,
+          this._screenshotImgNode,
+          this.viewModel.dragHandler
+        );
+      }
+    );
     this.scheduleRender();
   }
 
@@ -290,11 +301,14 @@ export default class Screenshot extends Widget {
   }
 
   private _renderScreenshotPanel(): any {
-    const { screenshotTitle, screenshotSubtitle } = this?.commonMessages?.screenshot;
+    const { screenshotTitle, screenshotSubtitle } =
+      this?.commonMessages?.screenshot;
     const fieldSet = this._renderFieldSet();
     const setMapAreaButton = this._renderSetMapAreaButton();
     const featureWarning = this._renderFeatureWarning();
-    const screenshotLayout = this.includeLayoutOption ? this._renderScreenshotLayout() : null;
+    const screenshotLayout = this.includeLayoutOption
+      ? this._renderScreenshotLayout()
+      : null;
     return (
       <div key="screenshot-panel" class={this.classes(CSS.base, CSS.widget)}>
         <div class={CSS.mainContainer}>
@@ -309,7 +323,9 @@ export default class Screenshot extends Widget {
           {this.enableLegendOption || this.enablePopupOption || this.custom ? (
             <h3 class={CSS.panelSubTitle}>{screenshotSubtitle}</h3>
           ) : null}
-          {this.enableLegendOption || this.enablePopupOption || this.custom ? fieldSet : null}
+          {this.enableLegendOption || this.enablePopupOption || this.custom
+            ? fieldSet
+            : null}
           {this.enablePopupOption ? featureWarning : null}
           {screenshotLayout}
           {setMapAreaButton}
@@ -320,15 +336,27 @@ export default class Screenshot extends Widget {
 
   private _renderScreenshotLayout(): any {
     const elementOptionKeys = Object.keys(this._elementOptions);
-    const allDisabled = elementOptionKeys.every((key) => !this._elementOptions[key]);
+    const allDisabled = elementOptionKeys.every(
+      (key) => !this._elementOptions[key]
+    );
     return (
       <label class={CSS.selectLayout}>
         <span> {this?.commonMessages?.screenshot?.screenshotLayout}</span>
-        <select bind={this} onchange={this._updateLayoutOption} disabled={allDisabled}>
-          <option value="horizontal" selected={this.outputLayout === "horizontal" ? true : false}>
+        <select
+          bind={this}
+          onchange={this._updateLayoutOption}
+          disabled={allDisabled}
+        >
+          <option
+            value="horizontal"
+            selected={this.outputLayout === "horizontal" ? true : false}
+          >
             {this?.commonMessages?.screenshot?.horizontal}
           </option>
-          <option value="vertical" selected={this.outputLayout === "vertical" ? true : false}>
+          <option
+            value="vertical"
+            selected={this.outputLayout === "vertical" ? true : false}
+          >
             {this?.commonMessages?.screenshot?.vertical}
           </option>
         </select>
@@ -364,7 +392,10 @@ export default class Screenshot extends Widget {
     return (
       <div class={CSS.screenshotfieldSetCheckbox}>
         {this.enableLegendOption ? (
-          <label key="esri-screenshot-legend-option" class={CSS.screenshotOption}>
+          <label
+            key="esri-screenshot-legend-option"
+            class={CSS.screenshotOption}
+          >
             <input
               bind={this}
               onclick={this._toggleLegend}
@@ -376,7 +407,10 @@ export default class Screenshot extends Widget {
           </label>
         ) : null}
         {this.enablePopupOption ? (
-          <label key="esri-screenshot-popup-option" class={CSS.screenshotOption}>
+          <label
+            key="esri-screenshot-popup-option"
+            class={CSS.screenshotOption}
+          >
             <input
               bind={this}
               onclick={this._togglePopup}
@@ -388,7 +422,10 @@ export default class Screenshot extends Widget {
           </label>
         ) : null}
         {this.custom ? (
-          <label key="esri-screenshot-custom-option" class={CSS.screenshotOption}>
+          <label
+            key="esri-screenshot-custom-option"
+            class={CSS.screenshotOption}
+          >
             <input
               bind={this}
               onclick={this._toggleCustom}
@@ -435,7 +472,7 @@ export default class Screenshot extends Widget {
     const { previewIsVisible } = this.viewModel;
     const overlayIsVisible = {
       [CSS.showOverlay]: previewIsVisible,
-      [CSS.hideOverlay]: !previewIsVisible
+      [CSS.hideOverlay]: !previewIsVisible,
     };
     const screenshotPreviewBtns = this._renderScreenshotPreviewBtns();
     return (
@@ -512,7 +549,7 @@ export default class Screenshot extends Widget {
 
   private _renderMaskNode(screenshotModeIsActive: boolean): any {
     const maskDivIsHidden = {
-      [CSS.hide]: !screenshotModeIsActive
+      [CSS.hide]: !screenshotModeIsActive,
     };
     return (
       <div
@@ -608,7 +645,7 @@ export default class Screenshot extends Widget {
                 container: this._offscreenPopupContainer,
                 graphic: this.view.popup.selectedFeature,
                 map: this.view.map,
-                spatialReference: this.view.spatialReference
+                spatialReference: this.view.spatialReference,
               })
             );
             this._selectFeatureAlertIsVisible = false;
@@ -640,14 +677,14 @@ export default class Screenshot extends Widget {
                 this._triggerAlert();
               },
               {
-                initial: true
+                initial: true,
               }
-            )
+            ),
           ]);
         }
       },
       {
-        initial: true
+        initial: true,
       }
     );
   }
@@ -655,7 +692,8 @@ export default class Screenshot extends Widget {
   private _triggerAlert(): void {
     if (
       this.includePopupInScreenshot &&
-      (!this.featureWidget || (this.featureWidget && !this.featureWidget.graphic))
+      (!this.featureWidget ||
+        (this.featureWidget && !this.featureWidget.graphic))
     ) {
       this._selectFeatureAlertIsVisible = true;
     } else {
@@ -674,8 +712,13 @@ export default class Screenshot extends Widget {
           this.view?.popup &&
           this.view?.popup?.selectedFeature
         ) {
-          while (this._offscreenPopupContainer && this._offscreenPopupContainer.firstChild) {
-            this._offscreenPopupContainer.removeChild(this._offscreenPopupContainer.firstChild);
+          while (
+            this._offscreenPopupContainer &&
+            this._offscreenPopupContainer.firstChild
+          ) {
+            this._offscreenPopupContainer.removeChild(
+              this._offscreenPopupContainer.firstChild
+            );
           }
           this.featureWidget.graphic = null;
           this._set("featureWidget", null);
@@ -687,7 +730,7 @@ export default class Screenshot extends Widget {
               container: this._offscreenPopupContainer,
               graphic: this.view.popup.selectedFeature,
               map: this.view.map,
-              spatialReference: this.view.spatialReference
+              spatialReference: this.view.spatialReference,
             })
           );
         }

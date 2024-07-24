@@ -1,4 +1,4 @@
-// Copyright 2021 Esri
+// Copyright 2024 Esri
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -19,7 +19,10 @@ import Handles from "@arcgis/core/core/Handles";
 import { watch, when } from "@arcgis/core/core/reactiveUtils";
 import FeatureWidget from "@arcgis/core/widgets/Feature";
 import Legend from "@arcgis/core/widgets/Legend";
-import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
+import {
+  subclass,
+  property,
+} from "@arcgis/core/core/accessorSupport/decorators";
 import { Area, Screenshot, ScreenshotConfig } from "./interfaces/interfaces";
 
 type State = "ready" | "takingScreenshot" | "complete" | "disabled";
@@ -41,12 +44,12 @@ export default class ScreenshotViewModel extends Accessor {
   private _screenshotConfig: ScreenshotConfig = null;
   private _mapComponentSelectors = [
     ".esri-screenshot__offscreen-legend-container",
-    ".esri-screenshot__offscreen-pop-up-container"
+    ".esri-screenshot__offscreen-pop-up-container",
   ];
 
   @property({
     dependsOn: ["view.ready"],
-    readOnly: true
+    readOnly: true,
   })
   get state(): State {
     const ready = this.get("view.ready");
@@ -75,7 +78,7 @@ export default class ScreenshotViewModel extends Accessor {
   enablePopupOption: boolean = null;
 
   @property({
-    readOnly: true
+    readOnly: true,
   })
   featureWidget: FeatureWidget = null;
 
@@ -89,7 +92,7 @@ export default class ScreenshotViewModel extends Accessor {
   includePopupInScreenshot: boolean = null;
 
   @property({
-    readOnly: true
+    readOnly: true,
   })
   legendWidget: Legend = null;
 
@@ -111,7 +114,7 @@ export default class ScreenshotViewModel extends Accessor {
       this._watchScreenshotMode(),
       this._watchLegendWidgetAndView(),
       this._resetOffScreenPopup(),
-      this._checkScreenshotModeFalse()
+      this._checkScreenshotModeFalse(),
     ]);
   }
 
@@ -141,14 +144,14 @@ export default class ScreenshotViewModel extends Accessor {
               x,
               y,
               width: 1,
-              height: 1
+              height: 1,
             },
-            ignorePadding: true
+            ignorePadding: true,
           };
         } else {
           this._screenshotConfig = {
             area: this._area,
-            ignorePadding: true
+            ignorePadding: true,
           };
         }
         this._screenshotPromise = true;
@@ -177,14 +180,14 @@ export default class ScreenshotViewModel extends Accessor {
               x,
               y,
               width: 1,
-              height: 1
+              height: 1,
             },
-            ignorePadding: true
+            ignorePadding: true,
           };
         } else {
           this._screenshotConfig = {
             area: this._area,
-            ignorePadding: true
+            ignorePadding: true,
           };
         }
         this._screenshotPromise = true;
@@ -314,7 +317,7 @@ export default class ScreenshotViewModel extends Accessor {
     this.notifyChange("state");
 
     const mapComponentCanvas = await html2canvas(mapComponent, {
-      logging: true
+      logging: true,
     });
 
     viewCanvas.height = viewScreenshot.data.height;
@@ -356,7 +359,7 @@ export default class ScreenshotViewModel extends Accessor {
 
     const html2CanvasConfig = {
       removeContainer: true,
-      logging: false
+      logging: false,
     };
 
     const firstMapComponent = await html2canvas(firstNode, html2CanvasConfig);
@@ -365,7 +368,7 @@ export default class ScreenshotViewModel extends Accessor {
 
     const secondMapComponent = await html2canvas(secondNode, {
       height: secondNode.offsetHeight,
-      ...html2CanvasConfig
+      ...html2CanvasConfig,
     });
 
     this._secondMapComponent = secondMapComponent;
@@ -409,7 +412,7 @@ export default class ScreenshotViewModel extends Accessor {
 
     const html2CanvasConfig = {
       removeContainer: true,
-      logging: false
+      logging: false,
     };
 
     const firstMapComponent = await html2canvas(firstNode, html2CanvasConfig);
@@ -417,13 +420,13 @@ export default class ScreenshotViewModel extends Accessor {
 
     const secondMapComponent = await html2canvas(secondNode, {
       height: secondNode.offsetHeight,
-      ...html2CanvasConfig
+      ...html2CanvasConfig,
     });
     this._secondMapComponent = secondMapComponent;
 
     const thirdMapComponent = await html2canvas(thirdNode, {
       height: thirdNode.offsetHeight,
-      ...html2CanvasConfig
+      ...html2CanvasConfig,
     });
     this._thirdMapComponent = thirdMapComponent;
     this._screenshotPromise = null;
@@ -456,39 +459,43 @@ export default class ScreenshotViewModel extends Accessor {
     maskDiv: HTMLElement,
     screenshotKey: string
   ) {
-    return watch(() => this?.state, () => {
-      if (
-        this.state === "complete" &&
-        this._firstMapComponent &&
-        this._secondMapComponent
-      ) {
-        viewCanvas.height = viewScreenshot.data.height;
-        viewCanvas.width = viewScreenshot.data.width;
-        img.src = viewScreenshot.dataUrl;
-        img.onload = () => {
-          viewCanvasContext.drawImage(img, 0, 0);
-          this._generateImageForTwoComponents(
-            viewCanvas,
-            combinedCanvasElements,
-            viewScreenshot,
-            this._firstMapComponent,
-            this._secondMapComponent
-          );
-          this._canvasElement = combinedCanvasElements;
-          this._showPreview(
-            combinedCanvasElements,
-            screenshotImageElement,
-            maskDiv
-          );
-          this._firstMapComponent = null;
-          this._secondMapComponent = null;
-          this._handles.remove(screenshotKey);
-          this.notifyChange("state");
-        };
+    return watch(
+      () => this?.state,
+      () => {
+        if (
+          this.state === "complete" &&
+          this._firstMapComponent &&
+          this._secondMapComponent
+        ) {
+          viewCanvas.height = viewScreenshot.data.height;
+          viewCanvas.width = viewScreenshot.data.width;
+          img.src = viewScreenshot.dataUrl;
+          img.onload = () => {
+            viewCanvasContext.drawImage(img, 0, 0);
+            this._generateImageForTwoComponents(
+              viewCanvas,
+              combinedCanvasElements,
+              viewScreenshot,
+              this._firstMapComponent,
+              this._secondMapComponent
+            );
+            this._canvasElement = combinedCanvasElements;
+            this._showPreview(
+              combinedCanvasElements,
+              screenshotImageElement,
+              maskDiv
+            );
+            this._firstMapComponent = null;
+            this._secondMapComponent = null;
+            this._handles.remove(screenshotKey);
+            this.notifyChange("state");
+          };
+        }
+      },
+      {
+        initial: true,
       }
-    }, {
-      initial: true
-    });
+    );
   }
 
   private _watchThreeMapComponents(
@@ -501,43 +508,47 @@ export default class ScreenshotViewModel extends Accessor {
     maskDiv: HTMLElement,
     screenshotKey: string
   ) {
-    return watch(() => this?.state, () => {
-      if (
-        this.state === "complete" &&
-        this._firstMapComponent &&
-        this._secondMapComponent &&
-        this._thirdMapComponent
-      ) {
-        viewCanvas.height = viewScreenshot.data.height;
-        viewCanvas.width = viewScreenshot.data.width;
-        img.src = viewScreenshot.dataUrl;
-        img.onload = () => {
-          viewCanvasContext.drawImage(img, 0, 0);
-          this._generateImageForThreeComponents(
-            viewCanvas,
-            combinedCanvasElements,
-            viewScreenshot,
-            this._firstMapComponent,
-            this._secondMapComponent,
-            this._thirdMapComponent
-          );
-          this._canvasElement = combinedCanvasElements;
+    return watch(
+      () => this?.state,
+      () => {
+        if (
+          this.state === "complete" &&
+          this._firstMapComponent &&
+          this._secondMapComponent &&
+          this._thirdMapComponent
+        ) {
+          viewCanvas.height = viewScreenshot.data.height;
+          viewCanvas.width = viewScreenshot.data.width;
+          img.src = viewScreenshot.dataUrl;
+          img.onload = () => {
+            viewCanvasContext.drawImage(img, 0, 0);
+            this._generateImageForThreeComponents(
+              viewCanvas,
+              combinedCanvasElements,
+              viewScreenshot,
+              this._firstMapComponent,
+              this._secondMapComponent,
+              this._thirdMapComponent
+            );
+            this._canvasElement = combinedCanvasElements;
 
-          this._showPreview(
-            combinedCanvasElements,
-            screenshotImageElement,
-            maskDiv
-          );
-          this._firstMapComponent = null;
-          this._secondMapComponent = null;
-          this._thirdMapComponent = null;
-          this._handles.remove(screenshotKey);
-          this.notifyChange("state");
-        };
+            this._showPreview(
+              combinedCanvasElements,
+              screenshotImageElement,
+              maskDiv
+            );
+            this._firstMapComponent = null;
+            this._secondMapComponent = null;
+            this._thirdMapComponent = null;
+            this._handles.remove(screenshotKey);
+            this.notifyChange("state");
+          };
+        }
+      },
+      {
+        initial: true,
       }
-    }, {
-      initial: true
-    });
+    );
   }
 
   private _generateImageForOneComponent(
@@ -913,7 +924,7 @@ export default class ScreenshotViewModel extends Accessor {
       x: xmin,
       y: ymin,
       width: xmax - xmin,
-      height: ymax - ymin
+      height: ymax - ymin,
     };
     this.notifyChange("state");
   }
@@ -1195,76 +1206,90 @@ export default class ScreenshotViewModel extends Accessor {
   }
 
   private _removeHighlight(): __esri.WatchHandle {
-    return watch(() => this?.view?.popup?.visible, () => {
-      if (!this.view) {
-        return;
-      }
-      if (
-        !this.view?.popup?.visible &&
-        this.screenshotModeIsActive &&
-        this.enablePopupOption &&
-        this.view?.popup?.selectedFeature
-      ) {
-        const layerView = this.view.layerViews.find(
-          layerView =>
-            layerView.layer.id === this.view?.popup?.selectedFeature?.layer?.id
-        ) as __esri.FeatureLayerView;
-        if (!layerView) {
+    return watch(
+      () => this?.view?.popup?.visible,
+      () => {
+        if (!this.view) {
           return;
         }
-        this._highlightedFeature = layerView.highlight(
-          this.view.popup.selectedFeature
+        if (
+          !this.view?.popup?.visible &&
+          this.screenshotModeIsActive &&
+          this.enablePopupOption &&
+          this.view?.popup?.selectedFeature
+        ) {
+          const layerView = this.view.layerViews.find(
+            (layerView) =>
+              layerView.layer.id ===
+              this.view?.popup?.selectedFeature?.layer?.id
+          ) as __esri.FeatureLayerView;
+          if (!layerView) {
+            return;
+          }
+          this._highlightedFeature = layerView.highlight(
+            this.view.popup.selectedFeature
+          );
+        }
+        const watchHighlight = "watch-highlight";
+        this._handles.add(
+          when(
+            () => this?.screenshotModeIsActive === false,
+            () => {
+              if (!this.screenshotModeIsActive) {
+                if (this.featureWidget) {
+                  this._set("featureWidget", null);
+                }
+                if (this._highlightedFeature) {
+                  this._highlightedFeature.remove();
+                  this._highlightedFeature = null;
+                }
+              }
+              this.notifyChange("state");
+              this._handles.remove(watchHighlight);
+            }
+          ),
+          watchHighlight
         );
       }
-      const watchHighlight = "watch-highlight";
-      this._handles.add(
-        when(() => this?.screenshotModeIsActive === false, () => {
-          if (!this.screenshotModeIsActive) {
-            if (this.featureWidget) {
-              this._set("featureWidget", null);
-            }
-            if (this._highlightedFeature) {
-              this._highlightedFeature.remove();
-              this._highlightedFeature = null;
-            }
-          }
-          this.notifyChange("state");
-          this._handles.remove(watchHighlight);
-        }),
-        watchHighlight
-      );
-    });
+    );
   }
 
   private _watchScreenshotMode(): __esri.WatchHandle {
-    return watch(() => this?.screenshotModeIsActive, () => {
-      if (!this.view) {
-        return;
+    return watch(
+      () => this?.screenshotModeIsActive,
+      () => {
+        if (!this.view) {
+          return;
+        }
+        if (this.view?.popup) {
+          this.view.popup.visible = false;
+        }
       }
-      if (this.view?.popup) {
-        this.view.popup.visible = false;
-      }
-    });
+    );
   }
 
   private _watchLegendWidgetAndView(): __esri.WatchHandle {
-    return watch(() => this?.legendWidget || this?.view?.ready, () => {
-      if (this.view?.ready && !this.legendWidget) {
-        this._set(
-          "legendWidget",
-          new Legend({
-            view: this.view
-          })
-        );
+    return watch(
+      () => this?.legendWidget || this?.view?.ready,
+      () => {
+        if (this.view?.ready && !this.legendWidget) {
+          this._set(
+            "legendWidget",
+            new Legend({
+              view: this.view,
+            })
+          );
+        }
+      },
+      {
+        initial: true,
       }
-    }, {
-      initial: true
-    });
+    );
   }
 
   private _resetOffScreenPopup(): __esri.WatchHandle {
     return when(
-      ()=> this?.screenshotModeIsActive === false,
+      () => this?.screenshotModeIsActive === false,
       () => {
         if (this.featureWidget) {
           this.featureWidget.graphic = null;
@@ -1277,19 +1302,20 @@ export default class ScreenshotViewModel extends Accessor {
 
   private _checkScreenshotModeFalse(): __esri.WatchHandle {
     return when(
-      ()=> this?.screenshotModeIsActive === false,
+      () => this?.screenshotModeIsActive === false,
       () => {
-      this.screenshotModeIsActive = false;
-      this.view.container.classList.remove("esri-screenshot__cursor");
-      if (this.featureWidget && this.featureWidget.graphic) {
-        this.featureWidget.graphic = null;
-      }
-      if (this.dragHandler) {
-        this.dragHandler.remove();
-        this.dragHandler = null;
-      }
+        this.screenshotModeIsActive = false;
+        this.view.container.classList.remove("esri-screenshot__cursor");
+        if (this.featureWidget && this.featureWidget.graphic) {
+          this.featureWidget.graphic = null;
+        }
+        if (this.dragHandler) {
+          this.dragHandler.remove();
+          this.dragHandler = null;
+        }
 
-      this.notifyChange("state");
-    });
+        this.notifyChange("state");
+      }
+    );
   }
 }
